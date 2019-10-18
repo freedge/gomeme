@@ -1,20 +1,20 @@
-package commands
+package job
 
 import (
-	"crypto/tls"
-	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"strconv"
+
+	"github.com/freedge/gomeme/client"
+	"github.com/freedge/gomeme/commands"
+	"github.com/freedge/gomeme/types"
 )
 
 type JobsStatusCommand struct {
 	application string
 	limit       int
 	status      string
-	reply       JobsStatusReply
+	reply       types.JobsStatusReply
 }
 
 func (cmd *JobsStatusCommand) Prepare(flags *flag.FlagSet) {
@@ -24,46 +24,20 @@ func (cmd *JobsStatusCommand) Prepare(flags *flag.FlagSet) {
 }
 func (cmd *JobsStatusCommand) Run(flags *flag.FlagSet) (i interface{}, err error) {
 	i = nil
-	var bearer = "Bearer " + TheToken
-	req, err := http.NewRequest("GET", Endpoint+"/run/jobs/status", nil)
 
 	// add authorization header to the req
-	req.Header.Add("Authorization", bearer)
-	q := req.URL.Query()
+	args := make(map[string]string)
 	if cmd.application != "" {
-		q.Add("application", cmd.application)
+		args["application"] = cmd.application
 	}
 	if cmd.status != "" {
-		q.Add("status", cmd.status)
+		args["status"] = cmd.status
 	}
-	q.Add("limit", strconv.Itoa(cmd.limit))
+	args["limit"] = strconv.Itoa(cmd.limit)
 
-	req.URL.RawQuery = q.Encode()
+	err = client.Call("GET", "/run/jobs/status", nil, args, &cmd.reply)
 
-	// Send req using http Client
-	client := &http.Client{}
-	if Insecure {
-		cfg := &tls.Config{
-			InsecureSkipVerify: true,
-		}
-		client.Transport = &http.Transport{
-			TLSClientConfig: cfg,
-		}
-	}
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return
-	}
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-	err = json.Unmarshal(body, &cmd.reply)
-	if err != nil {
-		return
-	}
-	i = cmd.reply.Statuses
+	i = cmd.reply
 
 	return
 }
@@ -81,5 +55,5 @@ func (cmd *JobsStatusCommand) PrettyPrint(f *flag.FlagSet, data interface{}) err
 	return nil
 }
 func init() {
-	Register("lj", &JobsStatusCommand{})
+	commands.Register("lj", &JobsStatusCommand{})
 }

@@ -6,8 +6,12 @@ import (
 	"os"
 
 	"github.com/freedge/gomeme/commands"
+	_ "github.com/freedge/gomeme/commands/job"
+	_ "github.com/freedge/gomeme/commands/login"
+	_ "github.com/freedge/gomeme/commands/qr"
 )
 
+// dump the go object
 var DumpNeeded = false
 
 func main() {
@@ -16,6 +20,7 @@ func main() {
 		os.Exit(-1)
 	}
 
+	// find the proper command and delegate most of the actions to it
 	command, found := commands.Commands[os.Args[1]]
 	if !found {
 		commands.Usage()

@@ -1,13 +1,13 @@
-package commands
+package job
 
 import (
-	"bytes"
-	"crypto/tls"
-	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
-	"net/http"
+
+	"github.com/freedge/gomeme/client"
+
+	"github.com/freedge/gomeme/commands"
+	"github.com/freedge/gomeme/types"
 )
 
 type OrderJob struct {
@@ -27,7 +27,7 @@ func (cmd *OrderJob) Prepare(flags *flag.FlagSet) {
 func (cmd *OrderJob) Run(flags *flag.FlagSet) (i interface{}, err error) {
 	i = nil
 	fmt.Println("untested !")
-	if TheToken == "" {
+	if commands.TheToken == "" {
 		err = fmt.Errorf("no token found. Please login first")
 		return
 	}
@@ -41,36 +41,9 @@ func (cmd *OrderJob) Run(flags *flag.FlagSet) (i interface{}, err error) {
 		return
 	}
 
-	var bearer = "Bearer " + TheToken
-	query := OrderQuery{Jobs: cmd.Jobs, Ctm: cmd.Ctm, Folder: cmd.Folder, Hold: cmd.Hold}
-	jsonquery, err := json.Marshal(query)
-	if err != nil {
-		return nil, err
-	}
-	req, err := http.NewRequest("POST", Endpoint+"/run/order", bytes.NewBuffer(jsonquery))
+	query := types.OrderQuery{Jobs: cmd.Jobs, Ctm: cmd.Ctm, Folder: cmd.Folder, Hold: cmd.Hold}
+	err = client.Call("POST", "/run/order", query, map[string]string{}, cmd.data)
 
-	// add authorization header to the req
-	req.Header.Add("Authorization", bearer)
-
-	// Send req using http Client
-	client := &http.Client{}
-	if Insecure {
-		cfg := &tls.Config{
-			InsecureSkipVerify: true,
-		}
-		client.Transport = &http.Transport{
-			TLSClientConfig: cfg,
-		}
-	}
-	req.Header.Set("Content-type", "application/json")
-	resp, err := client.Do(req)
-	if err != nil {
-		return
-	}
-	cmd.data, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
 	i = cmd.data
 
 	return
@@ -82,5 +55,5 @@ func (cmd *OrderJob) PrettyPrint(flags *flag.FlagSet, data interface{}) error {
 }
 
 func init() {
-	Register("joborder", &OrderJob{})
+	commands.Register("joborder", &OrderJob{})
 }

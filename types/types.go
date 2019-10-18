@@ -1,11 +1,12 @@
-package commands
+// Package types define various structures used to interact with Control-M API
+package types
 
 import "time"
 
 type QR struct {
 	Name      string
 	Ctm       string
-	Available string
+	Available string // Available is an int but defined as a String
 	Max       int
 }
 
@@ -48,6 +49,7 @@ type JobsStatusReply struct {
 	Total    int
 }
 
+// ParseTime parses a non empty StartTime or EndTime from a Status structure and returns a Time
 func ParseTime(s string) (t time.Time, err error) {
 	t, err = time.Parse("20060102150405", s)
 	return
