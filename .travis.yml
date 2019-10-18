@@ -26,7 +26,7 @@ env:
 
 jobs:
   include:
-        # The "build" stage verifies the program can be built against the 
+    # The "build" stage verifies the program can be built against the 
     # various GOOS and GOARCH combinations found in the Go releaser
     # config file, ".goreleaser.yml".
     - &build-stage
@@ -34,3 +34,8 @@ jobs:
       env:           GOOS=linux GOARCH=amd64
       install:       true
       script:        go install
+
+    # The test stage executes the test target.
+    - stage:         test
+      install:       true
+      script:        go test ./...
