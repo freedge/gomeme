@@ -1,0 +1,36 @@
+# mostly taking the one from govc
+
+# Use the newer Travis-CI build templates based on the
+# Ubuntu Linux distribution "Xenial Xerus" release.
+os:             linux
+dist:           xenial
+
+# Disable sudo for all builds by default. This ensures all jobs use
+# Travis-CI's containerized build environment unless specified otherwise.
+# The container builds have *much* shorter queue times than the VM-based
+# build environment on which the sudo builds depend.
+sudo:           false
+services:       false
+
+# Set the version of Go.
+language:       go
+go:             1.12
+
+# Always set the project's Go import path to ensure that forked
+# builds get cloned to the correct location.
+go_import_path: github.com/freedge/gomeme
+
+# Ensure all the jobs know where the temp directory is.
+env:
+  global: TMPDIR=/tmp
+
+jobs:
+  include:
+        # The "build" stage verifies the program can be built against the 
+    # various GOOS and GOARCH combinations found in the Go releaser
+    # config file, ".goreleaser.yml".
+    - &build-stage
+      stage:         build
+      env:           GOOS=linux GOARCH=amd64
+      install:       true
+      script:        go install
