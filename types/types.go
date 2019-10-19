@@ -69,3 +69,11 @@ type SetResourceQuery struct {
 type SetResourceReply struct {
 	Message string
 }
+type JobActionReply struct {
+	Message string
+}
+
+type OrderJobReply struct {
+	RunId     string
+	StatusURI string
+}

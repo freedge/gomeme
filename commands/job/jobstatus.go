@@ -61,7 +61,7 @@ func (cmd *JobsStatusCommand) Run(flags *flag.FlagSet) (i interface{}, err error
 func (cmd *JobsStatusCommand) PrettyPrint(f *flag.FlagSet, data interface{}) error {
 	fmt.Printf("%-40.40s %5.5s %-20.20s %8.8s %16.16s %16.16s %5.5s %12.12s %12.12s %20.20s\n",
 		"Folder/Name", "Held", "JobId", "Order", "Status", "Host", "Del?", "Start time", "End time", "Description")
-	fmt.Printf("-----------------------------------------------------------------------------------------------------------------\n")
+	fmt.Printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------------\n")
 	for _, job := range cmd.reply.Statuses {
 		fmt.Printf("%-40.40s %5.5s %-20.20s %8.8s %16.146s %16.16s %5.5s %12.12s %12.12s %20.20s\n",
 			job.Folder+"/"+job.Name,

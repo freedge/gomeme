@@ -67,6 +67,21 @@ gomeme job.log -jobid FOOCCT4P:5nq1c
 gomeme job.log -jobid FOOCCT4P:5nq1c -output
 ```
 
+### job.order
+
+order a job.
+
+```
+gomeme job.order -ctm FOOCT4T -folder ABC-DEV-OND -hold -jobs dABC1
+```
+
+### job.action
+
+hold/delete/undelete/confirm/setToOk a job
+
+```
+gomeme job.action -action delete -jobid FOOCT4T:3z553
+```
 
 ## License
 

@@ -15,7 +15,8 @@ type OrderJob struct {
 	Ctm    string
 	Folder string
 	Jobs   string
-	data   []byte
+	reply  types.OrderJobReply
+	status types.JobsStatusReply
 }
 
 func (cmd *OrderJob) Prepare(flags *flag.FlagSet) {
@@ -26,7 +27,6 @@ func (cmd *OrderJob) Prepare(flags *flag.FlagSet) {
 }
 func (cmd *OrderJob) Run(flags *flag.FlagSet) (i interface{}, err error) {
 	i = nil
-	fmt.Println("untested !")
 	if commands.TheToken == "" {
 		err = fmt.Errorf("no token found. Please login first")
 		return
@@ -42,18 +42,25 @@ func (cmd *OrderJob) Run(flags *flag.FlagSet) (i interface{}, err error) {
 	}
 
 	query := types.OrderQuery{Jobs: cmd.Jobs, Ctm: cmd.Ctm, Folder: cmd.Folder, Hold: cmd.Hold}
-	err = client.Call("POST", "/run/order", query, map[string]string{}, cmd.data)
+	err = client.Call("POST", "/run/order", query, map[string]string{}, &cmd.reply)
+	if err != nil {
+		return
+	}
 
-	i = cmd.data
+	err = client.Call("GET", "/run/status/"+cmd.reply.RunId, nil, map[string]string{}, &cmd.status)
+	i = &cmd.status
 
 	return
 }
 
 func (cmd *OrderJob) PrettyPrint(flags *flag.FlagSet, data interface{}) error {
-	fmt.Println(data)
+	fmt.Println("RunId: ", cmd.reply.RunId)
+	for _, status := range cmd.status.Statuses {
+		fmt.Println("JobId: ", status.JobId)
+	}
 	return nil
 }
 
 func init() {
-	commands.Register("joborder", &OrderJob{})
+	commands.Register("job.order", &OrderJob{})
 }
