@@ -1,41 +1,23 @@
-# mostly taking the one from govc
-
-# Use the newer Travis-CI build templates based on the
-# Ubuntu Linux distribution "Xenial Xerus" release.
-os:             linux
-dist:           xenial
-
-# Disable sudo for all builds by default. This ensures all jobs use
-# Travis-CI's containerized build environment unless specified otherwise.
-# The container builds have *much* shorter queue times than the VM-based
-# build environment on which the sudo builds depend.
-sudo:           false
-services:       false
-
-# Set the version of Go.
-language:       go
-go:             1.12
-
-# Always set the project's Go import path to ensure that forked
-# builds get cloned to the correct location.
+os: linux
+dist: xenial
+language: go
+go: 1.12
 go_import_path: github.com/freedge/gomeme
-
-# Ensure all the jobs know where the temp directory is.
 env:
   global: TMPDIR=/tmp
-
 jobs:
   include:
-    # The "build" stage verifies the program can be built against the 
-    # various GOOS and GOARCH combinations found in the Go releaser
-    # config file, ".goreleaser.yml".
-    - &build-stage
-      stage:         build
-      env:           GOOS=linux GOARCH=amd64
-      install:       true
-      script:        go install
-
-    # The test stage executes the test target.
-    - stage:         test
-      install:       true
-      script:        go test ./...
+  - stage: build
+    env: GOOS=linux GOARCH=amd64
+    install: true
+    script: go install
+  - stage: test
+    install: true
+    script: go test ./...
+deploy:
+  provider: releases
+  api_key:
+    secure: WZmUO8HvbBpKgNV9es0Y4/vEflqrSOSQIPgpzdEWZF5zY2Ul+lPQaZ8XrNcKY5PdvkX5DqhRGFPNg6RcVmiAKsAJ25fa69HR+/lS6EVcG+MU4PVsawE72tJcnS6yvm9l6JryUv182tl5JpCWRDrDWsfZh05rBJ1w6Vbh53bivEaNy0mFrpbCPhasyq915cISYs+WGUTwRZ4AB8iCWjCHIOR4nZoGGOy26ujIfepY8VjvlXAOk38JRaW4VrOEeUqQcmHy38HTD8njbRpjGzi6SPE1GIsO3cYJcJIy16civ7pimo3xmmvkQWawzZIBqAdcVbgRE8wpLHXAqaom1kuW+eQ79/sQLwdxQc6MRfhu2GznPaysz4XN1Na5nwfo0jKcj5QGsMB6Rp5BxeAtLtRdqWavs6l5Apt8stefUQjcPaDDqiJtXO8/35Dijr+TQ6R3Yo+ncrNUmMeL7NnUxPXDexBC84R+RP/iE8pQOuyhO+ZLsG773Zlzs87izfRP3zfVXhUKNHGjcmHkXyKZ8yP6JKC4Hwb0H81K6PRTbeaAQ/lWJsHEAAzOI/yNHLnKGxrJCKWmd1dEsgwtti7Zuu9qa73F3N0lOa5qvJ5nHE1O/edMA0mJdtYl+LZ6GUZ9QO2P9t97x5xsN+1GkLnSbVCHV2wciZ7VL1/z+8m/pTmGcPc=
+  file: "~/go/bin/gomeme"
+  on:
+    repo: freedge/gomeme
