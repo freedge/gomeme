@@ -20,6 +20,7 @@ type JobsStatusCommand struct {
 	jobid       string
 	folder      string
 	csv         bool
+	verbose     bool
 }
 
 func (cmd *JobsStatusCommand) Prepare(flags *flag.FlagSet) {
@@ -30,6 +31,7 @@ func (cmd *JobsStatusCommand) Prepare(flags *flag.FlagSet) {
 	flags.StringVar(&cmd.jobid, "jobid", "", "Jobid")
 	flags.StringVar(&cmd.folder, "folder", "", "Folder")
 	flags.BoolVar(&cmd.csv, "csv", false, "csv output")
+	flags.BoolVar(&cmd.verbose, "v", false, "output more stuff")
 }
 
 func (cmd *JobsStatusCommand) Run(flags *flag.FlagSet) (i interface{}, err error) {
@@ -90,13 +92,13 @@ func GetDurationAsString(job types.Status) (duration string) {
 		duration = fmt.Sprintf("%dh", int(d/3600))
 	}
 	if job.EndTime == "" {
-		duration += " so far"
+		duration += ".."
 	}
 	return
 }
 
 func (cmd *JobsStatusCommand) PrintCsv() error {
-	fmt.Printf("folder,name,status,duration,starttime,endtime")
+	fmt.Printf("folder,name,status,duration,starttime,endtime\n")
 	for _, job := range cmd.reply.Statuses {
 		fmt.Printf("%s,%s,%s,%f,%s,%s\n", job.Folder, job.Name, job.Status, GetDuration(job), job.StartTime, job.EndTime)
 	}
@@ -107,14 +109,26 @@ func (cmd *JobsStatusCommand) PrettyPrint(f *flag.FlagSet, data interface{}) err
 	if cmd.csv {
 		return cmd.PrintCsv()
 	}
-	fmt.Printf("%-40.40s %5.5s %-20.20s %8.8s %16.16s %16.16s %5.5s %12.12s %12.12s %20.20s %8.8s\n",
-		"Folder/Name", "Held", "JobId", "Order", "Status", "Host", "Del?", "Start time", "End time", "Description", "Duration")
-	fmt.Printf("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n")
-	for _, job := range cmd.reply.Statuses {
-		fmt.Printf("%-40.40s %5.5s %-20.20s %8.8s %16.146s %16.16s %5.5s %12.12s %12.12s %20.20s %s\n",
-			job.Folder+"/"+job.Name,
-			strconv.FormatBool(job.Held),
-			job.JobId, job.OrderDate, job.Status, job.Host, strconv.FormatBool(job.Deleted), job.StartTime, job.EndTime, job.Description, GetDurationAsString(job))
+	if cmd.verbose {
+		fmt.Printf("%-40.40s %5.5s %-20.20s %8.8s %16.16s %16.16s %5.5s %12.12s %12.12s %20.20s %8.8s\n",
+			"Folder/Name", "Held", "JobId", "Order", "Status", "Host", "Del?", "Start time", "End time", "Description", "Duration")
+		fmt.Printf("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n")
+		for _, job := range cmd.reply.Statuses {
+			fmt.Printf("%-40.40s %5.5s %-20.20s %8.8s %16.146s %16.16s %5.5s %12.12s %12.12s %20.20s %s\n",
+				job.Folder+"/"+job.Name,
+				strconv.FormatBool(job.Held),
+				job.JobId, job.OrderDate, job.Status, job.Host, strconv.FormatBool(job.Deleted), job.StartTime, job.EndTime, job.Description, GetDurationAsString(job))
+		}
+	} else {
+		fmt.Printf("%-15.15s %18.18s %8.8s %16.16s %8.8s\n",
+			"Name", "JobId", "Status", "Host", "Duration")
+		fmt.Printf("---------------------------------------------------------------------\n")
+		for _, job := range cmd.reply.Statuses {
+			fmt.Printf("%-15.15s %18.18s %8.8s %18.18s %6.6s\n",
+				job.Name,
+				job.JobId, job.Status, job.Host, GetDurationAsString(job))
+		}
+
 	}
 	return nil
 }
