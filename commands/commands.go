@@ -37,9 +37,11 @@ func Usage() {
 	for key, _ := range Commands {
 		s = s + " " + key
 	}
-	s = s + " ]. \n"
-	s += "Set " + ENDPOINT + " environment variable to the Control-M endpoint (eg: https://foobar:8443/automation-api)\n"
-	s += "Set " + INSECURE + " environment variable to skip host verification\n"
+	s = s + " ]."
+	if Endpoint == "" {
+		s += " \nSet " + ENDPOINT + " environment variable to the Control-M endpoint (eg: https://foobar:8443/automation-api)\n"
+		s += "Set " + INSECURE + " environment variable to skip host verification\n"
+	}
 	fmt.Println(s)
 }
 

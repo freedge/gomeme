@@ -31,8 +31,7 @@ func (cmd *QRCommand) Run(flags *flag.FlagSet) (i interface{}, err error) {
 	if cmd.Ctm != "" {
 		args["ctm"] = cmd.Ctm
 	}
-	client.Call("GET", "/run/resources", nil, args, &cmd.qrs)
-
+	err = client.Call("GET", "/run/resources", nil, args, &cmd.qrs)
 	i = cmd.qrs
 
 	return

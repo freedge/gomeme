@@ -61,3 +61,11 @@ type OrderQuery struct {
 	Folder string
 	Jobs   string
 }
+
+type SetResourceQuery struct {
+	Max string
+}
+
+type SetResourceReply struct {
+	Message string
+}

@@ -50,6 +50,13 @@ list jobs (default limit is)
 gomeme lj -application TOTO-PRD -status Executing -limit 30
 ```
 
+### qr.set
+
+set a qr
+
+```
+gomeme qr.set -name DEV-FOO -ctm BARCT4T -max 5
+```
 
 ## License
 

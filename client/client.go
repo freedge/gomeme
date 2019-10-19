@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/tls"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -51,6 +52,13 @@ func Call(method, url string, query interface{}, params map[string]string, out i
 	if err != nil {
 		return
 	}
+	switch resp.StatusCode {
+	case 404:
+		err = fmt.Errorf("client: got an error accessing %v", req.URL)
+		return
+
+	}
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
