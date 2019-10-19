@@ -56,7 +56,9 @@ func Call(method, url string, query interface{}, params map[string]string, out i
 	case 404:
 		err = fmt.Errorf("client: got an error accessing %v", req.URL)
 		return
-
+	case 500:
+		err = fmt.Errorf("Please login")
+		return
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
