@@ -1,21 +1,26 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
 
 	"github.com/freedge/gomeme/commands"
+	_ "github.com/freedge/gomeme/commands/job"
+	_ "github.com/freedge/gomeme/commands/login"
+	_ "github.com/freedge/gomeme/commands/qr"
 )
 
-var DumpNeeded = false
-
+var DumpNeeded = false // dump the go object
+var JsonNeeded = false // dump the go object
 func main() {
 	if len(os.Args) < 2 {
 		commands.Usage()
 		os.Exit(-1)
 	}
 
+	// find the proper command and delegate most of the actions to it
 	command, found := commands.Commands[os.Args[1]]
 	if !found {
 		commands.Usage()
@@ -23,6 +28,7 @@ func main() {
 	}
 	flagset := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
 	flagset.BoolVar(&DumpNeeded, "dump", false, "outputs as go structure")
+	flagset.BoolVar(&JsonNeeded, "json", false, "outputs as json")
 	command.Prepare(flagset)
 
 	err := flagset.Parse(os.Args[2:])
@@ -36,9 +42,13 @@ func main() {
 		os.Exit(-1)
 	}
 
-	if DumpNeeded {
+	switch {
+	case JsonNeeded:
+		bytes, _ := json.MarshalIndent(data, "", "  ")
+		fmt.Printf("%s\n", string(bytes))
+	case DumpNeeded:
 		fmt.Printf("%#v", data)
-	} else {
+	default:
 		err = command.PrettyPrint(flagset, data)
 	}
 	if err != nil {

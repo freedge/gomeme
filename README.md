@@ -30,7 +30,7 @@ $env:GOMEME_INSECURE="true"
 ...
 ```
 
-Use the ```-dump``` option to output in a Go-like format. ```-json``` option should come next.
+Use the ```-dump``` option to output in a Go-like format. ```-json``` option outputs in json format.
 
 ## Commands
 
