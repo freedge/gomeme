@@ -10,7 +10,30 @@ import (
 	"net/http"
 
 	"github.com/freedge/gomeme/commands"
+	"github.com/freedge/gomeme/types"
 )
+
+func HandleError(resp *http.Response) (formattedError error) {
+	formattedError = fmt.Errorf("server replied an error %d", resp.StatusCode)
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+	var reply types.ErrorReply
+	err = json.Unmarshal(body, &reply)
+	if err != nil {
+		return
+	}
+	if len(reply.Errors) > 0 {
+		errorString := ""
+		for _, msg := range reply.Errors {
+			errorString += msg.Message + " "
+		}
+		formattedError = fmt.Errorf("%s", errorString)
+	}
+
+	return
+}
 
 // Call the specific url under endpoint, with the proper query and parameters
 func Call(method, url string, query interface{}, params map[string]string, out interface{}) (err error) {
@@ -56,8 +79,8 @@ func Call(method, url string, query interface{}, params map[string]string, out i
 	case 404:
 		err = fmt.Errorf("client: got an error accessing %v", req.URL)
 		return
-	case 500:
-		err = fmt.Errorf("Please login")
+	case 401, 500:
+		err = HandleError(resp)
 		return
 	}
 

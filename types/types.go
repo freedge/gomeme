@@ -66,6 +66,10 @@ type SetResourceQuery struct {
 	Max string
 }
 
+type Message struct {
+	Message string
+}
+
 type SetResourceReply struct {
 	Message string
 }
@@ -76,4 +80,8 @@ type JobActionReply struct {
 type OrderJobReply struct {
 	RunId     string
 	StatusURI string
+}
+
+type ErrorReply struct {
+	Errors []Message
 }
