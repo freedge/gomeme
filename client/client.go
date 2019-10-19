@@ -64,6 +64,12 @@ func Call(method, url string, query interface{}, params map[string]string, out i
 		return
 	}
 
-	err = json.Unmarshal(body, out)
+	switch out.(type) {
+	case *string:
+		*(out.(*string)) = string(body)
+	default:
+		err = json.Unmarshal(body, out)
+	}
+
 	return
 }

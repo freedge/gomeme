@@ -58,6 +58,16 @@ set a qr
 gomeme qr.set -name DEV-FOO -ctm BARCT4T -max 5
 ```
 
+### job.log
+
+get the output or logs of a job id
+
+```
+gomeme job.log -jobid FOOCCT4P:5nq1c
+gomeme job.log -jobid FOOCCT4P:5nq1c -output
+```
+
+
 ## License
 
 http://www.apache.org/licenses/LICENSE-2.0
