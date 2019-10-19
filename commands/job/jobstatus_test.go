@@ -61,7 +61,7 @@ func TestJobStatus(t *testing.T) {
 	}
 	expected := types.JobsStatusReply{
 		Statuses: []types.Status{
-			types.Status{
+			{
 				JobId:          "LUCCT1P:32zfh",
 				FolderId:       "LUCCT1P:",
 				NumberOfRuns:   1,

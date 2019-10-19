@@ -35,7 +35,7 @@ func TestQrCommand(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	expected := []types.QR{types.QR{Available: "9", Ctm: "LUCCT4P", Max: 10, Name: "PRD-SEV"}}
+	expected := []types.QR{{Available: "9", Ctm: "LUCCT4P", Max: 10, Name: "PRD-SEV"}}
 	if !reflect.DeepEqual(qr, expected) {
 		t.Errorf("got %#v != %#v", qr, expected)
 	}

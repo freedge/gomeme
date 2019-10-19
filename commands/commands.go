@@ -34,7 +34,7 @@ func Register(name string, cmd Command) {
 // Usage prints the usage of this function using the registered command names
 func Usage() {
 	s := "Usage: " + os.Args[0] + " ["
-	for key, _ := range Commands {
+	for key := range Commands {
 		s = s + " " + key
 	}
 	s = s + " ]."
