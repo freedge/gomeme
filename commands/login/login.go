@@ -9,24 +9,32 @@ import (
 	"os"
 	"strings"
 
+	"golang.org/x/crypto/ssh/terminal"
+
 	"github.com/freedge/gomeme/client"
 	"github.com/freedge/gomeme/commands"
 	"github.com/freedge/gomeme/types"
 )
 
-type LoginCommand struct {
-	Username string
+type loginCommand struct {
+	user string
 }
 
 const (
 	PASSWORD = "GOMEME_PASSWORD" // environment variable for your password, only used by the login command
 )
 
-func (cmd *LoginCommand) Prepare(flags *flag.FlagSet) {
-	flags.StringVar(&(cmd.Username), "username", "", "Username to use")
+func (cmd *loginCommand) Prepare(flags *flag.FlagSet) {
+	flags.StringVar(&(cmd.user), "user", "", "Username to use")
 }
 
-func (cmd *LoginCommand) Run(flags *flag.FlagSet) (i interface{}, err error) {
+func (cmd *loginCommand) Run() (i interface{}, err error) {
+	if commands.Endpoint == "" || cmd.user == "" {
+		err = fmt.Errorf("Endpoint (%s) and username (%s) must be set", commands.Endpoint, cmd.user)
+		return
+	}
+
+	// either get the password from the environment
 	var password string
 	for _, e := range os.Environ() {
 		pair := strings.SplitN(e, "=", 2)
@@ -35,12 +43,23 @@ func (cmd *LoginCommand) Run(flags *flag.FlagSet) (i interface{}, err error) {
 			password = pair[1]
 		}
 	}
-	if commands.Endpoint == "" || password == "" || cmd.Username == "" {
-		err = fmt.Errorf("Endpoint (%s), password (set=%t), username (%s) must be set", commands.Endpoint, password != "", cmd.Username)
-		return
+
+	// either get it on the terminal
+	if password == "" {
+		if !terminal.IsTerminal(0) {
+			err = fmt.Errorf("run from a terminal or provide password through %s environment variable", PASSWORD)
+			return
+		}
+		fmt.Printf("Enter password for user %s:\n", cmd.user)
+		var bytes []byte
+		bytes, err = terminal.ReadPassword(0 /* stdin */)
+		if err != nil {
+			return
+		}
+		password = string(bytes)
 	}
 
-	query := types.SessionLoginQuery{Username: cmd.Username, Password: password}
+	query := types.SessionLoginQuery{Username: cmd.user, Password: password}
 	var token types.Token
 
 	err = client.Call("POST", "/session/login", query, map[string]string{}, &token)
@@ -53,11 +72,11 @@ func (cmd *LoginCommand) Run(flags *flag.FlagSet) (i interface{}, err error) {
 	return
 }
 
-func (cmd *LoginCommand) PrettyPrint(flags *flag.FlagSet, i interface{}) error {
+func (cmd *loginCommand) PrettyPrint(i interface{}) error {
 	fmt.Println("token", i)
 	return nil
 }
 
 func init() {
-	commands.Register("login", &LoginCommand{})
+	commands.Register("login", &loginCommand{})
 }

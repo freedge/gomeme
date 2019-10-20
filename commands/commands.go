@@ -14,9 +14,9 @@ import (
 
 // Command is implemented by all our commands
 type Command interface {
-	Prepare(flags *flag.FlagSet)                             // Prepare registers its own set of flags
-	Run(flags *flag.FlagSet) (interface{}, error)            // Run the command, return an object that can be later dump as json
-	PrettyPrint(flags *flag.FlagSet, data interface{}) error // Pretty print the output of the command. It is given the data as returned by the Run method
+	Prepare(flags *flag.FlagSet)        // Prepare registers its own set of flags
+	Run() (interface{}, error)          // Run the command, return an object that can be later dump as json
+	PrettyPrint(data interface{}) error // Pretty print the output of the command. It is given the data as returned by the Run method
 }
 
 // Each and every command must register itself into this map through a call to Register in the init function

@@ -20,7 +20,7 @@ and loosely inspired by govc.
 export GOMEME_ENDPOINT=https://.../automation-api
 export GOMEME_PASSWORD=...
 export GOMEME_INSECURE=true
-gomeme login -username toto
+gomeme login -user toto
 gomeme qr -name PRD*
 
 ```
@@ -34,6 +34,17 @@ $env:GOMEME_INSECURE="true"
 Use the ```-dump``` option to output in a Go-like format. ```-json``` option outputs in json format.
 
 ## Commands
+
+### login
+
+Get a token for a user. Writes it into a .token file in the current directory.
+
+The password must be provided either through the GOMEME_PASSWORD environment variable, or
+through the terminal.
+
+```
+gomeme login -user toto
+```
 
 ### qr
 

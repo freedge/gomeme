@@ -18,7 +18,7 @@ func (cmd *JobLogCommand) Prepare(flags *flag.FlagSet) {
 	flags.StringVar(&cmd.Jobid, "jobid", "", "JobID")
 	flags.BoolVar(&cmd.Output, "output", false, "display output instead of logs")
 }
-func (cmd *JobLogCommand) Run(flags *flag.FlagSet) (i interface{}, err error) {
+func (cmd *JobLogCommand) Run() (i interface{}, err error) {
 	i = nil
 
 	service := "log"
@@ -32,7 +32,7 @@ func (cmd *JobLogCommand) Run(flags *flag.FlagSet) (i interface{}, err error) {
 	return
 }
 
-func (cmd *JobLogCommand) PrettyPrint(f *flag.FlagSet, i interface{}) error {
+func (cmd *JobLogCommand) PrettyPrint(i interface{}) error {
 	fmt.Println(cmd.result)
 	return nil
 }

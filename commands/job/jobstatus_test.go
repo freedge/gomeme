@@ -46,7 +46,7 @@ func TestJobStatus(t *testing.T) {
 
 	js := jobsStatusCommand{limit: 42}
 	commands.Endpoint = ts.URL + "/api"
-	qr, err := js.Run(nil)
+	qr, err := js.Run()
 
 	if err != nil {
 		t.Error(err)

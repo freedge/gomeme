@@ -35,7 +35,7 @@ func (cmd *jobsStatusCommand) Prepare(flags *flag.FlagSet) {
 	flags.BoolVar(&cmd.verbose, "v", false, "output more stuff")
 }
 
-func (cmd *jobsStatusCommand) Run(flags *flag.FlagSet) (i interface{}, err error) {
+func (cmd *jobsStatusCommand) Run() (i interface{}, err error) {
 	i = nil
 
 	// add authorization header to the req
@@ -107,7 +107,7 @@ func (cmd *jobsStatusCommand) printCsv() error {
 	return nil
 }
 
-func (cmd *jobsStatusCommand) PrettyPrint(f *flag.FlagSet, data interface{}) error {
+func (cmd *jobsStatusCommand) PrettyPrint(data interface{}) error {
 	if cmd.csv {
 		return cmd.printCsv()
 	}

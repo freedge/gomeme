@@ -20,7 +20,7 @@ func TestQrCommand(t *testing.T) {
 
 	var cmd QRCommand
 	commands.Endpoint = ts.URL + "/api"
-	qr, err := cmd.Run(nil)
+	qr, err := cmd.Run()
 
 	if err != nil {
 		t.Error(err)

@@ -36,7 +36,7 @@ func main() {
 		panic(err)
 	}
 
-	data, err := command.Run(flagset)
+	data, err := command.Run()
 	if err != nil {
 		fmt.Printf("command exited in error: %s\n", err.Error())
 		os.Exit(-1)
@@ -49,7 +49,7 @@ func main() {
 	case DumpNeeded:
 		fmt.Printf("%#v", data)
 	default:
-		err = command.PrettyPrint(flagset, data)
+		err = command.PrettyPrint(data)
 	}
 	if err != nil {
 		fmt.Printf("Printing exited in error: %s\n", err.Error())

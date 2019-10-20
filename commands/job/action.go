@@ -20,7 +20,7 @@ func (cmd *JobActionCommand) Prepare(flags *flag.FlagSet) {
 	flags.StringVar(&cmd.action, "action", "", "action to run: hold, free, confirm, delete, undelete, rerun, setToOk")
 }
 
-func (cmd *JobActionCommand) Run(flags *flag.FlagSet) (i interface{}, err error) {
+func (cmd *JobActionCommand) Run() (i interface{}, err error) {
 	i = nil
 
 	if cmd.Jobid == "" || cmd.action == "" {
@@ -34,7 +34,7 @@ func (cmd *JobActionCommand) Run(flags *flag.FlagSet) (i interface{}, err error)
 	return
 }
 
-func (cmd *JobActionCommand) PrettyPrint(f *flag.FlagSet, i interface{}) error {
+func (cmd *JobActionCommand) PrettyPrint(i interface{}) error {
 	fmt.Println(cmd.result.Message)
 	return nil
 }

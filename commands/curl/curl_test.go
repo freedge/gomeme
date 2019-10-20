@@ -13,7 +13,7 @@ func TestCurl(t *testing.T) {
 	commands.Insecure = true
 
 	c := curl{}
-	s, _ := c.Run(nil)
+	s, _ := c.Run()
 
 	if !reflect.DeepEqual(s, "curl -k -H 'Accept: application/json' -H 'Authorization: Bearer abc' https//toto/api") {
 		t.Errorf("got %s", c.out)

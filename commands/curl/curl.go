@@ -19,7 +19,7 @@ type curl struct {
 }
 
 func (cmd *curl) Prepare(flags *flag.FlagSet) {}
-func (cmd *curl) Run(flags *flag.FlagSet) (interface{}, error) {
+func (cmd *curl) Run() (interface{}, error) {
 	kflag := ""
 	if commands.Insecure {
 		kflag = "-k "
@@ -28,7 +28,7 @@ func (cmd *curl) Run(flags *flag.FlagSet) (interface{}, error) {
 		kflag, commands.TheToken, commands.Endpoint)
 	return cmd.out, nil
 }
-func (cmd *curl) PrettyPrint(flags *flag.FlagSet, data interface{}) error {
+func (cmd *curl) PrettyPrint(data interface{}) error {
 	fmt.Println(cmd.out)
 	return nil
 }

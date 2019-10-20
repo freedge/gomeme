@@ -25,7 +25,7 @@ func (cmd *OrderJob) Prepare(flags *flag.FlagSet) {
 	flags.StringVar(&cmd.Folder, "folder", "", "Folder")
 	flags.StringVar(&cmd.Jobs, "jobs", "", "jobs")
 }
-func (cmd *OrderJob) Run(flags *flag.FlagSet) (i interface{}, err error) {
+func (cmd *OrderJob) Run() (i interface{}, err error) {
 	i = nil
 	if commands.TheToken == "" {
 		err = fmt.Errorf("no token found. Please login first")
@@ -53,7 +53,7 @@ func (cmd *OrderJob) Run(flags *flag.FlagSet) (i interface{}, err error) {
 	return
 }
 
-func (cmd *OrderJob) PrettyPrint(flags *flag.FlagSet, data interface{}) error {
+func (cmd *OrderJob) PrettyPrint(data interface{}) error {
 	fmt.Println("RunId: ", cmd.reply.RunId)
 	for _, status := range cmd.status.Statuses {
 		fmt.Println("JobId: ", status.JobId)
