@@ -5,19 +5,20 @@ go: 1.12
 go_import_path: github.com/freedge/gomeme
 env:
   global: TMPDIR=/tmp
-install:
-  - go get ./...
 jobs:
   include:
   - stage: build
     env: GOOS=linux GOARCH=amd64
     install: true
     script: 
+    - go get ./...
     - go install
     - gzip /home/travis/gopath/bin/gomeme
   - stage: test
     install: true
-    script: go test ./...
+    script: 
+    - go get ./...
+    - go test ./...
 deploy:
   provider: releases
   api_key:
