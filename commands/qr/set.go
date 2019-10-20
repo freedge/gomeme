@@ -1,4 +1,3 @@
-// Package qr accesses Quantitative Resources
 package qr
 
 import (

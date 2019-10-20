@@ -1,7 +1,6 @@
 package job
 
 import (
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -11,17 +10,10 @@ import (
 	"github.com/freedge/gomeme/types"
 )
 
-func load(name string) string {
-	s, err := ioutil.ReadFile(name)
-	if err != nil {
-		panic(err)
-	}
-
-	return string(s)
-}
-
 func TestJobStatus(t *testing.T) {
+	ch := make(chan string, 1)
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ch <- r.URL.Query().Encode()
 		w.Write([]byte(`
 		{
 			"statuses" : [ {
@@ -52,7 +44,7 @@ func TestJobStatus(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	var js JobsStatusCommand
+	js := JobsStatusCommand{limit: 42}
 	commands.Endpoint = ts.URL + "/api"
 	qr, err := js.Run(nil)
 
@@ -85,5 +77,9 @@ func TestJobStatus(t *testing.T) {
 		}, Returned: 1, Total: 1}
 	if !reflect.DeepEqual(qr, expected) {
 		t.Errorf("got %#v != %#v", qr, expected)
+	}
+	s := <-ch
+	if !reflect.DeepEqual(s, "limit=42") {
+		t.Errorf("invalid URL parameters %s", s)
 	}
 }

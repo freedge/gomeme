@@ -1,7 +1,6 @@
 // Package commands is the base of all commands. All commands
 // should be in a sub package, implement the Command interface,
 // and register itself through the init function using the Register function
-
 package commands
 
 import (

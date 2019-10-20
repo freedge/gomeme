@@ -11,6 +11,7 @@ import (
 	"github.com/freedge/gomeme/types"
 )
 
+// JobsStatusCommand retrieve a list of jobs
 type JobsStatusCommand struct {
 	application string
 	limit       int

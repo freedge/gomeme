@@ -1,7 +1,6 @@
 package qr
 
 import (
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -10,15 +9,6 @@ import (
 	"github.com/freedge/gomeme/commands"
 	"github.com/freedge/gomeme/types"
 )
-
-func load(name string) string {
-	s, err := ioutil.ReadFile(name)
-	if err != nil {
-		panic(err)
-	}
-
-	return string(s)
-}
 
 func TestQrCommand(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

@@ -1,3 +1,4 @@
+// Package client exports methods to Call the API
 package client
 
 import (
@@ -13,7 +14,7 @@ import (
 	"github.com/freedge/gomeme/types"
 )
 
-func HandleError(resp *http.Response) (formattedError error) {
+func handleError(resp *http.Response) (formattedError error) {
 	formattedError = fmt.Errorf("server replied an error %d", resp.StatusCode)
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -80,7 +81,7 @@ func Call(method, url string, query interface{}, params map[string]string, out i
 		err = fmt.Errorf("client: got an error accessing %v", req.URL)
 		return
 	case 401, 500:
-		err = HandleError(resp)
+		err = handleError(resp)
 		return
 	}
 
