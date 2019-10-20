@@ -84,6 +84,14 @@ hold/delete/undelete/confirm/setToOk a job
 gomeme job.action -action delete -jobid FOOCT4T:3z553
 ```
 
+### curl
+
+Just outputs the curl command to run to target the API by hand
+
+```
+gomeme curl
+```
+
 ## License
 
 http://www.apache.org/licenses/LICENSE-2.0
