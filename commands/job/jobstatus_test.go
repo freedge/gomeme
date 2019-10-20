@@ -44,7 +44,7 @@ func TestJobStatus(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	js := JobsStatusCommand{limit: 42}
+	js := jobsStatusCommand{limit: 42}
 	commands.Endpoint = ts.URL + "/api"
 	qr, err := js.Run(nil)
 

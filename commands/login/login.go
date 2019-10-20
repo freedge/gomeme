@@ -1,6 +1,5 @@
 // Package login defines the login command that retrieves a token
 // and save it into a file
-
 package login
 
 import (
@@ -20,7 +19,7 @@ type LoginCommand struct {
 }
 
 const (
-	PASSWORD = "GOMEME_PASSWORD"
+	PASSWORD = "GOMEME_PASSWORD" // environment variable for your password, only used by the login command
 )
 
 func (cmd *LoginCommand) Prepare(flags *flag.FlagSet) {

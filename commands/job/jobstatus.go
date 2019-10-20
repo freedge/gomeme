@@ -11,8 +11,8 @@ import (
 	"github.com/freedge/gomeme/types"
 )
 
-// JobsStatusCommand retrieve a list of jobs
-type JobsStatusCommand struct {
+// jobsStatusCommand retrieve a list of jobs
+type jobsStatusCommand struct {
 	application string
 	limit       int
 	status      string
@@ -24,7 +24,7 @@ type JobsStatusCommand struct {
 	verbose     bool
 }
 
-func (cmd *JobsStatusCommand) Prepare(flags *flag.FlagSet) {
+func (cmd *jobsStatusCommand) Prepare(flags *flag.FlagSet) {
 	flags.StringVar(&cmd.application, "application", "", "Jobs for this application")
 	flags.IntVar(&cmd.limit, "limit", 1000, "Limit to how many jobs")
 	flags.StringVar(&cmd.status, "status", "", "Only this status")
@@ -35,7 +35,7 @@ func (cmd *JobsStatusCommand) Prepare(flags *flag.FlagSet) {
 	flags.BoolVar(&cmd.verbose, "v", false, "output more stuff")
 }
 
-func (cmd *JobsStatusCommand) Run(flags *flag.FlagSet) (i interface{}, err error) {
+func (cmd *jobsStatusCommand) Run(flags *flag.FlagSet) (i interface{}, err error) {
 	i = nil
 
 	// add authorization header to the req
@@ -79,6 +79,7 @@ func GetDuration(job types.Status) (duration float64) {
 	return
 }
 
+// GetDurationAsString returns a pretty printed duration
 func GetDurationAsString(job types.Status) (duration string) {
 	d := GetDuration(job)
 	switch {
@@ -98,7 +99,7 @@ func GetDurationAsString(job types.Status) (duration string) {
 	return
 }
 
-func (cmd *JobsStatusCommand) PrintCsv() error {
+func (cmd *jobsStatusCommand) printCsv() error {
 	fmt.Printf("folder,name,status,duration,starttime,endtime\n")
 	for _, job := range cmd.reply.Statuses {
 		fmt.Printf("%s,%s,%s,%f,%s,%s\n", job.Folder, job.Name, job.Status, GetDuration(job), job.StartTime, job.EndTime)
@@ -106,9 +107,9 @@ func (cmd *JobsStatusCommand) PrintCsv() error {
 	return nil
 }
 
-func (cmd *JobsStatusCommand) PrettyPrint(f *flag.FlagSet, data interface{}) error {
+func (cmd *jobsStatusCommand) PrettyPrint(f *flag.FlagSet, data interface{}) error {
 	if cmd.csv {
-		return cmd.PrintCsv()
+		return cmd.printCsv()
 	}
 	if cmd.verbose {
 		fmt.Printf("%-40.40s %5.5s %-20.20s %8.8s %16.16s %16.16s %5.5s %12.12s %12.12s %20.20s %8.8s\n",
@@ -134,5 +135,5 @@ func (cmd *JobsStatusCommand) PrettyPrint(f *flag.FlagSet, data interface{}) err
 	return nil
 }
 func init() {
-	commands.Register("lj", &JobsStatusCommand{})
+	commands.Register("lj", &jobsStatusCommand{})
 }
