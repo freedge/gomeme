@@ -35,7 +35,12 @@ func (cmd *jobsStatusCommand) Prepare(flags *flag.FlagSet) {
 	flags.BoolVar(&cmd.verbose, "v", false, "output more stuff")
 }
 
-func (cmd *jobsStatusCommand) Run() (i interface{}, err error) {
+const (
+	// URL to target to get the jobs status
+	JOBS_STATUS = "/run/jobs/status"
+)
+
+func (cmd *jobsStatusCommand) GetJobs() (i interface{}, err error) {
 	i = nil
 
 	// add authorization header to the req
@@ -57,10 +62,15 @@ func (cmd *jobsStatusCommand) Run() (i interface{}, err error) {
 	}
 	args["limit"] = strconv.Itoa(cmd.limit)
 
-	err = client.Call("GET", "/run/jobs/status", nil, args, &cmd.reply)
+	err = client.Call("GET", JOBS_STATUS, nil, args, &cmd.reply)
 
 	i = cmd.reply
 
+	return
+}
+
+func (cmd *jobsStatusCommand) Run() (i interface{}, err error) {
+	i, err = cmd.GetJobs()
 	return
 }
 

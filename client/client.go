@@ -57,7 +57,12 @@ func Call(method, url string, query interface{}, params map[string]string, out i
 
 	q := req.URL.Query()
 	for name, value := range params {
-		q.Add(name, value)
+		// cradouille. Maybe change params into a url.Values
+		if name == "neighborhood" {
+			q[name] = []string{}
+		} else {
+			q.Add(name, value)
+		}
 	}
 	req.URL.RawQuery = q.Encode()
 

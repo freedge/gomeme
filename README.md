@@ -56,7 +56,7 @@ gomeme qr -name PRD-*
 
 ### lj
 
-list jobs (default limit is)
+list jobs (default limit is 1000)
 
 ```
 gomeme lj -application TOTO-PRD -status Executing -limit 30
@@ -94,6 +94,36 @@ hold/delete/undelete/confirm/setToOk a job
 ```
 gomeme job.action -action delete -jobid FOOCT4T:3z553
 ```
+
+### job.tree
+
+Tries to draw a tree of jobs with their dependencies.
+This generates quite a lot of queries to control-m (1 per job to retrieve dependencies),
+so it must be run carefully. Ensure there is no more than 42 jobs to analyse
+when running tree.
+
+The output looks like
+```
+A
+  B
+    C
+  D
+E
+  F
+```
+which means that A and E do not have known predecessor
+(in the list of selected nodes) and that B must completes before C starts, A must complete
+before B and D starts.
+
+However there could be other dependencies not reflected in that tree, like between C and D, or F and D, etc.
+
+
+This command takes the same parameters as lj
+
+```
+gomeme job.tree -application TOTO-PRD -limit 10
+```
+
 
 ### curl
 
