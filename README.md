@@ -112,11 +112,12 @@ E
   F
 ```
 which means that A and E do not have known predecessor
-(in the list of selected nodes) and that B must completes before C starts, A must complete
+(in the list of selected nodes) and that B must complete before C starts, A must complete
 before B and D starts.
 
-However there could be other dependencies not reflected in that tree, like between C and D, or F and D, etc.
-
+We ensure the longest chain of jobs is shown, so if all jobs take the same amount of time to complete, in above
+example C should start after B finishes, but there could be dependencies not appearing, such as C depending on
+the completion of D, that are not reflected.
 
 This command takes the same parameters as lj
 
