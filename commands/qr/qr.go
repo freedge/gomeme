@@ -10,17 +10,17 @@ import (
 	"github.com/freedge/gomeme/types"
 )
 
-type QRCommand struct {
+type listQRCommand struct {
 	Name string
 	Ctm  string
 	qrs  []types.QR
 }
 
-func (cmd *QRCommand) Prepare(flags *flag.FlagSet) {
+func (cmd *listQRCommand) Prepare(flags *flag.FlagSet) {
 	flags.StringVar(&cmd.Name, "name", "", "resource name")
 	flags.StringVar(&cmd.Ctm, "ctm", "", "ctm")
 }
-func (cmd *QRCommand) Run() (i interface{}, err error) {
+func (cmd *listQRCommand) Run() (i interface{}, err error) {
 	i = nil
 
 	args := make(map[string]string)
@@ -37,7 +37,7 @@ func (cmd *QRCommand) Run() (i interface{}, err error) {
 	return
 }
 
-func (cmd *QRCommand) PrettyPrint(i interface{}) error {
+func (cmd *listQRCommand) PrettyPrint(i interface{}) error {
 	fmt.Println("QR                       Ctm        Available      Max")
 	fmt.Println("======================================================")
 	for _, qr := range cmd.qrs {
@@ -47,5 +47,5 @@ func (cmd *QRCommand) PrettyPrint(i interface{}) error {
 }
 
 func init() {
-	commands.Register("qr", &QRCommand{})
+	commands.Register("qr", &listQRCommand{})
 }

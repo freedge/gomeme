@@ -79,6 +79,22 @@ func (cmd *jobTreeCommand) toposort() {
 	}
 }
 
+// add a distance on each node
+func (cmd *jobTreeCommand) weightGraph() {
+	// put a weight on all
+	for it := range cmd.toposortedStack {
+		src := cmd.toposortedStack[len(cmd.toposortedStack)-1-it]
+		if src.dist < 0 {
+			src.dist = 0
+		}
+		for _, edge := range src.outgoingEdges {
+			if edge.dist < src.dist+jobWeight { /* instead of 1, we could put the number of minutes for src job to complete */
+				edge.dist = src.dist + jobWeight
+			}
+		}
+	}
+}
+
 const jobWeight = 1
 
 func (cmd *jobTreeCommand) Prepare(flags *flag.FlagSet) {
@@ -143,19 +159,7 @@ func (cmd *jobTreeCommand) Run() (i interface{}, err error) {
 	// topological sort of our graph
 	cmd.toposortedStack = make([]*node, 0, len(cmd.nodes))
 	cmd.toposort()
-
-	// put a weight on all
-	for it := range cmd.toposortedStack {
-		src := cmd.toposortedStack[len(cmd.toposortedStack)-1-it]
-		if src.dist < 0 {
-			src.dist = 0
-		}
-		for _, edge := range src.outgoingEdges {
-			if edge.dist < src.dist+jobWeight { /* instead of 1, we could put the number of minutes for src job to complete */
-				edge.dist = src.dist + jobWeight
-			}
-		}
-	}
+	cmd.weightGraph()
 
 	// build a tree out of this
 	cmd.tree = make([]treenode, 0, len(cmd.nodes))

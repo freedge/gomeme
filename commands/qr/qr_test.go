@@ -18,7 +18,7 @@ func TestQrCommand(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	var cmd QRCommand
+	var cmd listQRCommand
 	commands.Endpoint = ts.URL + "/api"
 	qr, err := cmd.Run()
 
