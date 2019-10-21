@@ -2,6 +2,7 @@ package job
 
 import (
 	"fmt"
+	"math"
 	"strings"
 
 	"github.com/freedge/gomeme/client"
@@ -10,30 +11,42 @@ import (
 	"github.com/freedge/gomeme/commands"
 )
 
+// we implement a graph of jobs
 type node struct {
 	jobid         string
 	outgoingEdges []*node
 	incomingEdges []*node
 	status        *types.Status
+	toposorted    bool
+	dist          int64 // the distance to ancestor
 	analysed      bool
 }
 
+// treenode is the tree we actually want to print
 type treenode struct {
 	thejob *node
 	shift  int
 }
 
-// jobsStatusCommand retrieve a list of jobs
+// jobTreeCommand retrieve a list of jobs like jobsStatus, but also get dependencies
+// we want to output a complex graph of jobs (which should be a DAG : directed, acyclic graph)
+// in the most meaning full manner. Ideally, we should print on the tree, the "critical path"
+// of our job execution. An edge on a graph would be weighted with the likely execution time of the job
+// so that if we have to choose between A -> B -> C -> D and E -> D, we output the latter
+// if we know job E is itself longer than A -> B -> C.
+// As we don/t have figures on statistics per job, we're just going to give the same weight to each
+// edge, so it will always be the longest chain that is displayed.
 type jobTreeCommand struct {
 	jobsStatusCommand
-	nodes map[string]*node
-	tree  []treenode
+	nodes           map[string]*node // our graph of jobs
+	toposortedStack []*node          // the same graph, but sorted topologically
+	tree            []treenode       // the graph, now reduced into a tree
 }
 
 func (cmd *jobTreeCommand) addNode(job *types.Status) *node {
 	_, found := cmd.nodes[job.JobId]
 	if !found {
-		cmd.nodes[job.JobId] = &node{job.JobId, make([]*node, 0), make([]*node, 0), job, false}
+		cmd.nodes[job.JobId] = &node{job.JobId, make([]*node, 0), make([]*node, 0), job, false, math.MinInt64, false}
 	}
 	return cmd.nodes[job.JobId]
 }
@@ -44,6 +57,27 @@ func (cmd *jobTreeCommand) addEdge(fromNode *node, to *types.Status) {
 	fromNode.outgoingEdges = append(fromNode.outgoingEdges, toNode)
 }
 
+func (cmd *jobTreeCommand) toposortOneNode(anode *node) {
+	if anode.toposorted {
+		return
+	}
+	anode.toposorted = true
+	for _, anode := range anode.outgoingEdges {
+		cmd.toposortOneNode(anode)
+	}
+	cmd.toposortedStack = append(cmd.toposortedStack, anode)
+}
+
+// apply topological sorting on our cmd.nodes graph into a toposorted stack.
+// toposortedStack should be browsed backward to get items in descending order
+func (cmd *jobTreeCommand) toposort() {
+	for _, anode := range cmd.nodes {
+		cmd.toposortOneNode(anode)
+	}
+}
+
+const jobWeight = 1
+
 func (cmd *jobTreeCommand) Run() (i interface{}, err error) {
 	// retrieve a list of jobs
 	_, err = cmd.GetJobs()
@@ -53,6 +87,10 @@ func (cmd *jobTreeCommand) Run() (i interface{}, err error) {
 
 	if len(cmd.reply.Statuses) > 42 {
 		err = fmt.Errorf("there are too much (%d) jobs selected", len(cmd.reply.Statuses))
+		return
+	}
+	if len(cmd.reply.Statuses) == 0 {
+		err = fmt.Errorf("no job found")
 		return
 	}
 
@@ -82,10 +120,25 @@ func (cmd *jobTreeCommand) Run() (i interface{}, err error) {
 		}
 	}
 
-	// do some magic here to simplify the graph?
+	// topological sort of our graph
+	cmd.toposortedStack = make([]*node, 0, len(cmd.nodes))
+	cmd.toposort()
+
+	// put a weight on all
+	for it := range cmd.toposortedStack {
+		src := cmd.toposortedStack[len(cmd.toposortedStack)-1-it]
+		if src.dist < 0 {
+			src.dist = 0
+		}
+		for _, edge := range src.outgoingEdges {
+			if edge.dist < src.dist+jobWeight { /* instead of 1, we could put the number of minutes for src job to complete */
+				edge.dist = src.dist + jobWeight
+			}
+		}
+	}
 
 	// build a tree out of this
-	cmd.tree = make([]treenode, 0)
+	cmd.tree = make([]treenode, 0, len(cmd.nodes))
 	i = &cmd.tree
 	for _, anode := range cmd.nodes {
 		// visit starting from ancestor
@@ -102,8 +155,8 @@ func (cmd *jobTreeCommand) visit(shift int, anode *node) {
 	cmd.tree = append(cmd.tree, treenode{anode, shift})
 
 	for _, subnode := range anode.outgoingEdges {
-		if !subnode.analysed {
-			cmd.visit(shift+1, subnode)
+		if !subnode.analysed && int(subnode.dist) == (shift+1) {
+			cmd.visit(shift+jobWeight, subnode)
 		}
 	}
 }
