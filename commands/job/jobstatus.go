@@ -127,6 +127,7 @@ func (cmd *jobsStatusCommand) PrettyPrint(data interface{}) error {
 		return cmd.printCsv()
 	}
 	if cmd.verbose {
+		fmt.Printf("%d/%d jobs displayed\n", cmd.reply.Returned, cmd.reply.Total)
 		fmt.Printf("%-40.40s %5.5s %-20.20s %8.8s %16.16s %16.16s %5.5s %12.12s %12.12s %20.20s %8.8s\n",
 			"Folder/Name", "Held", "JobId", "Order", "Status", "Host", "Del?", "Start time", "End time", "Description", "Duration")
 		fmt.Printf("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n")

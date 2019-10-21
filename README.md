@@ -100,7 +100,7 @@ gomeme job.action -action delete -jobid FOOCT4T:3z553
 
 Tries to draw a tree of jobs with their dependencies.
 This generates quite a lot of queries to control-m (1 per job to retrieve dependencies),
-so it must be run carefully. Ensure there is no more than 42 jobs to analyse
+so it must be run carefully. Ensure there is no more than 100 jobs to analyse
 when running tree.
 
 The output looks like

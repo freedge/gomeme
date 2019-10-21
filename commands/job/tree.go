@@ -85,7 +85,7 @@ func (cmd *jobTreeCommand) Run() (i interface{}, err error) {
 		return
 	}
 
-	if len(cmd.reply.Statuses) > 42 {
+	if len(cmd.reply.Statuses) > 100 {
 		err = fmt.Errorf("there are too much (%d) jobs selected", len(cmd.reply.Statuses))
 		return
 	}
@@ -169,10 +169,12 @@ func (cmd *jobTreeCommand) visit(shift int, anode *node) {
 }
 
 func (cmd *jobTreeCommand) PrettyPrint(interface{}) error {
+	fmt.Printf("%-30.30s %-40.40s %s\n", "jobid", "folder/name", "status")
+	fmt.Println(strings.Repeat("-", 90))
 	for _, atreenode := range cmd.tree {
 		c := strings.Repeat(" ", 2*atreenode.shift)
 		c += atreenode.thejob.status.JobId
-		fmt.Printf("%-30.30s %-30.30s %12.12s\n", c, atreenode.thejob.status.Name, atreenode.thejob.status.Status)
+		fmt.Printf("%-30.30s %-40.40s %s\n", c, atreenode.thejob.status.Folder+"/"+atreenode.thejob.status.Name, atreenode.thejob.status.Status)
 	}
 	return nil
 }
