@@ -22,6 +22,7 @@ type jobsStatusCommand struct {
 	folder      string
 	csv         bool
 	verbose     bool
+	host        string
 }
 
 func (cmd *jobsStatusCommand) Prepare(flags *flag.FlagSet) {
@@ -33,6 +34,7 @@ func (cmd *jobsStatusCommand) Prepare(flags *flag.FlagSet) {
 	flags.StringVar(&cmd.folder, "folder", "", "Folder")
 	flags.BoolVar(&cmd.csv, "csv", false, "csv output")
 	flags.BoolVar(&cmd.verbose, "v", false, "output more stuff")
+	flags.StringVar(&cmd.host, "host", "", "host")
 }
 
 const (
@@ -59,6 +61,9 @@ func (cmd *jobsStatusCommand) GetJobs() (i interface{}, err error) {
 	}
 	if cmd.folder != "" {
 		args["folder"] = cmd.folder
+	}
+	if cmd.host != "" {
+		args["host"] = cmd.host
 	}
 	args["limit"] = strconv.Itoa(cmd.limit)
 

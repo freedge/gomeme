@@ -102,9 +102,13 @@ func (cmd *jobTreeCommand) Run() (i interface{}, err error) {
 		fromNode := cmd.addNode(&cmd.reply.Statuses[it])
 
 		reply := &types.JobsStatusReply{}
+		if cmd.verbose {
+			fmt.Printf("retrieving job % 3d/%d\n", it+1, len(cmd.reply.Statuses))
+		}
 		err = client.Call("GET", JOBS_STATUS, nil, map[string]string{
-			"neighborhood": "skip",
+			"neighborhood": "1",
 			"direction":    "depend",
+			"depth":        "1",
 			"jobid":        job.JobId,
 		}, &reply)
 		if err != nil {
@@ -114,6 +118,9 @@ func (cmd *jobTreeCommand) Run() (i interface{}, err error) {
 			// only consider subjob
 			if subjob.JobId == job.JobId {
 				continue
+			}
+			if cmd.verbose {
+				fmt.Println("adding edge")
 			}
 			// add
 			cmd.addEdge(fromNode, &reply.Statuses[it2])
@@ -165,7 +172,7 @@ func (cmd *jobTreeCommand) PrettyPrint(interface{}) error {
 	for _, atreenode := range cmd.tree {
 		c := strings.Repeat(" ", 2*atreenode.shift)
 		c += atreenode.thejob.status.JobId
-		fmt.Printf("%-30.30s %-15.15s %8.8s\n", c, atreenode.thejob.status.Name, atreenode.thejob.status.Status)
+		fmt.Printf("%-30.30s %-30.30s %12.12s\n", c, atreenode.thejob.status.Name, atreenode.thejob.status.Status)
 	}
 	return nil
 }

@@ -60,6 +60,7 @@ list jobs (default limit is 1000)
 
 ```
 gomeme lj -application TOTO-PRD -status Executing -limit 30
+gomeme lj -application TOTO-PRD -host *pk1*
 ```
 
 ### qr.set
