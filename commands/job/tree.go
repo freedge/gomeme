@@ -179,12 +179,12 @@ func (cmd *jobTreeCommand) PrettyPrint(interface{}) error {
 			fmt.Printf("%-30.30s %-40.40s %s\n", c, atreenode.thejob.status.Folder+"/"+atreenode.thejob.status.Name, atreenode.thejob.status.Status)
 		}
 	} else {
-		fmt.Printf("%-30.30s %-40.40s %-10.10s %10.10s  %10.10s  %10.10s %5.5s %6.6s\n", "jobid", "folder/name", "status", "starttime", "endtime", "duration", "hold", "order")
-		fmt.Println(strings.Repeat("-", 130))
+		fmt.Printf("%-30.30s %-40.40s %-10.10s %14.14s  %14.14s  %10.10s %5.5s %6.6s\n", "jobid", "folder/name", "status", "starttime", "endtime", "duration", "hold", "order")
+		fmt.Println(strings.Repeat("-", 136))
 		for _, atreenode := range cmd.tree {
 			c := strings.Repeat(" ", 2*atreenode.shift)
 			c += atreenode.thejob.status.JobId
-			fmt.Printf("%-30.30s %-40.40s %-10.10s %10.10s  %10.10s  %10.10s %5.5s %6.6s\n",
+			fmt.Printf("%-30.30s %-40.40s %-10.10s %14.14s  %14.14s  %10.10s %5.5s %6.6s\n",
 				c, atreenode.thejob.status.Folder+"/"+atreenode.thejob.status.Name, atreenode.thejob.status.Status,
 				atreenode.thejob.status.StartTime,
 				atreenode.thejob.status.EndTime,
