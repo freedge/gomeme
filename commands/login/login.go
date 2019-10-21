@@ -17,11 +17,12 @@ import (
 )
 
 type loginCommand struct {
-	user string
+	user  string
+	token types.Token
 }
 
 const (
-	PASSWORD = "GOMEME_PASSWORD" // environment variable for your password, only used by the login command
+	envPassword = "GOMEME_PASSWORD" // environment variable for your password, only used by the login command
 )
 
 func (cmd *loginCommand) Prepare(flags *flag.FlagSet) {
@@ -39,7 +40,7 @@ func (cmd *loginCommand) Run() (i interface{}, err error) {
 	for _, e := range os.Environ() {
 		pair := strings.SplitN(e, "=", 2)
 		switch pair[0] {
-		case PASSWORD:
+		case envPassword:
 			password = pair[1]
 		}
 	}
@@ -47,7 +48,7 @@ func (cmd *loginCommand) Run() (i interface{}, err error) {
 	// either get it on the terminal
 	if password == "" {
 		if !terminal.IsTerminal(0) {
-			err = fmt.Errorf("run from a terminal or provide password through %s environment variable", PASSWORD)
+			err = fmt.Errorf("run from a terminal or provide password through %s environment variable", envPassword)
 			return
 		}
 		fmt.Printf("Enter password for user %s:\n", cmd.user)
@@ -60,20 +61,19 @@ func (cmd *loginCommand) Run() (i interface{}, err error) {
 	}
 
 	query := types.SessionLoginQuery{Username: cmd.user, Password: password}
-	var token types.Token
 
-	err = client.Call("POST", "/session/login", query, map[string]string{}, &token)
+	err = client.Call("POST", "/session/login", query, map[string]string{}, &cmd.token)
 	if err != nil {
 		return
 	}
 
-	i = token.Token
-	err = ioutil.WriteFile(".token", []byte(token.Token), 0600)
+	i = cmd.token
+	err = ioutil.WriteFile(".token", []byte(cmd.token.Token), 0600)
 	return
 }
 
 func (cmd *loginCommand) PrettyPrint(i interface{}) error {
-	fmt.Println("token", i)
+	fmt.Printf("Logged in. Server version %s\n", cmd.token.Version)
 	return nil
 }
 
