@@ -3,6 +3,7 @@ package job
 import (
 	"fmt"
 	"math"
+	"strconv"
 	"strings"
 
 	"github.com/freedge/gomeme/client"
@@ -169,12 +170,28 @@ func (cmd *jobTreeCommand) visit(shift int, anode *node) {
 }
 
 func (cmd *jobTreeCommand) PrettyPrint(interface{}) error {
-	fmt.Printf("%-30.30s %-40.40s %s\n", "jobid", "folder/name", "status")
-	fmt.Println(strings.Repeat("-", 90))
-	for _, atreenode := range cmd.tree {
-		c := strings.Repeat(" ", 2*atreenode.shift)
-		c += atreenode.thejob.status.JobId
-		fmt.Printf("%-30.30s %-40.40s %s\n", c, atreenode.thejob.status.Folder+"/"+atreenode.thejob.status.Name, atreenode.thejob.status.Status)
+	if !cmd.verbose {
+		fmt.Printf("%-30.30s %-40.40s %s\n", "jobid", "folder/name", "status")
+		fmt.Println(strings.Repeat("-", 90))
+		for _, atreenode := range cmd.tree {
+			c := strings.Repeat(" ", 2*atreenode.shift)
+			c += atreenode.thejob.status.JobId
+			fmt.Printf("%-30.30s %-40.40s %s\n", c, atreenode.thejob.status.Folder+"/"+atreenode.thejob.status.Name, atreenode.thejob.status.Status)
+		}
+	} else {
+		fmt.Printf("%-30.30s %-40.40s %-10.10s %10.10s  %10.10s  %10.10s %5.5s %6.6s\n", "jobid", "folder/name", "status", "starttime", "endtime", "duration", "hold", "order")
+		fmt.Println(strings.Repeat("-", 130))
+		for _, atreenode := range cmd.tree {
+			c := strings.Repeat(" ", 2*atreenode.shift)
+			c += atreenode.thejob.status.JobId
+			fmt.Printf("%-30.30s %-40.40s %-10.10s %10.10s  %10.10s  %10.10s %5.5s %6.6s\n",
+				c, atreenode.thejob.status.Folder+"/"+atreenode.thejob.status.Name, atreenode.thejob.status.Status,
+				atreenode.thejob.status.StartTime,
+				atreenode.thejob.status.EndTime,
+				GetDurationAsString(*atreenode.thejob.status),
+				strconv.FormatBool(atreenode.thejob.status.Held),
+				atreenode.thejob.status.OrderDate)
+		}
 	}
 	return nil
 }
