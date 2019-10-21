@@ -23,6 +23,7 @@ type jobsStatusCommand struct {
 	csv         bool
 	verbose     bool
 	host        string
+	neighbours  bool
 }
 
 func (cmd *jobsStatusCommand) prepareCommon(flags *flag.FlagSet) {
@@ -34,6 +35,7 @@ func (cmd *jobsStatusCommand) prepareCommon(flags *flag.FlagSet) {
 	flags.StringVar(&cmd.folder, "folder", "", "Folder")
 	flags.BoolVar(&cmd.verbose, "v", false, "output more stuff")
 	flags.StringVar(&cmd.host, "host", "", "host")
+	flags.BoolVar(&cmd.neighbours, "deps", false, "browse through neighours of this job. Only jobid can be used to filter jobs")
 }
 
 func (cmd *jobsStatusCommand) Prepare(flags *flag.FlagSet) {
@@ -60,14 +62,28 @@ func (cmd *jobsStatusCommand) GetJobs() (i interface{}, err error) {
 	if cmd.jobname != "" {
 		args["jobname"] = cmd.jobname
 	}
-	if cmd.jobid != "" {
-		args["jobid"] = cmd.jobid
-	}
 	if cmd.folder != "" {
 		args["folder"] = cmd.folder
 	}
 	if cmd.host != "" {
 		args["host"] = cmd.host
+	}
+	if cmd.jobid != "" {
+		if cmd.neighbours {
+			if len(args) > 0 {
+				err = fmt.Errorf("only jobid should be used to filter jobs")
+				return
+			}
+			args["neighborhood"] = "1"
+			args["direction"] = "radial"
+			args["depth"] = "5"
+		}
+		args["jobid"] = cmd.jobid
+	} else {
+		if cmd.neighbours {
+			err = fmt.Errorf("jobid missing")
+			return
+		}
 	}
 	args["limit"] = strconv.Itoa(cmd.limit)
 

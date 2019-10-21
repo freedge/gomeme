@@ -63,6 +63,13 @@ gomeme lj -application TOTO-PRD -status Executing -limit 30
 gomeme lj -application TOTO-PRD -host *pk1*
 ```
 
+when listing a single jobid, one can use the deps option to go through the jobs in the neighbour of that job.
+
+```
+gomeme lj -deps -jobid FOOSRV:5rxwz
+```
+
+
 ### qr.set
 
 set a qr
