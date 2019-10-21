@@ -10,7 +10,7 @@ import (
 	"github.com/freedge/gomeme/types"
 )
 
-type OrderJob struct {
+type orderJobCommand struct {
 	Hold   bool
 	Ctm    string
 	Folder string
@@ -19,13 +19,13 @@ type OrderJob struct {
 	status types.JobsStatusReply
 }
 
-func (cmd *OrderJob) Prepare(flags *flag.FlagSet) {
+func (cmd *orderJobCommand) Prepare(flags *flag.FlagSet) {
 	flags.BoolVar(&cmd.Hold, "hold", true, "Hold the job after submission")
 	flags.StringVar(&cmd.Ctm, "ctm", "", "ctm")
 	flags.StringVar(&cmd.Folder, "folder", "", "Folder")
 	flags.StringVar(&cmd.Jobs, "jobs", "", "jobs")
 }
-func (cmd *OrderJob) Run() (i interface{}, err error) {
+func (cmd *orderJobCommand) Run() (i interface{}, err error) {
 	i = nil
 	if commands.TheToken == "" {
 		err = fmt.Errorf("no token found. Please login first")
@@ -53,7 +53,7 @@ func (cmd *OrderJob) Run() (i interface{}, err error) {
 	return
 }
 
-func (cmd *OrderJob) PrettyPrint(data interface{}) error {
+func (cmd *orderJobCommand) PrettyPrint(data interface{}) error {
 	fmt.Println("RunId: ", cmd.reply.RunId)
 	for _, status := range cmd.status.Statuses {
 		fmt.Println("JobId: ", status.JobId)
@@ -62,5 +62,5 @@ func (cmd *OrderJob) PrettyPrint(data interface{}) error {
 }
 
 func init() {
-	commands.Register("job.order", &OrderJob{})
+	commands.Register("job.order", &orderJobCommand{})
 }

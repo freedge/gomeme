@@ -118,7 +118,7 @@ func (cmd *jobTreeCommand) Run() (i interface{}, err error) {
 		if cmd.verbose {
 			fmt.Printf("retrieving job % 3d/%d\n", it+1, len(cmd.reply.Statuses))
 		}
-		err = client.Call("GET", JOBS_STATUS, nil, map[string]string{
+		err = client.Call("GET", jobsStatusPath, nil, map[string]string{
 			"neighborhood": "1",
 			"direction":    direction,
 			"depth":        "1",

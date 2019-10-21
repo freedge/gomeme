@@ -45,7 +45,7 @@ func (cmd *jobsStatusCommand) Prepare(flags *flag.FlagSet) {
 
 const (
 	// URL to target to get the jobs status
-	JOBS_STATUS = "/run/jobs/status"
+	jobsStatusPath = "/run/jobs/status"
 )
 
 func (cmd *jobsStatusCommand) GetJobs() (i interface{}, err error) {
@@ -87,7 +87,7 @@ func (cmd *jobsStatusCommand) GetJobs() (i interface{}, err error) {
 	}
 	args["limit"] = strconv.Itoa(cmd.limit)
 
-	err = client.Call("GET", JOBS_STATUS, nil, args, &cmd.reply)
+	err = client.Call("GET", jobsStatusPath, nil, args, &cmd.reply)
 
 	i = cmd.reply
 

@@ -9,36 +9,36 @@ import (
 	"github.com/freedge/gomeme/types"
 )
 
-type JobActionCommand struct {
-	Jobid  string
+type jobActionCommand struct {
+	jobid  string
 	action string
 	result types.JobActionReply
 }
 
-func (cmd *JobActionCommand) Prepare(flags *flag.FlagSet) {
-	flags.StringVar(&cmd.Jobid, "jobid", "", "JobID")
+func (cmd *jobActionCommand) Prepare(flags *flag.FlagSet) {
+	flags.StringVar(&cmd.jobid, "jobid", "", "JobID")
 	flags.StringVar(&cmd.action, "action", "", "action to run: hold, free, confirm, delete, undelete, rerun, setToOk")
 }
 
-func (cmd *JobActionCommand) Run() (i interface{}, err error) {
+func (cmd *jobActionCommand) Run() (i interface{}, err error) {
 	i = nil
 
-	if cmd.Jobid == "" || cmd.action == "" {
+	if cmd.jobid == "" || cmd.action == "" {
 		err = fmt.Errorf("job id or action missing")
 		return
 	}
 
-	err = client.Call("POST", "/run/job/"+cmd.Jobid+"/"+cmd.action, nil, map[string]string{}, &cmd.result)
+	err = client.Call("POST", "/run/job/"+cmd.jobid+"/"+cmd.action, nil, map[string]string{}, &cmd.result)
 	i = cmd.result
 
 	return
 }
 
-func (cmd *JobActionCommand) PrettyPrint(i interface{}) error {
+func (cmd *jobActionCommand) PrettyPrint(i interface{}) error {
 	fmt.Println(cmd.result.Message)
 	return nil
 }
 
 func init() {
-	commands.Register("job.action", &JobActionCommand{})
+	commands.Register("job.action", &jobActionCommand{})
 }
