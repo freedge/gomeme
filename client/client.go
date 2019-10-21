@@ -36,6 +36,8 @@ func handleError(resp *http.Response) (formattedError error) {
 	return
 }
 
+var customTransport *http.Transport
+
 // Call the specific url under endpoint, with the proper query and parameters
 func Call(method, url string, query interface{}, params map[string]string, out interface{}) (err error) {
 	var bytebuffer io.Reader = nil
@@ -64,12 +66,15 @@ func Call(method, url string, query interface{}, params map[string]string, out i
 	// Send req using http Client
 	client := &http.Client{}
 	if commands.Insecure {
-		cfg := &tls.Config{
-			InsecureSkipVerify: true,
+		if customTransport == nil {
+			cfg := &tls.Config{
+				InsecureSkipVerify: true,
+			}
+			customTransport = &http.Transport{
+				TLSClientConfig: cfg,
+			}
 		}
-		client.Transport = &http.Transport{
-			TLSClientConfig: cfg,
-		}
+		client.Transport = customTransport
 	}
 	req.Header.Set("Content-type", "application/json")
 	resp, err := client.Do(req)

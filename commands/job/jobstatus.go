@@ -22,6 +22,7 @@ type jobsStatusCommand struct {
 	folder      string
 	csv         bool
 	verbose     bool
+	host        string
 }
 
 func (cmd *jobsStatusCommand) Prepare(flags *flag.FlagSet) {
@@ -33,9 +34,15 @@ func (cmd *jobsStatusCommand) Prepare(flags *flag.FlagSet) {
 	flags.StringVar(&cmd.folder, "folder", "", "Folder")
 	flags.BoolVar(&cmd.csv, "csv", false, "csv output")
 	flags.BoolVar(&cmd.verbose, "v", false, "output more stuff")
+	flags.StringVar(&cmd.host, "host", "", "host")
 }
 
-func (cmd *jobsStatusCommand) Run() (i interface{}, err error) {
+const (
+	// URL to target to get the jobs status
+	JOBS_STATUS = "/run/jobs/status"
+)
+
+func (cmd *jobsStatusCommand) GetJobs() (i interface{}, err error) {
 	i = nil
 
 	// add authorization header to the req
@@ -55,12 +62,20 @@ func (cmd *jobsStatusCommand) Run() (i interface{}, err error) {
 	if cmd.folder != "" {
 		args["folder"] = cmd.folder
 	}
+	if cmd.host != "" {
+		args["host"] = cmd.host
+	}
 	args["limit"] = strconv.Itoa(cmd.limit)
 
-	err = client.Call("GET", "/run/jobs/status", nil, args, &cmd.reply)
+	err = client.Call("GET", JOBS_STATUS, nil, args, &cmd.reply)
 
 	i = cmd.reply
 
+	return
+}
+
+func (cmd *jobsStatusCommand) Run() (i interface{}, err error) {
+	i, err = cmd.GetJobs()
 	return
 }
 
@@ -112,6 +127,7 @@ func (cmd *jobsStatusCommand) PrettyPrint(data interface{}) error {
 		return cmd.printCsv()
 	}
 	if cmd.verbose {
+		fmt.Printf("%d/%d jobs displayed\n", cmd.reply.Returned, cmd.reply.Total)
 		fmt.Printf("%-40.40s %5.5s %-20.20s %8.8s %16.16s %16.16s %5.5s %12.12s %12.12s %20.20s %8.8s\n",
 			"Folder/Name", "Held", "JobId", "Order", "Status", "Host", "Del?", "Start time", "End time", "Description", "Duration")
 		fmt.Printf("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n")
