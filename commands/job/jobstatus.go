@@ -25,16 +25,20 @@ type jobsStatusCommand struct {
 	host        string
 }
 
-func (cmd *jobsStatusCommand) Prepare(flags *flag.FlagSet) {
+func (cmd *jobsStatusCommand) prepareCommon(flags *flag.FlagSet) {
 	flags.StringVar(&cmd.application, "application", "", "Jobs for this application")
 	flags.IntVar(&cmd.limit, "limit", 1000, "Limit to how many jobs")
 	flags.StringVar(&cmd.status, "status", "", "Only this status")
 	flags.StringVar(&cmd.jobname, "jobname", "", "Job name")
 	flags.StringVar(&cmd.jobid, "jobid", "", "Jobid")
 	flags.StringVar(&cmd.folder, "folder", "", "Folder")
-	flags.BoolVar(&cmd.csv, "csv", false, "csv output")
 	flags.BoolVar(&cmd.verbose, "v", false, "output more stuff")
 	flags.StringVar(&cmd.host, "host", "", "host")
+}
+
+func (cmd *jobsStatusCommand) Prepare(flags *flag.FlagSet) {
+	cmd.prepareCommon(flags)
+	flags.BoolVar(&cmd.csv, "csv", false, "csv output")
 }
 
 const (

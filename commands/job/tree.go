@@ -1,6 +1,7 @@
 package job
 
 import (
+	"flag"
 	"fmt"
 	"math"
 	"strconv"
@@ -39,6 +40,7 @@ type treenode struct {
 // edge, so it will always be the longest chain that is displayed.
 type jobTreeCommand struct {
 	jobsStatusCommand
+	predecessor     bool             // build a graph by ascending through predecessors
 	nodes           map[string]*node // our graph of jobs
 	toposortedStack []*node          // the same graph, but sorted topologically
 	tree            []treenode       // the graph, now reduced into a tree
@@ -79,6 +81,11 @@ func (cmd *jobTreeCommand) toposort() {
 
 const jobWeight = 1
 
+func (cmd *jobTreeCommand) Prepare(flags *flag.FlagSet) {
+	cmd.prepareCommon(flags)
+	flags.BoolVar(&cmd.predecessor, "back", false, "build a graph by going up through predecessors")
+}
+
 func (cmd *jobTreeCommand) Run() (i interface{}, err error) {
 	// retrieve a list of jobs
 	_, err = cmd.GetJobs()
@@ -99,6 +106,11 @@ func (cmd *jobTreeCommand) Run() (i interface{}, err error) {
 
 	// retrieve the dependencies between each job. It does not
 	// explore jobs outside the initial list
+	// choose a direction to explore dependencies
+	direction := "depend"
+	if cmd.predecessor {
+		direction = "predecessor"
+	}
 	for it, job := range cmd.reply.Statuses {
 		fromNode := cmd.addNode(&cmd.reply.Statuses[it])
 
@@ -108,7 +120,7 @@ func (cmd *jobTreeCommand) Run() (i interface{}, err error) {
 		}
 		err = client.Call("GET", JOBS_STATUS, nil, map[string]string{
 			"neighborhood": "1",
-			"direction":    "depend",
+			"direction":    direction,
 			"depth":        "1",
 			"jobid":        job.JobId,
 		}, &reply)

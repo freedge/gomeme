@@ -124,6 +124,7 @@ This command takes the same parameters as lj
 
 ```
 gomeme job.tree -application TOTO-PRD -limit 10
+gomeme job.tree -application TOTO-PRD -limit 10 -back    # instead of following dependencies, follow predecessors
 ```
 
 
