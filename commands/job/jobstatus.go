@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/freedge/gomeme/client"
@@ -148,14 +149,14 @@ func (cmd *jobsStatusCommand) PrettyPrint(data interface{}) error {
 	}
 	if cmd.verbose {
 		fmt.Printf("%d/%d jobs displayed\n", cmd.reply.Returned, cmd.reply.Total)
-		fmt.Printf("%-40.40s %5.5s %-20.20s %8.8s %16.16s %16.16s %5.5s %12.12s %12.12s %20.20s %8.8s\n",
-			"Folder/Name", "Held", "JobId", "Order", "Status", "Host", "Del?", "Start time", "End time", "Description", "Duration")
-		fmt.Printf("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n")
+		fmt.Printf("%-40.40s %5.5s %-20.20s %8.8s %16.16s %16.16s %5.5s %12.12s %12.12s %20.20s %8.8s %4.4s\n",
+			"Folder/Name", "Held", "JobId", "Order", "Status", "Host", "Del?", "Start time", "End time", "Description", "Duration", "Runs")
+		fmt.Printf("%s\n", strings.Repeat("-", 177))
 		for _, job := range cmd.reply.Statuses {
-			fmt.Printf("%-40.40s %5.5s %-20.20s %8.8s %16.146s %16.16s %5.5s %12.12s %12.12s %20.20s %s\n",
+			fmt.Printf("%-40.40s %5.5s %-20.20s %8.8s %16.146s %16.16s %5.5s %12.12s %12.12s %20.20s %8.8s % 4d\n",
 				job.Folder+"/"+job.Name,
 				strconv.FormatBool(job.Held),
-				job.JobId, job.OrderDate, job.Status, job.Host, strconv.FormatBool(job.Deleted), job.StartTime, job.EndTime, job.Description, GetDurationAsString(job))
+				job.JobId, job.OrderDate, job.Status, job.Host, strconv.FormatBool(job.Deleted), job.StartTime, job.EndTime, job.Description, GetDurationAsString(job), job.NumberOfRuns)
 		}
 	} else {
 		fmt.Printf("%-15.15s %18.18s %8.8s %16.16s %8.8s\n",

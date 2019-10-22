@@ -17,7 +17,7 @@ type jobActionCommand struct {
 
 func (cmd *jobActionCommand) Prepare(flags *flag.FlagSet) {
 	flags.StringVar(&cmd.jobid, "jobid", "", "JobID")
-	flags.StringVar(&cmd.action, "action", "", "action to run: hold, free, confirm, delete, undelete, rerun, setToOk")
+	flags.StringVar(&cmd.action, "action", "", "action to run: hold, free, confirm, delete, undelete, rerun, setToOk, runNow")
 }
 
 func (cmd *jobActionCommand) Run() (i interface{}, err error) {

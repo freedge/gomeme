@@ -23,6 +23,7 @@ type loginCommand struct {
 
 const (
 	envPassword = "GOMEME_PASSWORD" // environment variable for your password, only used by the login command
+	envUser     = "USER"            // default to the current user
 )
 
 func (cmd *loginCommand) Prepare(flags *flag.FlagSet) {
@@ -30,8 +31,8 @@ func (cmd *loginCommand) Prepare(flags *flag.FlagSet) {
 }
 
 func (cmd *loginCommand) Run() (i interface{}, err error) {
-	if commands.Endpoint == "" || cmd.user == "" {
-		err = fmt.Errorf("Endpoint (%s) and username (%s) must be set", commands.Endpoint, cmd.user)
+	if commands.Endpoint == "" {
+		err = fmt.Errorf("Endpoint must be set")
 		return
 	}
 
@@ -42,6 +43,10 @@ func (cmd *loginCommand) Run() (i interface{}, err error) {
 		switch pair[0] {
 		case envPassword:
 			password = pair[1]
+		case envUser:
+			if cmd.user == "" {
+				cmd.user = pair[1]
+			}
 		}
 	}
 
