@@ -170,6 +170,16 @@ List parameters specific to an agent. Uses ```-all``` to show all parameters.
 gomeme config.server -server FOO123 -agent toto.net
 ```
 
+### deploy.get
+
+Return definition of jobs in folder
+
+```
+gomeme deploy.get -ctm FOO -folder toto -xml
+gomeme deploy.get -ctm FOO -folder toto
+```
+
+
 ## License
 
 http://www.apache.org/licenses/LICENSE-2.0

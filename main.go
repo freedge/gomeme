@@ -9,6 +9,7 @@ import (
 	"github.com/freedge/gomeme/commands"
 	_ "github.com/freedge/gomeme/commands/config"
 	_ "github.com/freedge/gomeme/commands/curl"
+	_ "github.com/freedge/gomeme/commands/deploy"
 	_ "github.com/freedge/gomeme/commands/job"
 	_ "github.com/freedge/gomeme/commands/login"
 	_ "github.com/freedge/gomeme/commands/qr"
