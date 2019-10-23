@@ -179,6 +179,14 @@ gomeme deploy.get -ctm FOO -folder toto -xml
 gomeme deploy.get -ctm FOO -folder toto
 ```
 
+### logout
+
+Logout
+
+```
+gomeme logout
+```
+
 
 ## License
 

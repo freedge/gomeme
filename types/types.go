@@ -123,3 +123,6 @@ type ConfigAgentParam struct {
 
 // ConfigAgentParamsReply is the reply to the config agent params action
 type ConfigAgentParamsReply []ConfigAgentParam
+
+// LogoutReply is the message returned after login out
+type LogoutReply = Message
