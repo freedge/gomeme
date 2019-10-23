@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/freedge/gomeme/commands"
+	_ "github.com/freedge/gomeme/commands/config"
 	_ "github.com/freedge/gomeme/commands/curl"
 	_ "github.com/freedge/gomeme/commands/job"
 	_ "github.com/freedge/gomeme/commands/login"

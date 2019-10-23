@@ -21,6 +21,10 @@ func (cmd *jobLogCommand) Prepare(flags *flag.FlagSet) {
 	flags.IntVar(&cmd.run, "run", -1, "for output, run number of the job. Defaults to last one")
 }
 func (cmd *jobLogCommand) Run() (i interface{}, err error) {
+	if cmd.jobid == "" {
+		err = fmt.Errorf("missing jobid")
+		return
+	}
 	i = nil
 
 	service := "log"

@@ -93,3 +93,33 @@ type OrderJobReply struct {
 type ErrorReply struct {
 	Errors []Message
 }
+
+// Server replied by the config.servers service
+type Server struct {
+	Name    string
+	Host    string
+	State   string
+	Message string
+}
+
+// ConfigServersReply is the reply to the config server
+type ConfigServersReply []Server
+
+// Agent replied by the config.agents service
+type Agent struct {
+	NodeID string
+	Status string
+}
+
+// ConfigAgentsReply is the reply to the config.agents service
+type ConfigAgentsReply struct {
+	Agents []Agent
+}
+
+// ConfigAgentParam is one paramater of the agent
+type ConfigAgentParam struct {
+	Name, Value, DefaultValue string
+}
+
+// ConfigAgentParamsReply is the reply to the config agent params action
+type ConfigAgentParamsReply []ConfigAgentParam

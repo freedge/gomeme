@@ -145,6 +145,31 @@ Just outputs the curl command to run to target the API by hand
 gomeme curl
 ```
 
+### config.servers
+
+List all servers
+
+```
+gomeme config.servers
+```
+
+### config.agents
+
+List all agents for a specific server
+
+```
+gomeme config.servers -server FOO123
+```
+
+
+### config.agent
+
+List parameters specific to an agent. Uses ```-all``` to show all parameters.
+
+```
+gomeme config.server -server FOO123 -agent toto.net
+```
+
 ## License
 
 http://www.apache.org/licenses/LICENSE-2.0
