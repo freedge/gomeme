@@ -13,8 +13,11 @@ import (
 	_ "github.com/freedge/gomeme/commands/qr"
 )
 
-var DumpNeeded = false // dump the go object
-var JsonNeeded = false // dump the go object
+var (
+	dumpNeeded = false // dump the go object
+	jsonNeeded = false // dump as json
+)
+
 func main() {
 	if len(os.Args) < 2 {
 		commands.Usage()
@@ -28,12 +31,11 @@ func main() {
 		os.Exit(-1)
 	}
 	flagset := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
-	flagset.BoolVar(&DumpNeeded, "dump", false, "outputs as go structure")
-	flagset.BoolVar(&JsonNeeded, "json", false, "outputs as json")
+	flagset.BoolVar(&dumpNeeded, "dump", false, "outputs as go structure")
+	flagset.BoolVar(&jsonNeeded, "json", false, "outputs as json")
 	command.Prepare(flagset)
 
-	err := flagset.Parse(os.Args[2:])
-	if err != nil {
+	if err := flagset.Parse(os.Args[2:]); err != nil {
 		panic(err)
 	}
 
@@ -44,10 +46,10 @@ func main() {
 	}
 
 	switch {
-	case JsonNeeded:
+	case jsonNeeded:
 		bytes, _ := json.MarshalIndent(data, "", "  ")
 		fmt.Printf("%s\n", string(bytes))
-	case DumpNeeded:
+	case dumpNeeded:
 		fmt.Printf("%#v", data)
 	default:
 		err = command.PrettyPrint(data)

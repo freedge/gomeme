@@ -47,14 +47,14 @@ func (cmd *orderJobCommand) Run() (i interface{}, err error) {
 		return
 	}
 
-	err = client.Call("GET", "/run/status/"+cmd.reply.RunId, nil, map[string]string{}, &cmd.status)
+	err = client.Call("GET", "/run/status/"+cmd.reply.RunID, nil, map[string]string{}, &cmd.status)
 	i = &cmd.status
 
 	return
 }
 
 func (cmd *orderJobCommand) PrettyPrint(data interface{}) error {
-	fmt.Println("RunId: ", cmd.reply.RunId)
+	fmt.Println("RunId: ", cmd.reply.RunID)
 	for _, status := range cmd.status.Statuses {
 		fmt.Println("JobId: ", status.JobId)
 	}

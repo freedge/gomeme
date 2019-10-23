@@ -20,7 +20,7 @@ type curl struct {
 
 func (cmd *curl) Prepare(flags *flag.FlagSet) {}
 func (cmd *curl) Run() (interface{}, error) {
-	kflag := ""
+	var kflag string
 	if commands.Insecure {
 		kflag = "-k "
 	}

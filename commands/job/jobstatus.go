@@ -49,26 +49,19 @@ const (
 	jobsStatusPath = "/run/jobs/status"
 )
 
+// func addArg(args map[string]string, )
+
 func (cmd *jobsStatusCommand) GetJobs() (i interface{}, err error) {
 	i = nil
 
 	// add authorization header to the req
 	args := make(map[string]string)
-	if cmd.application != "" {
-		args["application"] = cmd.application
-	}
-	if cmd.status != "" {
-		args["status"] = cmd.status
-	}
-	if cmd.jobname != "" {
-		args["jobname"] = cmd.jobname
-	}
-	if cmd.folder != "" {
-		args["folder"] = cmd.folder
-	}
-	if cmd.host != "" {
-		args["host"] = cmd.host
-	}
+	commands.AddIfNotEmpty(args, "application", cmd.application)
+	commands.AddIfNotEmpty(args, "status", cmd.status)
+	commands.AddIfNotEmpty(args, "jobname", cmd.jobname)
+	commands.AddIfNotEmpty(args, "folder", cmd.folder)
+	commands.AddIfNotEmpty(args, "host", cmd.host)
+
 	if cmd.jobid != "" {
 		if cmd.neighbours {
 			if len(args) > 0 {

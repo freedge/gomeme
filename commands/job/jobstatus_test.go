@@ -55,7 +55,7 @@ func TestJobStatus(t *testing.T) {
 		Statuses: []types.Status{
 			{
 				JobId:          "LUCCT1P:32zfh",
-				FolderId:       "LUCCT1P:",
+				FolderID:       "LUCCT1P:",
 				NumberOfRuns:   1,
 				Name:           "C1P-PRD-DBA-DBA",
 				Folder:         "C1P-PRD-DBA-DBA",

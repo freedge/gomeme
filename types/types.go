@@ -3,6 +3,7 @@ package types
 
 import "time"
 
+// QR contains the definition of a quantitative resource
 type QR struct {
 	Name      string
 	Ctm       string
@@ -10,20 +11,23 @@ type QR struct {
 	Max       int
 }
 
+// SessionLoginQuery contains the data to pass when login in
 type SessionLoginQuery struct {
 	Username string
 	Password string
 }
 
+// Token is contained in the login response
 type Token struct {
 	Version  string
 	Token    string
 	Username string
 }
 
+// Status is a job status
 type Status struct {
 	JobId          string
-	FolderId       string
+	FolderID       string `json:"folderId"`
 	NumberOfRuns   int
 	Name           string
 	Folder         string
@@ -43,6 +47,7 @@ type Status struct {
 	LogURI         string
 }
 
+// JobsStatusReply is the reply from run/jobs/status
 type JobsStatusReply struct {
 	Statuses []Status
 	Returned int
@@ -51,10 +56,10 @@ type JobsStatusReply struct {
 
 // ParseTime parses a non empty StartTime or EndTime from a Status structure and returns a Time
 func ParseTime(s string) (t time.Time, err error) {
-	t, err = time.Parse("20060102150405", s)
-	return
+	return time.Parse("20060102150405", s)
 }
 
+// OrderQuery contains the data to order a new job
 type OrderQuery struct {
 	Hold   bool
 	Ctm    string
@@ -62,26 +67,29 @@ type OrderQuery struct {
 	Jobs   string
 }
 
+// SetResourceQuery contain the data to set a QR. QR name is given in the URL parameter
 type SetResourceQuery struct {
 	Max string
 }
 
+// Message is returned by various services
 type Message struct {
 	Message string
 }
 
-type SetResourceReply struct {
-	Message string
-}
-type JobActionReply struct {
-	Message string
-}
+// SetResourceReply is returned when setting a QR
+type SetResourceReply = Message
 
+// JobActionReply is returned for most actions
+type JobActionReply = Message
+
+// OrderJobReply is returned after ordering a job
 type OrderJobReply struct {
-	RunId     string
+	RunID     string `json:"runId"` // this syntax should probably be adopted everywhere in the file
 	StatusURI string
 }
 
+// ErrorReply is returned in case of errors most of the time
 type ErrorReply struct {
 	Errors []Message
 }

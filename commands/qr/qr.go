@@ -24,13 +24,9 @@ func (cmd *listQRCommand) Run() (i interface{}, err error) {
 	i = nil
 
 	args := make(map[string]string)
+	commands.AddIfNotEmpty(args, "name", cmd.Name)
+	commands.AddIfNotEmpty(args, "ctm", cmd.Ctm)
 
-	if cmd.Name != "" {
-		args["name"] = cmd.Name
-	}
-	if cmd.Ctm != "" {
-		args["ctm"] = cmd.Ctm
-	}
 	err = client.Call("GET", "/run/resources", nil, args, &cmd.qrs)
 	i = cmd.qrs
 

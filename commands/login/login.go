@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"strings"
 
 	"golang.org/x/crypto/ssh/terminal"
 
@@ -36,30 +35,21 @@ func (cmd *loginCommand) Run() (i interface{}, err error) {
 		return
 	}
 
-	// either get the password from the environment
-	var password string
-	for _, e := range os.Environ() {
-		pair := strings.SplitN(e, "=", 2)
-		switch pair[0] {
-		case envPassword:
-			password = pair[1]
-		case envUser:
-			if cmd.user == "" {
-				cmd.user = pair[1]
-			}
-		}
+	if cmd.user == "" {
+		cmd.user = os.Getenv(envUser)
 	}
 
 	// either get it on the terminal
-	if password == "" {
+	var found bool
+	var password string
+	if password, found = os.LookupEnv(envPassword); !found {
 		if !terminal.IsTerminal(0) {
 			err = fmt.Errorf("run from a terminal or provide password through %s environment variable", envPassword)
 			return
 		}
 		fmt.Printf("Enter password for user %s:\n", cmd.user)
 		var bytes []byte
-		bytes, err = terminal.ReadPassword(0 /* stdin */)
-		if err != nil {
+		if bytes, err = terminal.ReadPassword(0 /* stdin */); err != nil {
 			return
 		}
 		password = string(bytes)
@@ -67,8 +57,7 @@ func (cmd *loginCommand) Run() (i interface{}, err error) {
 
 	query := types.SessionLoginQuery{Username: cmd.user, Password: password}
 
-	err = client.Call("POST", "/session/login", query, map[string]string{}, &cmd.token)
-	if err != nil {
+	if err = client.Call("POST", "/session/login", query, map[string]string{}, &cmd.token); err != nil {
 		return
 	}
 

@@ -47,8 +47,7 @@ type jobTreeCommand struct {
 }
 
 func (cmd *jobTreeCommand) addNode(job *types.Status) *node {
-	_, found := cmd.nodes[job.JobId]
-	if !found {
+	if _, found := cmd.nodes[job.JobId]; !found {
 		cmd.nodes[job.JobId] = &node{job.JobId, make([]*node, 0), make([]*node, 0), job, false, math.MinInt64, false}
 	}
 	return cmd.nodes[job.JobId]
@@ -104,8 +103,7 @@ func (cmd *jobTreeCommand) Prepare(flags *flag.FlagSet) {
 
 func (cmd *jobTreeCommand) Run() (i interface{}, err error) {
 	// retrieve a list of jobs
-	_, err = cmd.GetJobs()
-	if err != nil {
+	if _, err = cmd.GetJobs(); err != nil {
 		return
 	}
 

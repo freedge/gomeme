@@ -40,7 +40,7 @@ var customTransport *http.Transport
 
 // Call the specific url under endpoint, with the proper query and parameters
 func Call(method, url string, query interface{}, params map[string]string, out interface{}) (err error) {
-	var bytebuffer io.Reader = nil
+	var bytebuffer io.Reader
 	if query != nil {
 		jsonquery, err := json.Marshal(query)
 		if err != nil {
