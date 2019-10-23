@@ -8,17 +8,14 @@
 
 
 
-gomeme is a cli for Control-M, based on Control-M Automation API
-
-https://docs.bmc.com/docs/automation-api/9181/services-784100995.html
-
-and loosely inspired by govc.
+gomeme is a cli for Control-M, based on
+[Control-M Automation API](https://docs.bmc.com/docs/automation-api/9181/services-784100995.html)
+and loosely inspired by [govc](https://github.com/vmware/govmomi/tree/master/govc).
 
 ## Usage
 
 ```
 export GOMEME_ENDPOINT=https://.../automation-api
-export GOMEME_PASSWORD=...
 export GOMEME_INSECURE=true
 gomeme login -user toto
 gomeme qr -name PRD*
@@ -33,6 +30,8 @@ $env:GOMEME_INSECURE="true"
 
 Use the ```-dump``` option to output in a Go-like format. ```-json``` option outputs in json format.
 
+Helps for commands can be accessed with ```-h```
+
 ## Commands
 
 ### login
@@ -41,6 +40,8 @@ Get a token for a user. Writes it into a .token file in the current directory.
 
 The password must be provided either through the GOMEME_PASSWORD environment variable, or
 through the terminal.
+
+User defaults to $USER if not specified.
 
 ```
 gomeme login -user toto
@@ -56,7 +57,7 @@ gomeme qr -name PRD-*
 
 ### lj
 
-list jobs (default limit is 1000)
+list jobs (default limit is 1000). Use ```-v``` for more info. Outputs a csv with ```-csv```
 
 ```
 gomeme lj -application TOTO-PRD -status Executing -limit 30
@@ -66,7 +67,7 @@ gomeme lj -application TOTO-PRD -host *pk1*
 when listing a single jobid, one can use the deps option to go through the jobs in the neighbour of that job.
 
 ```
-gomeme lj -deps -jobid FOOSRV:5rxwz
+gomeme lj -deps -jobid FOOSRV:5rxwz -v
 ```
 
 
@@ -85,6 +86,7 @@ get the output or logs of a job id
 ```
 gomeme job.log -jobid FOOCCT4P:5nq1c
 gomeme job.log -jobid FOOCCT4P:5nq1c -output
+gomeme job.log -jobid FOOCCT4P:5nq1c -output -run 3
 ```
 
 ### job.order
@@ -97,7 +99,7 @@ gomeme job.order -ctm FOOCT4T -folder ABC-DEV-OND -hold -jobs dABC1
 
 ### job.action
 
-hold/delete/undelete/confirm/setToOk a job
+hold/delete/undelete/confirm/setToOk/rerun a job
 
 ```
 gomeme job.action -action delete -jobid FOOCT4T:3z553
