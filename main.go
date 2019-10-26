@@ -20,7 +20,6 @@ func commandHandler(command flags.Commander, args []string) error {
 	cmd := command.(commands.Command)
 	var err error
 	if err = cmd.Execute(args); err != nil {
-		fmt.Printf("command exited in error: %s\n", err.Error())
 		return err
 	}
 	data := cmd.Data()
