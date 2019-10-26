@@ -15,7 +15,7 @@ import (
 type jobsStatusCommonCommand struct {
 	Application string `short:"a" long:"application"`
 	Limit       int    `short:"l"  long:"limit" default:"1000"`
-	Status      string `short:"s"  long:"status" choice:"Executing" choice:"Ended Not OK" choice:"Ended OK" description:"Only this status"`
+	Status      string `short:"s"  long:"status" choice:"Executing" choice:"Ended Not OK" choice:"Ended OK" choice:"Wait Condition" choice:"Wait Resource" choice:"Wait User" choice:"Wait Host" description:"Only this status"`
 	reply       types.JobsStatusReply
 	Jobname     string `short:"n" long:"jobname" description:"job name"`
 	Jobid       string `short:"j" long:"jobid" description:"job id"`
