@@ -170,6 +170,14 @@ List parameters specific to an agent. Uses ```-all``` to show all parameters.
 gomeme config.server --ctm FOO123 --host toto.net
 ```
 
+### config.ping
+
+Ping an agent, so that it ends up in config.agents output. Default timeout is 10s, use d to discover.
+
+```
+gomeme config.ping -H foo -c FOO
+```
+
 ### deploy.get
 
 Return definition of jobs in folder
