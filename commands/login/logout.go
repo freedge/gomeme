@@ -1,7 +1,6 @@
 package login
 
 import (
-	"flag"
 	"fmt"
 
 	"github.com/freedge/gomeme/client"
@@ -13,22 +12,21 @@ type logout struct {
 	out types.LogoutReply
 }
 
-func (cmd *logout) Prepare(flags *flag.FlagSet) {}
-func (cmd *logout) Run() (i interface{}, err error) {
+func (cmd *logout) Data() interface{} { return cmd.out }
+func (cmd *logout) Execute([]string) (err error) {
 
 	if err = client.Call("POST", "/session/logout", nil, map[string]string{}, &cmd.out); err != nil {
 		return
 	}
 
-	i = cmd.out
 	return
 }
 
-func (cmd *logout) PrettyPrint(data interface{}) error {
+func (cmd *logout) PrettyPrint() error {
 	fmt.Println(cmd.out.Message)
 	return nil
 }
 
 func init() {
-	commands.Register("logout", &logout{})
+	commands.AddCommand("logout", "logout", "logout", &logout{})
 }

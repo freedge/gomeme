@@ -2,7 +2,6 @@
 package config
 
 import (
-	"flag"
 	"fmt"
 
 	"github.com/freedge/gomeme/client"
@@ -11,33 +10,24 @@ import (
 )
 
 type agent struct {
-	server string
-	agent  string
-	all    bool
+	server string `short:"c" long:"ctm" description:"server" required:"true"`
+	agent  string `short:"h" long:"host" description:"agent" required:"true"`
+	all    bool   `short:"a" long:"all" description:"show all parameters, not only the default ones"`
 	params types.ConfigAgentParamsReply
 }
 
-func (cmd *agent) Prepare(flags *flag.FlagSet) {
-	flags.StringVar(&cmd.server, "server", "", "Server to target")
-	flags.StringVar(&cmd.agent, "agent", "", "Agent to target")
-	flags.BoolVar(&cmd.all, "all", false, "Show all parameters, not only the non default ones")
-
-}
-func (cmd *agent) Run() (i interface{}, err error) {
-
-	if cmd.server == "" || cmd.agent == "" {
-		err = fmt.Errorf("server or agent not specified")
-		return
-	}
+func (cmd *agent) Execute([]string) (err error) {
 	if err = client.Call("GET", "/config/server/"+cmd.server+"/agent/"+cmd.agent+"/params", nil, map[string]string{}, &cmd.params); err != nil {
 		return
 	}
-
-	i = cmd.params
 	return
 }
 
-func (cmd *agent) PrettyPrint(data interface{}) error {
+func (cmd *agent) Data() interface{} {
+	return cmd.params
+}
+
+func (cmd *agent) PrettyPrint() error {
 	if cmd.all {
 		for _, param := range cmd.params {
 			defaultValue := ""
@@ -57,5 +47,5 @@ func (cmd *agent) PrettyPrint(data interface{}) error {
 }
 
 func init() {
-	commands.Register("config.agent", &agent{})
+	commands.AddCommand("config.agent", "config.agent", "config.agent", &agent{})
 }

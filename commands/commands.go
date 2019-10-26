@@ -4,24 +4,36 @@
 package commands
 
 import (
-	"flag"
-	"fmt"
 	"io/ioutil"
 	"os"
-	"sort"
 	"strconv"
-	"strings"
+
+	"github.com/jessevdk/go-flags"
 )
+
+// DefaultOpts are the common options for every command
+type DefaultOpts struct {
+	Dump       bool `long:"dump" description:"outputs as go structure"`
+	JSONNeeded bool `long:"json" description:"outputs as json"`
+}
+
+// Opts is the list of default opts
+var Opts DefaultOpts
+
+// Parser defines all the commands
+var Parser = flags.NewParser(&Opts, flags.Default)
+
+// AddCommand register a new command to be parsed
+func AddCommand(a, b, c string, cmd Command) {
+	Parser.AddCommand(a, b, c, cmd)
+}
 
 // Command is implemented by all our commands
 type Command interface {
-	Prepare(flags *flag.FlagSet)        // Prepare registers its own set of flags
-	Run() (interface{}, error)          // Run the command, return an object that can be later dump as json
-	PrettyPrint(data interface{}) error // Pretty print the output of the command. It is given the data as returned by the Run method
+	flags.Commander
+	Data() interface{}  // Return the data after the command ran succesfully
+	PrettyPrint() error // Pretty print the output of the command. It is given the data as returned by the Run method
 }
-
-// Commands contains Each and every command, must registered through a call to Register in the init function
-var Commands map[string]Command
 
 // AddIfNotEmpty is a convenient method to add in a map if value is not empty
 func AddIfNotEmpty(args map[string]string, key, value string) {
@@ -30,36 +42,28 @@ func AddIfNotEmpty(args map[string]string, key, value string) {
 	}
 }
 
-// Register a new command, to be called from the init function
-func Register(name string, cmd Command) {
-	if Commands == nil {
-		Commands = make(map[string]Command, 0)
-	}
-	Commands[name] = cmd
-}
-
 // Usage prints the usage of this function using the registered command names
 func Usage() {
-	var sb strings.Builder
-	sb.WriteString("Usage: ")
-	sb.WriteString(os.Args[0])
-	sb.WriteString(" [command] -h\n Supported commands:\n")
+	// 	var sb strings.Builder
+	// 	sb.WriteString("Usage: ")
+	// 	sb.WriteString(os.Args[0])
+	// 	sb.WriteString(" [command] -h\n Supported commands:\n")
 
-	var keys []string
-	for key := range Commands {
-		keys = append(keys, key)
-	}
-	sort.Strings(keys)
-	for _, key := range keys {
-		fmt.Fprintf(&sb, "\t%s\n", key)
-	}
+	// 	var keys []string
+	// 	for key := range Commands {
+	// 		keys = append(keys, key)
+	// 	}
+	// 	sort.Strings(keys)
+	// 	for _, key := range keys {
+	// 		fmt.Fprintf(&sb, "\t%s\n", key)
+	// 	}
 
-	fmt.Fprintf(&sb, `
-export %s environment variable to the Control-M endpoint (eg: https://foobar:8443/automation-api)
-export %s=true environment variable to skip host verification
-`, envEndpoint, envInsecure)
+	// 	fmt.Fprintf(&sb, `
+	// export %s environment variable to the Control-M endpoint (eg: https://foobar:8443/automation-api)
+	// export %s=true environment variable to skip host verification
+	// `, envEndpoint, envInsecure)
 
-	fmt.Println(sb.String())
+	// fmt.Println(sb.String())
 }
 
 const (

@@ -2,7 +2,6 @@
 package qr
 
 import (
-	"flag"
 	"fmt"
 
 	"github.com/freedge/gomeme/client"
@@ -11,29 +10,26 @@ import (
 )
 
 type listQRCommand struct {
-	Name string
-	Ctm  string
+	Name string `short:"n" long:"name" description:"resource name"`
+	Ctm  string `short:"c" long:"ctm" description:"server"`
 	qrs  []types.QR
 }
 
-func (cmd *listQRCommand) Prepare(flags *flag.FlagSet) {
-	flags.StringVar(&cmd.Name, "name", "", "resource name")
-	flags.StringVar(&cmd.Ctm, "ctm", "", "ctm")
+func (cmd *listQRCommand) Data() interface{} {
+	return cmd.qrs
 }
-func (cmd *listQRCommand) Run() (i interface{}, err error) {
-	i = nil
+
+func (cmd *listQRCommand) Execute([]string) (err error) {
 
 	args := make(map[string]string)
 	commands.AddIfNotEmpty(args, "name", cmd.Name)
 	commands.AddIfNotEmpty(args, "ctm", cmd.Ctm)
 
 	err = client.Call("GET", "/run/resources", nil, args, &cmd.qrs)
-	i = cmd.qrs
-
 	return
 }
 
-func (cmd *listQRCommand) PrettyPrint(i interface{}) error {
+func (cmd *listQRCommand) PrettyPrint() error {
 	fmt.Println("QR                       Ctm        Available      Max")
 	fmt.Println("======================================================")
 	for _, qr := range cmd.qrs {
@@ -43,5 +39,5 @@ func (cmd *listQRCommand) PrettyPrint(i interface{}) error {
 }
 
 func init() {
-	commands.Register("qr", &listQRCommand{})
+	commands.AddCommand("qr", "qr", "list qrs", &listQRCommand{})
 }

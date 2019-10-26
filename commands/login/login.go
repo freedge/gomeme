@@ -3,7 +3,6 @@
 package login
 
 import (
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -16,7 +15,7 @@ import (
 )
 
 type loginCommand struct {
-	user  string
+	user  string `short:"u" long:"user" description:"Username to use"`
 	token types.Token
 }
 
@@ -25,11 +24,11 @@ const (
 	envUser     = "USER"            // default to the current user
 )
 
-func (cmd *loginCommand) Prepare(flags *flag.FlagSet) {
-	flags.StringVar(&(cmd.user), "user", "", "Username to use")
+func (cmd *loginCommand) Data() interface{} {
+	return &cmd.token
 }
 
-func (cmd *loginCommand) Run() (i interface{}, err error) {
+func (cmd *loginCommand) Execute([]string) (err error) {
 	if commands.Endpoint == "" {
 		err = fmt.Errorf("Endpoint must be set")
 		return
@@ -61,16 +60,15 @@ func (cmd *loginCommand) Run() (i interface{}, err error) {
 		return
 	}
 
-	i = cmd.token
 	err = ioutil.WriteFile(".token", []byte(cmd.token.Token), 0600)
 	return
 }
 
-func (cmd *loginCommand) PrettyPrint(i interface{}) error {
+func (cmd *loginCommand) PrettyPrint() error {
 	fmt.Printf("Logged in. Server version %s\n", cmd.token.Version)
 	return nil
 }
 
 func init() {
-	commands.Register("login", &loginCommand{})
+	commands.AddCommand("login", "login", "login", &loginCommand{})
 }

@@ -20,13 +20,13 @@ func TestQrCommand(t *testing.T) {
 
 	var cmd listQRCommand
 	commands.Endpoint = ts.URL + "/api"
-	qr, err := cmd.Run()
+	err := cmd.Execute([]string{})
 
 	if err != nil {
 		t.Error(err)
 	}
 	expected := []types.QR{{Available: "9", Ctm: "LUCCT4P", Max: 10, Name: "PRD-SEV"}}
-	if !reflect.DeepEqual(qr, expected) {
-		t.Errorf("got %#v != %#v", qr, expected)
+	if !reflect.DeepEqual(cmd.Data(), expected) {
+		t.Errorf("got %#v != %#v", cmd.Data(), expected)
 	}
 }

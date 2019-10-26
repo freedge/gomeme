@@ -1,7 +1,6 @@
 package job
 
 import (
-	"flag"
 	"fmt"
 
 	"github.com/freedge/gomeme/client"
@@ -9,24 +8,17 @@ import (
 )
 
 type jobLogCommand struct {
-	jobid  string
-	output bool
+	jobid  string `short:"j" long:"jobid" description:"jobid" required:"true"`
+	output bool   `short:"o" long:"output"  description:"display output instead of logs"`
 	result string
-	run    int
+	run    int `short:"r" long:"run" default:"-1" description:"for output, run number of the job. Defaults to last one"`
 }
 
-func (cmd *jobLogCommand) Prepare(flags *flag.FlagSet) {
-	flags.StringVar(&cmd.jobid, "jobid", "", "JobID")
-	flags.BoolVar(&cmd.output, "output", false, "display output instead of logs")
-	flags.IntVar(&cmd.run, "run", -1, "for output, run number of the job. Defaults to last one")
+func (cmd *jobLogCommand) Data() interface{} {
+	return cmd.result
 }
-func (cmd *jobLogCommand) Run() (i interface{}, err error) {
-	if cmd.jobid == "" {
-		err = fmt.Errorf("missing jobid")
-		return
-	}
-	i = nil
 
+func (cmd *jobLogCommand) Execute([]string) (err error) {
 	service := "log"
 	if cmd.output {
 		service = "output"
@@ -41,16 +33,14 @@ func (cmd *jobLogCommand) Run() (i interface{}, err error) {
 	}
 
 	err = client.Call("GET", "/run/job/"+cmd.jobid+"/"+service, nil, map[string]string{}, &cmd.result)
-	i = cmd.result
-
 	return
 }
 
-func (cmd *jobLogCommand) PrettyPrint(i interface{}) error {
+func (cmd *jobLogCommand) PrettyPrint() error {
 	fmt.Println(cmd.result)
 	return nil
 }
 
 func init() {
-	commands.Register("job.log", &jobLogCommand{})
+	commands.AddCommand("job.log", "job.log", "job.log", &jobLogCommand{})
 }

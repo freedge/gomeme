@@ -1,7 +1,6 @@
 package job
 
 import (
-	"flag"
 	"fmt"
 	"strconv"
 	"strings"
@@ -13,35 +12,26 @@ import (
 )
 
 // jobsStatusCommand retrieve a list of jobs
-type jobsStatusCommand struct {
-	application string
-	limit       int
-	status      string
+type jobsStatusCommonCommand struct {
+	application string `short:"a" long:"application"`
+	limit       int    `short:"l"  long:"limit" default:"1000"`
+	status      string `short:"s"  long:"status" choice:"Executing" choice:"Ended Not OK" choice:"Ended OK" description:"Only this status"`
 	reply       types.JobsStatusReply
-	jobname     string
-	jobid       string
-	folder      string
-	csv         bool
-	verbose     bool
-	host        string
-	neighbours  bool
+	jobname     string `short:"n" long:"job name" description:"job name"`
+	jobid       string `short:"j" long:"jobid" description:"job id"`
+	folder      string `short:"f" long:"folder" description:"folder"`
+	verbose     bool   `short:"v" long:"verbose" description:"output more stuff"`
+	host        string `short:"h" long:"host" description:"host"`
+	neighbours  bool   `long:"deps" description:"browse through neighours of this job. Only jobid can be used to filter jobs"`
 }
 
-func (cmd *jobsStatusCommand) prepareCommon(flags *flag.FlagSet) {
-	flags.StringVar(&cmd.application, "application", "", "Jobs for this application")
-	flags.IntVar(&cmd.limit, "limit", 1000, "Limit to how many jobs")
-	flags.StringVar(&cmd.status, "status", "", "Only this status")
-	flags.StringVar(&cmd.jobname, "jobname", "", "Job name")
-	flags.StringVar(&cmd.jobid, "jobid", "", "Jobid")
-	flags.StringVar(&cmd.folder, "folder", "", "Folder")
-	flags.BoolVar(&cmd.verbose, "v", false, "output more stuff")
-	flags.StringVar(&cmd.host, "host", "", "host")
-	flags.BoolVar(&cmd.neighbours, "deps", false, "browse through neighours of this job. Only jobid can be used to filter jobs")
+type jobsStatusCommand struct {
+	jobsStatusCommonCommand
+	csv bool `short:"c" long:"csv" description:"csv output"`
 }
 
-func (cmd *jobsStatusCommand) Prepare(flags *flag.FlagSet) {
-	cmd.prepareCommon(flags)
-	flags.BoolVar(&cmd.csv, "csv", false, "csv output")
+func (cmd *jobsStatusCommand) Data() interface{} {
+	return cmd.reply
 }
 
 const (
@@ -51,7 +41,7 @@ const (
 
 // func addArg(args map[string]string, )
 
-func (cmd *jobsStatusCommand) GetJobs() (i interface{}, err error) {
+func (cmd *jobsStatusCommonCommand) GetJobs() (i interface{}, err error) {
 	i = nil
 
 	// add authorization header to the req
@@ -88,8 +78,8 @@ func (cmd *jobsStatusCommand) GetJobs() (i interface{}, err error) {
 	return
 }
 
-func (cmd *jobsStatusCommand) Run() (i interface{}, err error) {
-	i, err = cmd.GetJobs()
+func (cmd *jobsStatusCommand) Execute([]string) (err error) {
+	_, err = cmd.GetJobs()
 	return
 }
 
@@ -136,7 +126,7 @@ func (cmd *jobsStatusCommand) printCsv() error {
 	return nil
 }
 
-func (cmd *jobsStatusCommand) PrettyPrint(data interface{}) error {
+func (cmd *jobsStatusCommand) PrettyPrint() error {
 	if cmd.csv {
 		return cmd.printCsv()
 	}
@@ -165,5 +155,5 @@ func (cmd *jobsStatusCommand) PrettyPrint(data interface{}) error {
 	return nil
 }
 func init() {
-	commands.Register("lj", &jobsStatusCommand{})
+	commands.AddCommand("lj", "listjobs", "list jobs", &jobsStatusCommand{})
 }
