@@ -36,5 +36,5 @@ func (cmd *curl) PrettyPrint() error {
 }
 
 func init() {
-	commands.AddCommand("curl", "", "", &curl{})
+	commands.AddCommand("curl", "curl command", "The curl command to type to access the API", &curl{})
 }

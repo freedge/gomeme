@@ -32,5 +32,5 @@ func (cmd *servers) PrettyPrint() error {
 }
 
 func init() {
-	commands.AddCommand("config.servers", "config.servers", "config.servers", &servers{})
+	commands.AddCommand("config.servers", "list the servers", "List all the ctm servers", &servers{})
 }

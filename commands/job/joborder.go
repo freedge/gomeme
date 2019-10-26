@@ -41,5 +41,5 @@ func (cmd *orderJobCommand) PrettyPrint() error {
 }
 
 func init() {
-	commands.AddCommand("job.order", "job.order", "job.order", &orderJobCommand{})
+	commands.AddCommand("job.order", "order a job", "Order the specified job", &orderJobCommand{})
 }

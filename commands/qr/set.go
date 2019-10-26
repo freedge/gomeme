@@ -31,5 +31,5 @@ func (cmd *setQRCommand) PrettyPrint() error {
 }
 
 func init() {
-	commands.AddCommand("qr.set", "qr.set", "set a QR", &setQRCommand{})
+	commands.AddCommand("qr.set", "set a qr", "Set a quantitative resource under a given ctm server", &setQRCommand{})
 }

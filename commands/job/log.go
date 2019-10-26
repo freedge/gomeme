@@ -8,10 +8,10 @@ import (
 )
 
 type jobLogCommand struct {
-	jobid  string `short:"j" long:"jobid" description:"jobid" required:"true"`
-	output bool   `short:"o" long:"output"  description:"display output instead of logs"`
+	Jobid  string `short:"j" long:"jobid" description:"jobid" required:"true"`
+	Output bool   `short:"o" long:"output"  description:"display output instead of logs"`
 	result string
-	run    int `short:"r" long:"run" default:"-1" description:"for output, run number of the job. Defaults to last one"`
+	Run    int `short:"r" long:"run" default:"-1" description:"for output, run number of the job. Defaults to last one"`
 }
 
 func (cmd *jobLogCommand) Data() interface{} {
@@ -20,19 +20,19 @@ func (cmd *jobLogCommand) Data() interface{} {
 
 func (cmd *jobLogCommand) Execute([]string) (err error) {
 	service := "log"
-	if cmd.output {
+	if cmd.Output {
 		service = "output"
 	}
-	if cmd.run > 0 {
-		if cmd.output {
-			service = fmt.Sprintf("%s/?runNo=%d", service, cmd.run)
+	if cmd.Run > 0 {
+		if cmd.Output {
+			service = fmt.Sprintf("%s/?runNo=%d", service, cmd.Run)
 		} else {
 			err = fmt.Errorf("run can only be specified when getting a job output")
 			return
 		}
 	}
 
-	err = client.Call("GET", "/run/job/"+cmd.jobid+"/"+service, nil, map[string]string{}, &cmd.result)
+	err = client.Call("GET", "/run/job/"+cmd.Jobid+"/"+service, nil, map[string]string{}, &cmd.result)
 	return
 }
 
@@ -42,5 +42,5 @@ func (cmd *jobLogCommand) PrettyPrint() error {
 }
 
 func init() {
-	commands.AddCommand("job.log", "job.log", "job.log", &jobLogCommand{})
+	commands.AddCommand("job.log", "get logs for a job", "Retrieve output or logs of a job id", &jobLogCommand{})
 }

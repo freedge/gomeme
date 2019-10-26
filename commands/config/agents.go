@@ -11,12 +11,12 @@ import (
 )
 
 type agents struct {
-	server string `short:"c" long:"ctm" description:"server" required:"true"`
+	Server string `short:"c" long:"ctm" description:"server" required:"true"`
 	agents types.ConfigAgentsReply
 }
 
 func (cmd *agents) Execute([]string) (err error) {
-	err = client.Call("GET", "/config/server/"+cmd.server+"/agents", nil, map[string]string{}, &cmd.agents)
+	err = client.Call("GET", "/config/server/"+cmd.Server+"/agents", nil, map[string]string{}, &cmd.agents)
 	return
 }
 
@@ -33,5 +33,5 @@ func (cmd *agents) PrettyPrint() error {
 }
 
 func init() {
-	commands.AddCommand("config.agents", "config.agents", "config.agents", &agents{})
+	commands.AddCommand("config.agents", "list the agents", "List all the agent hostnames for a server", &agents{})
 }

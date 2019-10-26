@@ -28,5 +28,5 @@ func (cmd *logout) PrettyPrint() error {
 }
 
 func init() {
-	commands.AddCommand("logout", "logout", "logout", &logout{})
+	commands.AddCommand("logout", "logout", "Logout the current token", &logout{})
 }

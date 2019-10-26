@@ -39,7 +39,7 @@ type treenode struct {
 // edge, so it will always be the longest chain that is displayed.
 type jobTreeCommand struct {
 	jobsStatusCommand
-	predecessor     bool             `short:"b" long:"back" description:"build the graph by browsing through predecessors"` // build a graph by ascending through predecessors
+	Predecessor     bool             `short:"b" long:"back" description:"build the graph by browsing through predecessors"` // build a graph by ascending through predecessors
 	nodes           map[string]*node // our graph of jobs
 	toposortedStack []*node          // the same graph, but sorted topologically
 	tree            []treenode       // the graph, now reduced into a tree
@@ -120,14 +120,14 @@ func (cmd *jobTreeCommand) Execute([]string) (err error) {
 	// explore jobs outside the initial list
 	// choose a direction to explore dependencies
 	direction := "depend"
-	if cmd.predecessor {
+	if cmd.Predecessor {
 		direction = "predecessor"
 	}
 	for it, job := range cmd.reply.Statuses {
 		fromNode := cmd.addNode(&cmd.reply.Statuses[it])
 
 		reply := &types.JobsStatusReply{}
-		if cmd.verbose {
+		if cmd.Verbose {
 			fmt.Printf("retrieving job % 3d/%d\n", it+1, len(cmd.reply.Statuses))
 		}
 		err = client.Call("GET", jobsStatusPath, nil, map[string]string{
@@ -144,7 +144,7 @@ func (cmd *jobTreeCommand) Execute([]string) (err error) {
 			if subjob.JobId == job.JobId {
 				continue
 			}
-			if cmd.verbose {
+			if cmd.Verbose {
 				fmt.Println("adding edge")
 			}
 			// add
@@ -181,7 +181,7 @@ func (cmd *jobTreeCommand) visit(shift int, anode *node) {
 }
 
 func (cmd *jobTreeCommand) PrettyPrint() error {
-	if !cmd.verbose {
+	if !cmd.Verbose {
 		fmt.Printf("%-30.30s %-40.40s %s\n", "jobid", "folder/name", "status")
 		fmt.Println(strings.Repeat("-", 90))
 		for _, atreenode := range cmd.tree {
@@ -208,5 +208,5 @@ func (cmd *jobTreeCommand) PrettyPrint() error {
 }
 
 func init() {
-	commands.AddCommand("job.tree", "job.tree", "job.tree", &jobTreeCommand{})
+	commands.AddCommand("job.tree", "list jobs in a tree", "Retrieve a graph of jobs and their dependencies, output it into the form of a tree", &jobTreeCommand{})
 }

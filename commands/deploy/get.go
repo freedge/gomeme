@@ -9,9 +9,9 @@ import (
 )
 
 type get struct {
-	ctm    string `short:"c" long:"ctm" description:"server" required:"true"`
-	folder string `short:"f" long:"folder" description:"folder" required:"true"`
-	xml    bool   `short:"x" long:"xml" description:"xml format"`
+	Ctm    string `short:"c" long:"ctm" description:"server" required:"true"`
+	Folder string `short:"f" long:"folder" description:"folder" required:"true"`
+	Xml    bool   `short:"x" long:"xml" description:"xml format"`
 	output string
 }
 
@@ -20,8 +20,8 @@ func (cmd *get) Data() interface{} {
 }
 
 func (cmd *get) Execute([]string) (err error) {
-	params := map[string]string{"ctm": cmd.ctm, "folder": cmd.folder}
-	if cmd.xml {
+	params := map[string]string{"ctm": cmd.Ctm, "folder": cmd.Folder}
+	if cmd.Xml {
 		params["format"] = "XML"
 	}
 
@@ -35,5 +35,5 @@ func (cmd *get) PrettyPrint() error {
 }
 
 func init() {
-	commands.AddCommand("deploy.get", "deploy.get", "deploy.get", &get{})
+	commands.AddCommand("deploy.get", "get jobs definition", "Get all the jobs definition under a folder", &get{})
 }

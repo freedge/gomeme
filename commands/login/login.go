@@ -15,7 +15,7 @@ import (
 )
 
 type loginCommand struct {
-	user  string `short:"u" long:"user" description:"Username to use" env:"USER"`
+	User  string `short:"u" long:"user" description:"Username to use" env:"USER"`
 	token types.Token
 }
 
@@ -37,7 +37,7 @@ func (cmd *loginCommand) Execute([]string) (err error) {
 			err = fmt.Errorf("run from a terminal or provide password through %s environment variable", envPassword)
 			return
 		}
-		fmt.Printf("Enter password for user %s:\n", cmd.user)
+		fmt.Printf("Enter password for user %s:\n", cmd.User)
 		var bytes []byte
 		if bytes, err = terminal.ReadPassword(0 /* stdin */); err != nil {
 			return
@@ -45,7 +45,7 @@ func (cmd *loginCommand) Execute([]string) (err error) {
 		password = string(bytes)
 	}
 
-	query := types.SessionLoginQuery{Username: cmd.user, Password: password}
+	query := types.SessionLoginQuery{Username: cmd.User, Password: password}
 
 	if err = client.Call("POST", "/session/login", query, map[string]string{}, &cmd.token); err != nil {
 		return
@@ -61,5 +61,5 @@ func (cmd *loginCommand) PrettyPrint() error {
 }
 
 func init() {
-	commands.AddCommand("login", "login", "login", &loginCommand{})
+	commands.AddCommand("login", "login", "Login with the specified username", &loginCommand{})
 }

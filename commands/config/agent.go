@@ -10,14 +10,14 @@ import (
 )
 
 type agent struct {
-	server string `short:"c" long:"ctm" description:"server" required:"true"`
-	agent  string `short:"H" long:"host" description:"agent" required:"true"`
-	all    bool   `short:"a" long:"all" description:"show all parameters, not only the default ones"`
+	Server string `short:"c" long:"ctm" description:"server" required:"true"`
+	Agent  string `short:"H" long:"host" description:"agent" required:"true"`
+	All    bool   `short:"a" long:"all" description:"show all parameters, not only the default ones"`
 	params types.ConfigAgentParamsReply
 }
 
 func (cmd *agent) Execute([]string) (err error) {
-	if err = client.Call("GET", "/config/server/"+cmd.server+"/agent/"+cmd.agent+"/params", nil, map[string]string{}, &cmd.params); err != nil {
+	if err = client.Call("GET", "/config/server/"+cmd.Server+"/agent/"+cmd.Agent+"/params", nil, map[string]string{}, &cmd.params); err != nil {
 		return
 	}
 	return
@@ -28,7 +28,7 @@ func (cmd *agent) Data() interface{} {
 }
 
 func (cmd *agent) PrettyPrint() error {
-	if cmd.all {
+	if cmd.All {
 		for _, param := range cmd.params {
 			defaultValue := ""
 			if param.Value != param.DefaultValue {
@@ -47,5 +47,5 @@ func (cmd *agent) PrettyPrint() error {
 }
 
 func init() {
-	commands.AddCommand("config.agent", "config.agent", "config.agent", &agent{})
+	commands.AddCommand("config.agent", "list parameters of an agent", "List the non-default, or all the parameters for an agent", &agent{})
 }

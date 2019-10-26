@@ -39,5 +39,5 @@ func (cmd *listQRCommand) PrettyPrint() error {
 }
 
 func init() {
-	commands.AddCommand("qr", "qr", "list qrs", &listQRCommand{})
+	commands.AddCommand("qr", "list qr", "List quantitative resources, optionally filtering them", &listQRCommand{})
 }

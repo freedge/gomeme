@@ -9,8 +9,8 @@ import (
 )
 
 type jobActionCommand struct {
-	jobid  string `short:"j" long:"jobid" required:"true" description:"Job ID"`
-	action string `short:"a" long:"action" description:"action to run" choice:"hold" choice:"free" choice:"confirm" choice:"delete" choice:"undelete" choice:"rerun" choice:"setToOk" choice:"runNow" choice:"kill" required:"true"`
+	Jobid  string `short:"j" long:"jobid" required:"true" description:"Job ID"`
+	Action string `short:"a" long:"action" description:"action to run" choice:"hold" choice:"free" choice:"confirm" choice:"delete" choice:"undelete" choice:"rerun" choice:"setToOk" choice:"runNow" choice:"kill" required:"true"`
 	result types.JobActionReply
 }
 
@@ -19,7 +19,7 @@ func (cmd *jobActionCommand) Data() interface{} {
 }
 
 func (cmd *jobActionCommand) Execute([]string) (err error) {
-	err = client.Call("POST", "/run/job/"+cmd.jobid+"/"+cmd.action, nil, map[string]string{}, &cmd.result)
+	err = client.Call("POST", "/run/job/"+cmd.Jobid+"/"+cmd.Action, nil, map[string]string{}, &cmd.result)
 	return
 }
 
@@ -29,5 +29,5 @@ func (cmd *jobActionCommand) PrettyPrint() error {
 }
 
 func init() {
-	commands.AddCommand("job.action", "job.action", "job.action", &jobActionCommand{})
+	commands.AddCommand("job.action", "action on a job", "Perform an action (confirm, hold, free, etc.) on a job", &jobActionCommand{})
 }
