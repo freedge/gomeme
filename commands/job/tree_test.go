@@ -52,7 +52,7 @@ func TestJobTree(t *testing.T) {
 	}}
 
 	js := jobTreeCommand{}
-	commands.Endpoint = ts.URL + "/api"
+	commands.Opts.Endpoint = ts.URL + "/api"
 	err := js.Execute([]string{})
 
 	if err != nil {

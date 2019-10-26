@@ -45,7 +45,7 @@ func TestJobStatus(t *testing.T) {
 	defer ts.Close()
 
 	js := jobsStatusCommand{jobsStatusCommonCommand: jobsStatusCommonCommand{limit: 42}}
-	commands.Endpoint = ts.URL + "/api"
+	commands.Opts.Endpoint = ts.URL + "/api"
 	err := js.Execute([]string{})
 
 	if err != nil {

@@ -19,7 +19,7 @@ func TestQrCommand(t *testing.T) {
 	defer ts.Close()
 
 	var cmd listQRCommand
-	commands.Endpoint = ts.URL + "/api"
+	commands.Opts.Endpoint = ts.URL + "/api"
 	err := cmd.Execute([]string{})
 
 	if err != nil {
