@@ -17,8 +17,8 @@ and loosely inspired by [govc](https://github.com/vmware/govmomi/tree/master/gov
 ```
 export GOMEME_ENDPOINT=https://.../automation-api
 export GOMEME_INSECURE=true
-gomeme login -user toto
-gomeme qr -name PRD*
+gomeme login -u toto
+gomeme qr -n PRD*
 
 ```
 
@@ -28,7 +28,7 @@ $env:GOMEME_INSECURE="true"
 ...
 ```
 
-Use the ```-dump``` option to output in a Go-like format. ```-json``` option outputs in json format.
+Use the ```--dump``` option to output in a Go-like format. ```--json``` option outputs in json format.
 
 Helps for commands can be accessed with ```-h```
 
@@ -44,7 +44,7 @@ through the terminal.
 User defaults to $USER if not specified.
 
 ```
-gomeme login -user toto
+gomeme login --user toto
 ```
 
 ### qr
@@ -52,7 +52,7 @@ gomeme login -user toto
 list qrs
 
 ```
-gomeme qr -name PRD-*
+gomeme qr --name PRD-*
 ```
 
 ### lj
@@ -60,14 +60,14 @@ gomeme qr -name PRD-*
 list jobs (default limit is 1000). Use ```-v``` for more info. Outputs a csv with ```-csv```
 
 ```
-gomeme lj -application TOTO-PRD -status Executing -limit 30
-gomeme lj -application TOTO-PRD -host *pk1*
+gomeme lj --application TOTO-PRD --status Executing --limit 30
+gomeme lj -a TOTO-PRD --host *pk1*
 ```
 
 when listing a single jobid, one can use the deps option to go through the jobs in the neighbour of that job.
 
 ```
-gomeme lj -deps -jobid FOOSRV:5rxwz -v
+gomeme lj --deps --jobid FOOSRV:5rxwz -v
 ```
 
 
@@ -76,7 +76,7 @@ gomeme lj -deps -jobid FOOSRV:5rxwz -v
 set a qr
 
 ```
-gomeme qr.set -name DEV-FOO -ctm BARCT4T -max 5
+gomeme qr.set --name DEV-FOO --ctm BARCT4T --max 5
 ```
 
 ### job.log
@@ -84,9 +84,9 @@ gomeme qr.set -name DEV-FOO -ctm BARCT4T -max 5
 get the output or logs of a job id
 
 ```
-gomeme job.log -jobid FOOCCT4P:5nq1c
-gomeme job.log -jobid FOOCCT4P:5nq1c -output
-gomeme job.log -jobid FOOCCT4P:5nq1c -output -run 3
+gomeme job.log --jobid FOOCCT4P:5nq1c
+gomeme job.log --jobid FOOCCT4P:5nq1c --output
+gomeme job.log --jobid FOOCCT4P:5nq1c --output --run 3
 ```
 
 ### job.order
@@ -94,7 +94,7 @@ gomeme job.log -jobid FOOCCT4P:5nq1c -output -run 3
 order a job.
 
 ```
-gomeme job.order -ctm FOOCT4T -folder ABC-DEV-OND -hold -jobs dABC1
+gomeme job.order --ctm FOOCT4T --folder ABC-DEV-OND --jobs dABC1
 ```
 
 ### job.action
@@ -102,7 +102,7 @@ gomeme job.order -ctm FOOCT4T -folder ABC-DEV-OND -hold -jobs dABC1
 hold/delete/undelete/confirm/setToOk/rerun a job
 
 ```
-gomeme job.action -action delete -jobid FOOCT4T:3z553
+gomeme job.action --action delete --jobid FOOCT4T:3z553
 ```
 
 ### job.tree
@@ -132,8 +132,8 @@ the completion of D, that are not reflected.
 This command takes the same parameters as lj
 
 ```
-gomeme job.tree -application TOTO-PRD -limit 10
-gomeme job.tree -application TOTO-PRD -limit 10 -back    # instead of following dependencies, follow predecessors
+gomeme job.tree --application TOTO-PRD --limit 10
+gomeme job.tree --application TOTO-PRD --limit 10 --back    # instead of following dependencies, follow predecessors
 ```
 
 
@@ -158,7 +158,7 @@ gomeme config.servers
 List all agents for a specific server
 
 ```
-gomeme config.servers -server FOO123
+gomeme config.servers --ctm FOO123
 ```
 
 
@@ -167,7 +167,7 @@ gomeme config.servers -server FOO123
 List parameters specific to an agent. Uses ```-all``` to show all parameters.
 
 ```
-gomeme config.server -server FOO123 -agent toto.net
+gomeme config.server --ctm FOO123 --host toto.net
 ```
 
 ### deploy.get
@@ -175,8 +175,8 @@ gomeme config.server -server FOO123 -agent toto.net
 Return definition of jobs in folder
 
 ```
-gomeme deploy.get -ctm FOO -folder toto -xml
-gomeme deploy.get -ctm FOO -folder toto
+gomeme deploy.get --ctm FOO --folder toto --xml
+gomeme deploy.get --ctm FOO --folder toto
 ```
 
 ### logout

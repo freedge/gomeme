@@ -21,7 +21,7 @@ type jobsStatusCommonCommand struct {
 	jobid       string `short:"j" long:"jobid" description:"job id"`
 	folder      string `short:"f" long:"folder" description:"folder"`
 	verbose     bool   `short:"v" long:"verbose" description:"output more stuff"`
-	host        string `short:"h" long:"host" description:"host"`
+	host        string `short:"H" long:"host" description:"host"`
 	neighbours  bool   `long:"deps" description:"browse through neighours of this job. Only jobid can be used to filter jobs"`
 }
 

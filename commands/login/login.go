@@ -15,13 +15,12 @@ import (
 )
 
 type loginCommand struct {
-	user  string `short:"u" long:"user" description:"Username to use"`
+	user  string `short:"u" long:"user" description:"Username to use" env:"USER"`
 	token types.Token
 }
 
 const (
 	envPassword = "GOMEME_PASSWORD" // environment variable for your password, only used by the login command
-	envUser     = "USER"            // default to the current user
 )
 
 func (cmd *loginCommand) Data() interface{} {
@@ -29,14 +28,6 @@ func (cmd *loginCommand) Data() interface{} {
 }
 
 func (cmd *loginCommand) Execute([]string) (err error) {
-	if commands.Endpoint == "" {
-		err = fmt.Errorf("Endpoint must be set")
-		return
-	}
-
-	if cmd.user == "" {
-		cmd.user = os.Getenv(envUser)
-	}
 
 	// either get it on the terminal
 	var found bool

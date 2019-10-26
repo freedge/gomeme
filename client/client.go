@@ -48,7 +48,7 @@ func Call(method, url string, query interface{}, params map[string]string, out i
 		}
 		bytebuffer = bytes.NewBuffer(jsonquery)
 	}
-	req, err := http.NewRequest(method, commands.Endpoint+url, bytebuffer)
+	req, err := http.NewRequest(method, commands.Opts.Endpoint+url, bytebuffer)
 
 	if commands.TheToken != "" {
 		var bearer = "Bearer " + commands.TheToken
@@ -65,7 +65,7 @@ func Call(method, url string, query interface{}, params map[string]string, out i
 
 	// Send req using http Client
 	client := &http.Client{}
-	if commands.Insecure {
+	if commands.Opts.Insecure {
 		if customTransport == nil {
 			cfg := &tls.Config{
 				InsecureSkipVerify: true,

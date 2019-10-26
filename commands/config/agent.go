@@ -11,7 +11,7 @@ import (
 
 type agent struct {
 	server string `short:"c" long:"ctm" description:"server" required:"true"`
-	agent  string `short:"h" long:"host" description:"agent" required:"true"`
+	agent  string `short:"H" long:"host" description:"agent" required:"true"`
 	all    bool   `short:"a" long:"all" description:"show all parameters, not only the default ones"`
 	params types.ConfigAgentParamsReply
 }

@@ -23,11 +23,11 @@ func (cmd *curl) Data() interface{} {
 
 func (cmd *curl) Execute([]string) error {
 	var kflag string
-	if commands.Insecure {
+	if commands.Opts.Insecure {
 		kflag = "-k "
 	}
 	cmd.out = fmt.Sprintf("curl %s-H 'Accept: application/json' -H 'Authorization: Bearer %s' %s",
-		kflag, commands.TheToken, commands.Endpoint)
+		kflag, commands.TheToken, commands.Opts.Endpoint)
 	return nil
 }
 func (cmd *curl) PrettyPrint() error {
