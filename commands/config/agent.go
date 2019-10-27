@@ -17,9 +17,7 @@ type agent struct {
 }
 
 func (cmd *agent) Execute([]string) (err error) {
-	if err = client.Call("GET", "/config/server/"+cmd.Server+"/agent/"+cmd.Agent+"/params", nil, map[string]string{}, &cmd.params); err != nil {
-		return
-	}
+	err = client.Call("GET", "/config/server/"+cmd.Server+"/agent/"+cmd.Agent+"/params", nil, map[string]string{}, &cmd.params)
 	return
 }
 

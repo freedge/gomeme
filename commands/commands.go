@@ -15,6 +15,7 @@ type DefaultOpts struct {
 	JSONNeeded bool   `long:"json" description:"outputs as json"`
 	Insecure   bool   `long:"insecure" description:"insecure"  env:"GOMEME_INSECURE"`
 	Endpoint   string `long:"endpoint" description:"endpoint" env:"GOMEME_ENDPOINT" required:"true"`
+	Debug      bool   `long:"debug"`
 }
 
 // Opts is the list of default opts

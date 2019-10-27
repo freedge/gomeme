@@ -32,6 +32,8 @@ Use the ```--dump``` option to output in a Go-like format. ```--json``` option o
 
 Helps for commands can be accessed with ```-h```
 
+Traffic received from ctm server can be dumped with ```--debug```
+
 ## Commands
 
 ### login

@@ -81,6 +81,12 @@ func Call(method, url string, query interface{}, params map[string]string, out i
 	if err != nil {
 		return
 	}
+
+	if commands.Opts.Debug {
+		body, _ := ioutil.ReadAll(resp.Body)
+		fmt.Println("DEBUG", resp.StatusCode, string(body))
+	}
+
 	switch resp.StatusCode {
 	case 404:
 		err = fmt.Errorf("client: got an error accessing %v", req.URL)
