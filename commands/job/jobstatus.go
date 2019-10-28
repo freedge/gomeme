@@ -20,7 +20,7 @@ type jobsStatusCommonCommand struct {
 	Jobname     string `short:"n" long:"jobname" description:"job name"`
 	Jobid       string `short:"j" long:"jobid" description:"job id"`
 	Folder      string `short:"f" long:"folder" description:"folder"`
-	Verbose     bool   `short:"v" long:"verbose" description:"output more stuff"`
+	Verbose     bool   `short:"v" long:"verbose" description:"output more stuff, that fits onto my sreen (158 characters wide)"`
 	Host        string `short:"H" long:"host" description:"host"`
 	Neighbours  bool   `long:"deps" description:"browse through neighours of this job. Only jobid can be used to filter jobs"`
 }
@@ -132,14 +132,14 @@ func (cmd *jobsStatusCommand) PrettyPrint() error {
 	}
 	if cmd.Verbose {
 		fmt.Printf("%d/%d jobs displayed\n", cmd.reply.Returned, cmd.reply.Total)
-		fmt.Printf("%-40.40s %5.5s %-20.20s %8.8s %16.16s %16.16s %5.5s %12.12s %12.12s %20.20s %8.8s %4.4s\n",
-			"Folder/Name", "Held", "JobId", "Order", "Status", "Host", "Del?", "Start time", "End time", "Description", "Duration", "Runs")
-		fmt.Printf("%s\n", strings.Repeat("-", 177))
+		fmt.Printf("%-40.40s %5.5s %-14.14s %8.8s %14.14s %17.17s %5.5s %12.12s %21.21s %8.8s %4.4s\n",
+			"Folder/Name", "Held", "JobId", "Order", "Status", "Host", "Del?", "Start time", "Description", "Duration", "Runs")
+		fmt.Printf("%s\n", strings.Repeat("-", 158))
 		for _, job := range cmd.reply.Statuses {
-			fmt.Printf("%-40.40s %5.5s %-20.20s %8.8s %16.146s %16.16s %5.5s %12.12s %12.12s %20.20s %8.8s % 4d\n",
+			fmt.Printf("%-40.40s %5.5s %-14.14s %8.8s %14.14s %17.17s %5.5s %12.12s %21.21s %8.8s % 4d\n",
 				job.Folder+"/"+job.Name,
 				strconv.FormatBool(job.Held),
-				job.JobId, job.OrderDate, job.Status, job.Host, strconv.FormatBool(job.Deleted), job.StartTime, job.EndTime, job.Description, GetDurationAsString(job), job.NumberOfRuns)
+				job.JobId, job.OrderDate, job.Status, job.Host, strconv.FormatBool(job.Deleted), job.StartTime, job.Description, GetDurationAsString(job), job.NumberOfRuns)
 		}
 	} else {
 		fmt.Printf("%-15.15s %18.18s %8.8s %16.16s %8.8s\n",
