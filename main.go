@@ -2,11 +2,12 @@ package main
 
 import (
 	"encoding/json"
-	"flag"
 	"fmt"
 	"os"
 
 	"github.com/freedge/gomeme/commands"
+	"github.com/jessevdk/go-flags"
+
 	_ "github.com/freedge/gomeme/commands/config"
 	_ "github.com/freedge/gomeme/commands/curl"
 	_ "github.com/freedge/gomeme/commands/deploy"
@@ -15,49 +16,34 @@ import (
 	_ "github.com/freedge/gomeme/commands/qr"
 )
 
-var (
-	dumpNeeded = false // dump the go object
-	jsonNeeded = false // dump as json
-)
-
-func main() {
-	if len(os.Args) < 2 {
-		commands.Usage()
-		os.Exit(-1)
+func commandHandler(command flags.Commander, args []string) error {
+	cmd := command.(commands.Command)
+	var err error
+	if err = cmd.Execute(args); err != nil {
+		return err
 	}
-
-	// find the proper command and delegate most of the actions to it
-	command, found := commands.Commands[os.Args[1]]
-	if !found {
-		commands.Usage()
-		os.Exit(-1)
-	}
-	flagset := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
-	flagset.BoolVar(&dumpNeeded, "dump", false, "outputs as go structure")
-	flagset.BoolVar(&jsonNeeded, "json", false, "outputs as json")
-	command.Prepare(flagset)
-
-	if err := flagset.Parse(os.Args[2:]); err != nil {
-		panic(err)
-	}
-
-	data, err := command.Run()
-	if err != nil {
-		fmt.Printf("command exited in error: %s\n", err.Error())
-		os.Exit(-1)
-	}
+	data := cmd.Data()
 
 	switch {
-	case jsonNeeded:
+	case commands.Opts.JSONNeeded:
 		bytes, _ := json.MarshalIndent(data, "", "  ")
 		fmt.Printf("%s\n", string(bytes))
-	case dumpNeeded:
+	case commands.Opts.Dump:
 		fmt.Printf("%#v", data)
 	default:
-		err = command.PrettyPrint(data)
+		err = cmd.PrettyPrint()
 	}
-	if err != nil {
-		fmt.Printf("Printing exited in error: %s\n", err.Error())
-		os.Exit(-1)
+
+	return err
+}
+
+func main() {
+	commands.Parser.CommandHandler = commandHandler
+	if _, err := commands.Parser.Parse(); err != nil {
+		if flagsErr, ok := err.(*flags.Error); ok && flagsErr.Type == flags.ErrHelp {
+			os.Exit(0)
+		} else {
+			os.Exit(1)
+		}
 	}
 }

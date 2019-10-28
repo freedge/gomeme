@@ -1,7 +1,6 @@
 package job
 
 import (
-	"flag"
 	"fmt"
 	"strconv"
 	"strings"
@@ -13,35 +12,26 @@ import (
 )
 
 // jobsStatusCommand retrieve a list of jobs
-type jobsStatusCommand struct {
-	application string
-	limit       int
-	status      string
+type jobsStatusCommonCommand struct {
+	Application string `short:"a" long:"application"`
+	Limit       int    `short:"l"  long:"limit" default:"1000"`
+	Status      string `short:"s"  long:"status" choice:"Executing" choice:"Ended Not OK" choice:"Ended OK" choice:"Wait Condition" choice:"Wait Resource" choice:"Wait User" choice:"Wait Host" description:"Only this status"`
 	reply       types.JobsStatusReply
-	jobname     string
-	jobid       string
-	folder      string
-	csv         bool
-	verbose     bool
-	host        string
-	neighbours  bool
+	Jobname     string `short:"n" long:"jobname" description:"job name"`
+	Jobid       string `short:"j" long:"jobid" description:"job id"`
+	Folder      string `short:"f" long:"folder" description:"folder"`
+	Verbose     bool   `short:"v" long:"verbose" description:"output more stuff"`
+	Host        string `short:"H" long:"host" description:"host"`
+	Neighbours  bool   `long:"deps" description:"browse through neighours of this job. Only jobid can be used to filter jobs"`
 }
 
-func (cmd *jobsStatusCommand) prepareCommon(flags *flag.FlagSet) {
-	flags.StringVar(&cmd.application, "application", "", "Jobs for this application")
-	flags.IntVar(&cmd.limit, "limit", 1000, "Limit to how many jobs")
-	flags.StringVar(&cmd.status, "status", "", "Only this status")
-	flags.StringVar(&cmd.jobname, "jobname", "", "Job name")
-	flags.StringVar(&cmd.jobid, "jobid", "", "Jobid")
-	flags.StringVar(&cmd.folder, "folder", "", "Folder")
-	flags.BoolVar(&cmd.verbose, "v", false, "output more stuff")
-	flags.StringVar(&cmd.host, "host", "", "host")
-	flags.BoolVar(&cmd.neighbours, "deps", false, "browse through neighours of this job. Only jobid can be used to filter jobs")
+type jobsStatusCommand struct {
+	jobsStatusCommonCommand
+	Csv bool `short:"c" long:"csv" description:"csv output"`
 }
 
-func (cmd *jobsStatusCommand) Prepare(flags *flag.FlagSet) {
-	cmd.prepareCommon(flags)
-	flags.BoolVar(&cmd.csv, "csv", false, "csv output")
+func (cmd *jobsStatusCommand) Data() interface{} {
+	return cmd.reply
 }
 
 const (
@@ -51,19 +41,19 @@ const (
 
 // func addArg(args map[string]string, )
 
-func (cmd *jobsStatusCommand) GetJobs() (i interface{}, err error) {
+func (cmd *jobsStatusCommonCommand) GetJobs() (i interface{}, err error) {
 	i = nil
 
 	// add authorization header to the req
 	args := make(map[string]string)
-	commands.AddIfNotEmpty(args, "application", cmd.application)
-	commands.AddIfNotEmpty(args, "status", cmd.status)
-	commands.AddIfNotEmpty(args, "jobname", cmd.jobname)
-	commands.AddIfNotEmpty(args, "folder", cmd.folder)
-	commands.AddIfNotEmpty(args, "host", cmd.host)
+	commands.AddIfNotEmpty(args, "application", cmd.Application)
+	commands.AddIfNotEmpty(args, "status", cmd.Status)
+	commands.AddIfNotEmpty(args, "jobname", cmd.Jobname)
+	commands.AddIfNotEmpty(args, "folder", cmd.Folder)
+	commands.AddIfNotEmpty(args, "host", cmd.Host)
 
-	if cmd.jobid != "" {
-		if cmd.neighbours {
+	if cmd.Jobid != "" {
+		if cmd.Neighbours {
 			if len(args) > 0 {
 				err = fmt.Errorf("only jobid should be used to filter jobs")
 				return
@@ -72,14 +62,14 @@ func (cmd *jobsStatusCommand) GetJobs() (i interface{}, err error) {
 			args["direction"] = "radial"
 			args["depth"] = "5"
 		}
-		args["jobid"] = cmd.jobid
+		args["jobid"] = cmd.Jobid
 	} else {
-		if cmd.neighbours {
+		if cmd.Neighbours {
 			err = fmt.Errorf("jobid missing")
 			return
 		}
 	}
-	args["limit"] = strconv.Itoa(cmd.limit)
+	args["limit"] = strconv.Itoa(cmd.Limit)
 
 	err = client.Call("GET", jobsStatusPath, nil, args, &cmd.reply)
 
@@ -88,8 +78,8 @@ func (cmd *jobsStatusCommand) GetJobs() (i interface{}, err error) {
 	return
 }
 
-func (cmd *jobsStatusCommand) Run() (i interface{}, err error) {
-	i, err = cmd.GetJobs()
+func (cmd *jobsStatusCommand) Execute([]string) (err error) {
+	_, err = cmd.GetJobs()
 	return
 }
 
@@ -136,11 +126,11 @@ func (cmd *jobsStatusCommand) printCsv() error {
 	return nil
 }
 
-func (cmd *jobsStatusCommand) PrettyPrint(data interface{}) error {
-	if cmd.csv {
+func (cmd *jobsStatusCommand) PrettyPrint() error {
+	if cmd.Csv {
 		return cmd.printCsv()
 	}
-	if cmd.verbose {
+	if cmd.Verbose {
 		fmt.Printf("%d/%d jobs displayed\n", cmd.reply.Returned, cmd.reply.Total)
 		fmt.Printf("%-40.40s %5.5s %-20.20s %8.8s %16.16s %16.16s %5.5s %12.12s %12.12s %20.20s %8.8s %4.4s\n",
 			"Folder/Name", "Held", "JobId", "Order", "Status", "Host", "Del?", "Start time", "End time", "Description", "Duration", "Runs")
@@ -165,5 +155,5 @@ func (cmd *jobsStatusCommand) PrettyPrint(data interface{}) error {
 	return nil
 }
 func init() {
-	commands.Register("lj", &jobsStatusCommand{})
+	commands.AddCommand("lj", "list the jobs", "List jobs matching the filtering criteria", &jobsStatusCommand{})
 }

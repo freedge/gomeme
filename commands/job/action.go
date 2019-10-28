@@ -1,7 +1,6 @@
 package job
 
 import (
-	"flag"
 	"fmt"
 
 	"github.com/freedge/gomeme/client"
@@ -10,35 +9,25 @@ import (
 )
 
 type jobActionCommand struct {
-	jobid  string
-	action string
+	Jobid  string `short:"j" long:"jobid" required:"true" description:"Job ID"`
+	Action string `short:"a" long:"action" description:"action to run" choice:"hold" choice:"free" choice:"confirm" choice:"delete" choice:"undelete" choice:"rerun" choice:"setToOk" choice:"runNow" choice:"kill" required:"true"`
 	result types.JobActionReply
 }
 
-func (cmd *jobActionCommand) Prepare(flags *flag.FlagSet) {
-	flags.StringVar(&cmd.jobid, "jobid", "", "JobID")
-	flags.StringVar(&cmd.action, "action", "", "action to run: hold, free, confirm, delete, undelete, rerun, setToOk, runNow")
+func (cmd *jobActionCommand) Data() interface{} {
+	return cmd.result
 }
 
-func (cmd *jobActionCommand) Run() (i interface{}, err error) {
-	i = nil
-
-	if cmd.jobid == "" || cmd.action == "" {
-		err = fmt.Errorf("job id or action missing")
-		return
-	}
-
-	err = client.Call("POST", "/run/job/"+cmd.jobid+"/"+cmd.action, nil, map[string]string{}, &cmd.result)
-	i = cmd.result
-
+func (cmd *jobActionCommand) Execute([]string) (err error) {
+	err = client.Call("POST", "/run/job/"+cmd.Jobid+"/"+cmd.Action, nil, map[string]string{}, &cmd.result)
 	return
 }
 
-func (cmd *jobActionCommand) PrettyPrint(i interface{}) error {
+func (cmd *jobActionCommand) PrettyPrint() error {
 	fmt.Println(cmd.result.Message)
 	return nil
 }
 
 func init() {
-	commands.Register("job.action", &jobActionCommand{})
+	commands.AddCommand("job.action", "action on a job", "Perform an action (confirm, hold, free, etc.) on a job", &jobActionCommand{})
 }

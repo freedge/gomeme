@@ -44,9 +44,9 @@ func TestJobStatus(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	js := jobsStatusCommand{limit: 42}
-	commands.Endpoint = ts.URL + "/api"
-	qr, err := js.Run()
+	js := jobsStatusCommand{jobsStatusCommonCommand: jobsStatusCommonCommand{Limit: 42}}
+	commands.Opts.Endpoint = ts.URL + "/api"
+	err := js.Execute([]string{})
 
 	if err != nil {
 		t.Error(err)
@@ -75,8 +75,8 @@ func TestJobStatus(t *testing.T) {
 				LogURI:         "https://bla:8443/automation-api/run/job/LUCCT1P:32zfh/log",
 			},
 		}, Returned: 1, Total: 1}
-	if !reflect.DeepEqual(qr, expected) {
-		t.Errorf("got %#v != %#v", qr, expected)
+	if !reflect.DeepEqual(js.Data(), expected) {
+		t.Errorf("got %#v != %#v", js.Data(), expected)
 	}
 	s := <-ch
 	if !reflect.DeepEqual(s, "limit=42") {

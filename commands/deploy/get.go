@@ -2,7 +2,6 @@
 package deploy
 
 import (
-	"flag"
 	"fmt"
 
 	"github.com/freedge/gomeme/client"
@@ -10,42 +9,31 @@ import (
 )
 
 type get struct {
-	ctm    string
-	folder string
-	xml    bool
+	Ctm    string `short:"c" long:"ctm" description:"server" required:"true"`
+	Folder string `short:"f" long:"folder" description:"folder" required:"true"`
+	Xml    bool   `short:"x" long:"xml" description:"xml format"`
 	output string
 }
 
-func (cmd *get) Prepare(flags *flag.FlagSet) {
-	flags.StringVar(&cmd.ctm, "ctm", "", "ctm")
-	flags.StringVar(&cmd.folder, "folder", "", "folder")
-	flags.BoolVar(&cmd.xml, "xml", false, "xml format")
+func (cmd *get) Data() interface{} {
+	return cmd.output
 }
 
-func (cmd *get) Run() (i interface{}, err error) {
-
-	if cmd.folder == "" || cmd.ctm == "" {
-		err = fmt.Errorf("folder or ctm not specified")
-		return
-	}
-	params := map[string]string{"ctm": cmd.ctm, "folder": cmd.folder}
-	if cmd.xml {
+func (cmd *get) Execute([]string) (err error) {
+	params := map[string]string{"ctm": cmd.Ctm, "folder": cmd.Folder}
+	if cmd.Xml {
 		params["format"] = "XML"
 	}
 
-	if err = client.Call("GET", "/deploy/jobs", nil, params, &cmd.output); err != nil {
-		return
-	}
-
-	i = cmd.output
+	err = client.Call("GET", "/deploy/jobs", nil, params, &cmd.output)
 	return
 }
 
-func (cmd *get) PrettyPrint(data interface{}) error {
+func (cmd *get) PrettyPrint() error {
 	fmt.Println(cmd.output)
 	return nil
 }
 
 func init() {
-	commands.Register("deploy.get", &get{})
+	commands.AddCommand("deploy.get", "get jobs definition", "Get all the jobs definition under a folder", &get{})
 }

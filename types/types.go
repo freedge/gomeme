@@ -126,3 +126,12 @@ type ConfigAgentParamsReply []ConfigAgentParam
 
 // LogoutReply is the message returned after login out
 type LogoutReply = Message
+
+// PingAgentReply is the message returned when pinging an agent
+type PingAgentReply = Message
+
+// PingAgentQuery are the parameters sent to ping an agent
+type PingAgentQuery struct {
+	Timeout  int  `json:"timeout"`
+	Discover bool `json:"discover"`
+}

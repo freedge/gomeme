@@ -1,7 +1,6 @@
 package job
 
 import (
-	"flag"
 	"fmt"
 	"math"
 	"strconv"
@@ -40,10 +39,14 @@ type treenode struct {
 // edge, so it will always be the longest chain that is displayed.
 type jobTreeCommand struct {
 	jobsStatusCommand
-	predecessor     bool             // build a graph by ascending through predecessors
+	Predecessor     bool             `short:"b" long:"back" description:"build the graph by browsing through predecessors"` // build a graph by ascending through predecessors
 	nodes           map[string]*node // our graph of jobs
 	toposortedStack []*node          // the same graph, but sorted topologically
 	tree            []treenode       // the graph, now reduced into a tree
+}
+
+func (cmd *jobTreeCommand) Data() interface{} {
+	return cmd.tree
 }
 
 func (cmd *jobTreeCommand) addNode(job *types.Status) *node {
@@ -96,12 +99,7 @@ func (cmd *jobTreeCommand) weightGraph() {
 
 const jobWeight = 1
 
-func (cmd *jobTreeCommand) Prepare(flags *flag.FlagSet) {
-	cmd.prepareCommon(flags)
-	flags.BoolVar(&cmd.predecessor, "back", false, "build a graph by going up through predecessors")
-}
-
-func (cmd *jobTreeCommand) Run() (i interface{}, err error) {
+func (cmd *jobTreeCommand) Execute([]string) (err error) {
 	// retrieve a list of jobs
 	if _, err = cmd.GetJobs(); err != nil {
 		return
@@ -122,14 +120,14 @@ func (cmd *jobTreeCommand) Run() (i interface{}, err error) {
 	// explore jobs outside the initial list
 	// choose a direction to explore dependencies
 	direction := "depend"
-	if cmd.predecessor {
+	if cmd.Predecessor {
 		direction = "predecessor"
 	}
 	for it, job := range cmd.reply.Statuses {
 		fromNode := cmd.addNode(&cmd.reply.Statuses[it])
 
 		reply := &types.JobsStatusReply{}
-		if cmd.verbose {
+		if cmd.Verbose {
 			fmt.Printf("retrieving job % 3d/%d\n", it+1, len(cmd.reply.Statuses))
 		}
 		err = client.Call("GET", jobsStatusPath, nil, map[string]string{
@@ -146,7 +144,7 @@ func (cmd *jobTreeCommand) Run() (i interface{}, err error) {
 			if subjob.JobId == job.JobId {
 				continue
 			}
-			if cmd.verbose {
+			if cmd.Verbose {
 				fmt.Println("adding edge")
 			}
 			// add
@@ -161,7 +159,6 @@ func (cmd *jobTreeCommand) Run() (i interface{}, err error) {
 
 	// build a tree out of this
 	cmd.tree = make([]treenode, 0, len(cmd.nodes))
-	i = &cmd.tree
 	for _, anode := range cmd.nodes {
 		// visit starting from ancestor
 		if len(anode.incomingEdges) > 0 {
@@ -183,8 +180,8 @@ func (cmd *jobTreeCommand) visit(shift int, anode *node) {
 	}
 }
 
-func (cmd *jobTreeCommand) PrettyPrint(interface{}) error {
-	if !cmd.verbose {
+func (cmd *jobTreeCommand) PrettyPrint() error {
+	if !cmd.Verbose {
 		fmt.Printf("%-30.30s %-40.40s %s\n", "jobid", "folder/name", "status")
 		fmt.Println(strings.Repeat("-", 90))
 		for _, atreenode := range cmd.tree {
@@ -211,5 +208,5 @@ func (cmd *jobTreeCommand) PrettyPrint(interface{}) error {
 }
 
 func init() {
-	commands.Register("job.tree", &jobTreeCommand{})
+	commands.AddCommand("job.tree", "list jobs in a tree", "Retrieve a graph of jobs and their dependencies, output it into the form of a tree", &jobTreeCommand{})
 }

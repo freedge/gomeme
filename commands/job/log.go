@@ -1,7 +1,6 @@
 package job
 
 import (
-	"flag"
 	"fmt"
 
 	"github.com/freedge/gomeme/client"
@@ -9,48 +8,39 @@ import (
 )
 
 type jobLogCommand struct {
-	jobid  string
-	output bool
+	Jobid  string `short:"j" long:"jobid" description:"jobid" required:"true"`
+	Output bool   `short:"o" long:"output"  description:"display output instead of logs"`
 	result string
-	run    int
+	Run    int `short:"r" long:"run" default:"-1" description:"for output, run number of the job. Defaults to last one"`
 }
 
-func (cmd *jobLogCommand) Prepare(flags *flag.FlagSet) {
-	flags.StringVar(&cmd.jobid, "jobid", "", "JobID")
-	flags.BoolVar(&cmd.output, "output", false, "display output instead of logs")
-	flags.IntVar(&cmd.run, "run", -1, "for output, run number of the job. Defaults to last one")
+func (cmd *jobLogCommand) Data() interface{} {
+	return cmd.result
 }
-func (cmd *jobLogCommand) Run() (i interface{}, err error) {
-	if cmd.jobid == "" {
-		err = fmt.Errorf("missing jobid")
-		return
-	}
-	i = nil
 
+func (cmd *jobLogCommand) Execute([]string) (err error) {
 	service := "log"
-	if cmd.output {
+	if cmd.Output {
 		service = "output"
 	}
-	if cmd.run > 0 {
-		if cmd.output {
-			service = fmt.Sprintf("%s/?runNo=%d", service, cmd.run)
+	if cmd.Run > 0 {
+		if cmd.Output {
+			service = fmt.Sprintf("%s/?runNo=%d", service, cmd.Run)
 		} else {
 			err = fmt.Errorf("run can only be specified when getting a job output")
 			return
 		}
 	}
 
-	err = client.Call("GET", "/run/job/"+cmd.jobid+"/"+service, nil, map[string]string{}, &cmd.result)
-	i = cmd.result
-
+	err = client.Call("GET", "/run/job/"+cmd.Jobid+"/"+service, nil, map[string]string{}, &cmd.result)
 	return
 }
 
-func (cmd *jobLogCommand) PrettyPrint(i interface{}) error {
+func (cmd *jobLogCommand) PrettyPrint() error {
 	fmt.Println(cmd.result)
 	return nil
 }
 
 func init() {
-	commands.Register("job.log", &jobLogCommand{})
+	commands.AddCommand("job.log", "get logs for a job", "Retrieve output or logs of a job id", &jobLogCommand{})
 }

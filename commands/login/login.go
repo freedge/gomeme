@@ -3,7 +3,6 @@
 package login
 
 import (
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -16,28 +15,19 @@ import (
 )
 
 type loginCommand struct {
-	user  string
+	User  string `short:"u" long:"user" description:"Username to use" env:"USER"`
 	token types.Token
 }
 
 const (
 	envPassword = "GOMEME_PASSWORD" // environment variable for your password, only used by the login command
-	envUser     = "USER"            // default to the current user
 )
 
-func (cmd *loginCommand) Prepare(flags *flag.FlagSet) {
-	flags.StringVar(&(cmd.user), "user", "", "Username to use")
+func (cmd *loginCommand) Data() interface{} {
+	return &cmd.token
 }
 
-func (cmd *loginCommand) Run() (i interface{}, err error) {
-	if commands.Endpoint == "" {
-		err = fmt.Errorf("Endpoint must be set")
-		return
-	}
-
-	if cmd.user == "" {
-		cmd.user = os.Getenv(envUser)
-	}
+func (cmd *loginCommand) Execute([]string) (err error) {
 
 	// either get it on the terminal
 	var found bool
@@ -47,7 +37,7 @@ func (cmd *loginCommand) Run() (i interface{}, err error) {
 			err = fmt.Errorf("run from a terminal or provide password through %s environment variable", envPassword)
 			return
 		}
-		fmt.Printf("Enter password for user %s:\n", cmd.user)
+		fmt.Printf("Enter password for user %s:\n", cmd.User)
 		var bytes []byte
 		if bytes, err = terminal.ReadPassword(0 /* stdin */); err != nil {
 			return
@@ -55,22 +45,21 @@ func (cmd *loginCommand) Run() (i interface{}, err error) {
 		password = string(bytes)
 	}
 
-	query := types.SessionLoginQuery{Username: cmd.user, Password: password}
+	query := types.SessionLoginQuery{Username: cmd.User, Password: password}
 
 	if err = client.Call("POST", "/session/login", query, map[string]string{}, &cmd.token); err != nil {
 		return
 	}
 
-	i = cmd.token
 	err = ioutil.WriteFile(".token", []byte(cmd.token.Token), 0600)
 	return
 }
 
-func (cmd *loginCommand) PrettyPrint(i interface{}) error {
+func (cmd *loginCommand) PrettyPrint() error {
 	fmt.Printf("Logged in. Server version %s\n", cmd.token.Version)
 	return nil
 }
 
 func init() {
-	commands.Register("login", &loginCommand{})
+	commands.AddCommand("login", "login", "Login with the specified username", &loginCommand{})
 }

@@ -1,7 +1,6 @@
 package job
 
 import (
-	"flag"
 	"fmt"
 
 	"github.com/freedge/gomeme/client"
@@ -11,49 +10,29 @@ import (
 )
 
 type orderJobCommand struct {
-	Hold   bool
-	Ctm    string
-	Folder string
-	Jobs   string
-	reply  types.OrderJobReply
-	status types.JobsStatusReply
+	DontHold bool   `short:"D" long:"donthold" description:"do not hold the job after submission"`
+	Ctm      string `short:"c" long:"ctm" description:"server" required:"true"`
+	Folder   string `short:"f" long:"folder" description:"folder" required:"true"`
+	Jobs     string `short:"n" long:"name" description:"job name" required:"true"`
+	reply    types.OrderJobReply
+	status   types.JobsStatusReply
 }
 
-func (cmd *orderJobCommand) Prepare(flags *flag.FlagSet) {
-	flags.BoolVar(&cmd.Hold, "hold", true, "Hold the job after submission")
-	flags.StringVar(&cmd.Ctm, "ctm", "", "ctm")
-	flags.StringVar(&cmd.Folder, "folder", "", "Folder")
-	flags.StringVar(&cmd.Jobs, "jobs", "", "jobs")
+func (cmd *orderJobCommand) Data() interface{} {
+	return cmd.status
 }
-func (cmd *orderJobCommand) Run() (i interface{}, err error) {
-	i = nil
-	if commands.TheToken == "" {
-		err = fmt.Errorf("no token found. Please login first")
-		return
-	}
-	if !cmd.Hold {
-		err = fmt.Errorf("Currently only support holding jobs")
-		return
-	}
-
-	if cmd.Jobs == "" || cmd.Ctm == "" || cmd.Folder == "" {
-		err = fmt.Errorf("parameters missing")
-		return
-	}
-
-	query := types.OrderQuery{Jobs: cmd.Jobs, Ctm: cmd.Ctm, Folder: cmd.Folder, Hold: cmd.Hold}
+func (cmd *orderJobCommand) Execute([]string) (err error) {
+	query := types.OrderQuery{Jobs: cmd.Jobs, Ctm: cmd.Ctm, Folder: cmd.Folder, Hold: !cmd.DontHold}
 	err = client.Call("POST", "/run/order", query, map[string]string{}, &cmd.reply)
 	if err != nil {
 		return
 	}
 
 	err = client.Call("GET", "/run/status/"+cmd.reply.RunID, nil, map[string]string{}, &cmd.status)
-	i = &cmd.status
-
 	return
 }
 
-func (cmd *orderJobCommand) PrettyPrint(data interface{}) error {
+func (cmd *orderJobCommand) PrettyPrint() error {
 	fmt.Println("RunId: ", cmd.reply.RunID)
 	for _, status := range cmd.status.Statuses {
 		fmt.Println("JobId: ", status.JobId)
@@ -62,5 +41,5 @@ func (cmd *orderJobCommand) PrettyPrint(data interface{}) error {
 }
 
 func init() {
-	commands.Register("job.order", &orderJobCommand{})
+	commands.AddCommand("job.order", "order a job", "Order the specified job", &orderJobCommand{})
 }

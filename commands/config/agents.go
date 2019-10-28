@@ -2,7 +2,6 @@
 package config
 
 import (
-	"flag"
 	"fmt"
 	"strings"
 
@@ -12,28 +11,20 @@ import (
 )
 
 type agents struct {
-	server string
+	Server string `short:"c" long:"ctm" description:"server" required:"true"`
 	agents types.ConfigAgentsReply
 }
 
-func (cmd *agents) Prepare(flags *flag.FlagSet) {
-	flags.StringVar(&cmd.server, "server", "", "Server to target")
-}
-func (cmd *agents) Run() (i interface{}, err error) {
-
-	if cmd.server == "" {
-		err = fmt.Errorf("server not specified")
-		return
-	}
-	if err = client.Call("GET", "/config/server/"+cmd.server+"/agents", nil, map[string]string{}, &cmd.agents); err != nil {
-		return
-	}
-
-	i = cmd.agents
+func (cmd *agents) Execute([]string) (err error) {
+	err = client.Call("GET", "/config/server/"+cmd.Server+"/agents", nil, map[string]string{}, &cmd.agents)
 	return
 }
 
-func (cmd *agents) PrettyPrint(data interface{}) error {
+func (cmd *agents) Data() interface{} {
+	return cmd.agents
+}
+
+func (cmd *agents) PrettyPrint() error {
 	fmt.Printf("%20.20s %20.20s\n%s\n", "Node ID", "Status", strings.Repeat("-", 41))
 	for _, agent := range cmd.agents.Agents {
 		fmt.Printf("%20.20s %20.20s \n", agent.NodeID, agent.Status)
@@ -42,5 +33,5 @@ func (cmd *agents) PrettyPrint(data interface{}) error {
 }
 
 func init() {
-	commands.Register("config.agents", &agents{})
+	commands.AddCommand("config.agents", "list the agents", "List all the agent hostnames for a server", &agents{})
 }
