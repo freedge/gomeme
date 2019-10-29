@@ -189,6 +189,16 @@ gomeme deploy.get --ctm FOO --folder toto --xml
 gomeme deploy.get --ctm FOO --folder toto
 ```
 
+### deploy.put
+
+🚧 Upload the definition of jobs
+
+```
+gomeme deploy.put --filename foo.json
+```
+
+
+
 ### logout
 
 Logout
