@@ -30,7 +30,7 @@ func AddCommand(a, b, c string, cmd Command) {
 // Command is implemented by all our commands
 type Command interface {
 	flags.Commander
-	Data() interface{}  // Return the data after the command ran succesfully
+	Data() interface{}  // Return the data after the command ran successfully
 	PrettyPrint() error // Pretty print the output of the command. It is given the data as returned by the Run method
 }
 
