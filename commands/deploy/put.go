@@ -13,7 +13,7 @@ import (
 )
 
 type put struct {
-	Filename string `long:"filename" short:"f" description:"json file corresponding to the job definition folder"`
+	Filename string `long:"filename" short:"f" description:"json file corresponding to the job definition folder" required:"true"`
 	reply    types.DeployReply
 }
 
