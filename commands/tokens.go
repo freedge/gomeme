@@ -40,7 +40,7 @@ func WriteTokensFile() {
 
 // ReadTokens sets tokens from tokenfile
 func ReadTokens() {
-	usr, err := os.UserCacheDir()
+	usr, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatal(err)
 	}
