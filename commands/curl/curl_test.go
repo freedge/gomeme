@@ -5,10 +5,11 @@ import (
 	"testing"
 
 	"github.com/freedge/gomeme/commands"
+	"github.com/freedge/gomeme/types"
 )
 
 func TestCurl(t *testing.T) {
-	commands.TheToken = "abc"
+	commands.Tokens.Endpoint["https//toto/api"] = types.TokenFileToken{Token: types.Token{Token: "abc"}}
 	commands.Opts.Endpoint = "https//toto/api"
 	commands.Opts.Insecure = true
 

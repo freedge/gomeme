@@ -50,8 +50,8 @@ func Call(method, url string, query interface{}, params map[string]string, out i
 	}
 	req, err := http.NewRequest(method, commands.Opts.Endpoint+url, bytebuffer)
 
-	if commands.TheToken != "" {
-		var bearer = "Bearer " + commands.TheToken
+	if token, found := commands.Tokens.Endpoint[commands.Opts.Endpoint]; found {
+		var bearer = "Bearer " + token.Token.Token
 
 		// add authorization header to the req
 		req.Header.Add("Authorization", bearer)

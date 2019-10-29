@@ -4,8 +4,8 @@ package login
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
+	"time"
 
 	"golang.org/x/crypto/ssh/terminal"
 
@@ -51,7 +51,9 @@ func (cmd *loginCommand) Execute([]string) (err error) {
 		return
 	}
 
-	err = ioutil.WriteFile(".token", []byte(cmd.token.Token), 0600)
+	commands.Tokens.Endpoint[commands.Opts.Endpoint] = types.TokenFileToken{Token: cmd.token, Insecure: commands.Opts.Insecure, Created: time.Now()}
+	commands.WriteTokensFile()
+
 	return
 }
 

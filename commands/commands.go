@@ -4,8 +4,6 @@
 package commands
 
 import (
-	"io/ioutil"
-
 	"github.com/jessevdk/go-flags"
 )
 
@@ -40,17 +38,5 @@ type Command interface {
 func AddIfNotEmpty(args map[string]string, key, value string) {
 	if value != "" {
 		args[key] = value
-	}
-}
-
-var (
-	// TheToken to use to connect to the endpoint
-	TheToken string
-)
-
-// init sets us endpoint and token
-func init() {
-	if s, err := ioutil.ReadFile(".token"); err == nil {
-		TheToken = string(s)
 	}
 }

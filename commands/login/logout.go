@@ -14,11 +14,9 @@ type logout struct {
 
 func (cmd *logout) Data() interface{} { return cmd.out }
 func (cmd *logout) Execute([]string) (err error) {
-
-	if err = client.Call("POST", "/session/logout", nil, map[string]string{}, &cmd.out); err != nil {
-		return
-	}
-
+	err = client.Call("POST", "/session/logout", nil, map[string]string{}, &cmd.out)
+	delete(commands.Tokens.Endpoint, commands.Opts.Endpoint)
+	commands.WriteTokensFile()
 	return
 }
 
