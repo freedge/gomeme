@@ -38,15 +38,25 @@ func handleError(resp *http.Response) (formattedError error) {
 
 var customTransport *http.Transport
 
+// ContentType is the content type to send when send multi part data... maybe refactor that one day
+var ContentType string
+
 // Call the specific url under endpoint, with the proper query and parameters
 func Call(method, url string, query interface{}, params map[string]string, out interface{}) (err error) {
 	var bytebuffer io.Reader
+	isJsonInput := true
 	if query != nil {
-		jsonquery, err := json.Marshal(query)
-		if err != nil {
-			return err
+		switch query.(type) {
+		case *bytes.Buffer:
+			isJsonInput = false
+			bytebuffer = query.(*bytes.Buffer)
+		default:
+			jsonquery, err := json.Marshal(query)
+			if err != nil {
+				return err
+			}
+			bytebuffer = bytes.NewBuffer(jsonquery)
 		}
-		bytebuffer = bytes.NewBuffer(jsonquery)
 	}
 	req, err := http.NewRequest(method, commands.Opts.Endpoint+url, bytebuffer)
 
@@ -76,7 +86,12 @@ func Call(method, url string, query interface{}, params map[string]string, out i
 		}
 		client.Transport = customTransport
 	}
-	req.Header.Set("Content-type", "application/json")
+	if isJsonInput {
+		req.Header.Set("Content-type", "application/json")
+	} else {
+		req.Header.Set("Content-type", ContentType)
+	}
+
 	resp, err := client.Do(req)
 	if err != nil {
 		return

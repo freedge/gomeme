@@ -135,3 +135,19 @@ type PingAgentQuery struct {
 	Timeout  int  `json:"timeout"`
 	Discover bool `json:"discover"`
 }
+
+// DeployResult is the result of a deployment
+type DeployResult struct {
+	DeploymentFile                    string
+	SuccessfulFoldersCount            int
+	SuccessfulSmartFoldersCount       int
+	SuccessfulSubFoldersCount         int
+	SuccessfulJobsCount               int
+	SuccessfulConnectionProfilesCount int
+	SuccessfulDriversCount            int
+	IsDeployDescriptorValid           bool
+	DeployedFolders                   []string
+}
+
+// DeployReply is the reply to the deployment service
+type DeployReply = []DeployResult
