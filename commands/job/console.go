@@ -10,6 +10,8 @@ import (
 
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
+
+	tb "github.com/nsf/termbox-go"
 )
 
 type jobConsole struct {
@@ -93,6 +95,7 @@ func (cmd *jobConsole) Execute([]string) (err error) {
 		log.Fatalf("failed to initialize termui: %v", err)
 	}
 	defer ui.Close()
+	tb.SetInputMode(tb.InputEsc) // do not capture mouse events
 
 	if _, err := cmd.GetJobs(); err != nil {
 		return err
@@ -112,6 +115,10 @@ func (cmd *jobConsole) Execute([]string) (err error) {
 
 	l.SelectedRowStyle = ui.NewStyle(ui.ColorClear, ui.ColorClear, ui.ModifierBold)
 	l.WrapText = false
+	l.BorderLeft = false
+	l.BorderRight = false
+	l.PaddingLeft = -1
+	l.PaddingRight = -1
 	x, y := ui.TerminalDimensions()
 	l.SetRect(0, 0, x, y)
 	p = widgets.NewParagraph()
@@ -168,6 +175,7 @@ func (cmd *jobConsole) Execute([]string) (err error) {
 				jlc := jobLogCommand{Jobid: cmd.reply.Statuses[l.SelectedRow].JobId, Output: false}
 				err := jlc.Execute([]string{})
 				if err == nil {
+					ui.Clear()
 					displayFile(events, jlc.Data().(string))
 				}
 
@@ -176,6 +184,7 @@ func (cmd *jobConsole) Execute([]string) (err error) {
 				jlc := jobLogCommand{Jobid: cmd.reply.Statuses[l.SelectedRow].JobId, Output: true}
 				err := jlc.Execute([]string{})
 				if err == nil {
+					ui.Clear()
 					displayFile(events, jlc.Data().(string))
 				}
 
@@ -183,6 +192,7 @@ func (cmd *jobConsole) Execute([]string) (err error) {
 				jlc := jobStatusCommand{Jobid: cmd.reply.Statuses[l.SelectedRow].JobId}
 				err := jlc.Execute([]string{})
 				if err == nil {
+					ui.Clear()
 					jlc.PrettyPrint()
 					displayFile(events, "")
 				}
@@ -195,6 +205,7 @@ func (cmd *jobConsole) Execute([]string) (err error) {
 
 				err := jlc.Execute([]string{})
 				if err == nil {
+					ui.Clear()
 					jlc.PrettyPrint()
 					displayFile(events, "")
 				}
