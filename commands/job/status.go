@@ -1,6 +1,7 @@
 package job
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/freedge/gomeme/client"
@@ -10,19 +11,19 @@ import (
 
 type jobStatusCommand struct {
 	Jobid       string `short:"j" long:"jobid" required:"true" description:"Job ID"`
-	result      types.Status
-	waitingInfo string
+	Result      types.Status
+	WaitingInfo string
 }
 
 func (cmd *jobStatusCommand) Data() interface{} {
-	return cmd.result
+	return cmd
 }
 
 func (cmd *jobStatusCommand) Execute([]string) (err error) {
-	err = client.Call("GET", "/run/job/"+cmd.Jobid+"/status", nil, map[string]string{}, &cmd.result)
+	err = client.Call("GET", "/run/job/"+cmd.Jobid+"/status", nil, map[string]string{}, &cmd.Result)
 
 	if err != nil {
-		_ = client.Call("GET", "/run/job/"+cmd.Jobid+"/waitingInfo", nil, map[string]string{}, &cmd.result)
+		_ = client.Call("GET", "/run/job/"+cmd.Jobid+"/waitingInfo", nil, map[string]string{}, &cmd.WaitingInfo)
 		// not sure how to parse this at this moment
 	}
 
@@ -30,7 +31,13 @@ func (cmd *jobStatusCommand) Execute([]string) (err error) {
 }
 
 func (cmd *jobStatusCommand) PrettyPrint() error {
-	fmt.Printf("%#v %#v\n", cmd.result, cmd.waitingInfo)
+	// this command is useless at this moment, just display the json as parsed
+	bytes, err := json.MarshalIndent(cmd, "", "  ")
+	if err == nil {
+		fmt.Printf("%s\n", string(bytes))
+	} else {
+		fmt.Printf("%#v %#v %#v\n", cmd.Result, cmd.WaitingInfo, err)
+	}
 	return nil
 }
 
