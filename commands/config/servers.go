@@ -24,9 +24,9 @@ func (cmd *servers) Data() interface{} {
 }
 
 func (cmd *servers) PrettyPrint() error {
-	fmt.Printf("%10.10s %10.10s %10.10s %10.10s\n%s\n", "Host", "Message", "Name", "State", strings.Repeat("-", 43))
+	fmt.Printf("%30.30s %10.10s %30.30s %10.10s\n%s\n", "Host", "Message", "Name", "State", strings.Repeat("-", 83))
 	for _, server := range cmd.servers {
-		fmt.Printf("%10.10s %10.10s %10.10s %10.10s\n", server.Host, server.Message, server.Name, server.State)
+		fmt.Printf("%30.30s %10.10s %30.30s %10.10s\n", server.Host, server.Message, server.Name, server.State)
 	}
 	return nil
 }

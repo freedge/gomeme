@@ -25,9 +25,9 @@ func (cmd *agents) Data() interface{} {
 }
 
 func (cmd *agents) PrettyPrint() error {
-	fmt.Printf("%20.20s %20.20s\n%s\n", "Node ID", "Status", strings.Repeat("-", 41))
+	fmt.Printf("%50.50s %20.20s\n%s\n", "Node ID", "Status", strings.Repeat("-", 71))
 	for _, agent := range cmd.agents.Agents {
-		fmt.Printf("%20.20s %20.20s \n", agent.NodeID, agent.Status)
+		fmt.Printf("%50.50s %20.20s \n", agent.NodeID, agent.Status)
 	}
 	return nil
 }

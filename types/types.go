@@ -26,25 +26,27 @@ type Token struct {
 
 // Status is a job status
 type Status struct {
-	JobId          string
-	FolderID       string `json:"folderId"`
-	NumberOfRuns   int
-	Name           string
-	Folder         string
-	Type           string
-	Status         string
-	Held           bool
-	Deleted        bool
-	StartTime      string
-	EndTime        string
-	OrderDate      string
-	Ctm            string
-	Description    string
-	Host           string
-	Application    string
-	SubApplication string
-	OutputURI      string
-	LogURI         string
+	JobId              string
+	FolderID           string `json:"folderId"`
+	NumberOfRuns       int
+	Name               string
+	Folder             string
+	Type               string
+	Status             string
+	Held               bool
+	Deleted            bool
+	StartTime          string
+	EndTime            string
+	OrderDate          string
+	Ctm                string
+	Description        string
+	Host               string
+	Application        string
+	SubApplication     string
+	OutputURI          string
+	LogURI             string
+	EstimatedStartTime []string
+	EstimatedEndTime   []string
 }
 
 // JobsStatusReply is the reply from run/jobs/status
@@ -57,6 +59,12 @@ type JobsStatusReply struct {
 // ParseTime parses a non empty StartTime or EndTime from a Status structure and returns a Time
 func ParseTime(s string) (t time.Time, err error) {
 	return time.Parse("20060102150405", s)
+}
+
+// ParseTime2 parses a non empty StartTime or EndTime from a Status structure and returns a Time.
+// Actually needs a second one since the time is different when retrieving through job.status
+func ParseTime2(s string) (t time.Time, err error) {
+	return time.Parse("Jan 2, 2006 3:04:05 PM", s)
 }
 
 // OrderQuery contains the data to order a new job

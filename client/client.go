@@ -97,8 +97,9 @@ func Call(method, url string, query interface{}, params map[string]string, out i
 		return
 	}
 
+	var body []byte
 	if commands.Opts.Debug {
-		body, _ := ioutil.ReadAll(resp.Body)
+		body, _ = ioutil.ReadAll(resp.Body)
 		fmt.Println("DEBUG", resp.StatusCode, string(body))
 	}
 
@@ -111,9 +112,11 @@ func Call(method, url string, query interface{}, params map[string]string, out i
 		return
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
+	if !commands.Opts.Debug {
+		body, err = ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return
+		}
 	}
 
 	switch out.(type) {
