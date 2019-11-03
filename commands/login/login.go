@@ -51,7 +51,7 @@ func (cmd *loginCommand) Execute([]string) (err error) {
 		return
 	}
 
-	commands.Tokens.Endpoint[commands.Opts.Endpoint] = types.TokenFileToken{Token: cmd.token, Insecure: commands.Opts.Insecure, Created: time.Now()}
+	commands.Tokens.Endpoint[commands.Opts.Endpoint] = types.TokenFileToken{Token: cmd.token, Created: time.Now()}
 	commands.WriteTokensFile()
 
 	return

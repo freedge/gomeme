@@ -23,14 +23,14 @@ func (cmd *curl) Data() interface{} {
 
 func (cmd *curl) Execute([]string) error {
 	var kflag, token string
-	if commands.Opts.Insecure {
-		kflag = "-k "
+	if commands.Opts.Capath != "" {
+		kflag = " --capath " + commands.Opts.Capath
 	}
 	if theToken, found := commands.Tokens.Endpoint[commands.Opts.Endpoint]; found {
 		token = fmt.Sprintf("-H 'Authorization: Bearer %s' ", theToken.Token.Token)
 	}
 
-	cmd.out = fmt.Sprintf("curl %s-H 'Accept: application/json' %s%s",
+	cmd.out = fmt.Sprintf("curl%s -H 'Accept: application/json' %s%s",
 		kflag, token, commands.Opts.Endpoint)
 	return nil
 }

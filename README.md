@@ -16,23 +16,36 @@ and loosely inspired by [govc](https://github.com/vmware/govmomi/tree/master/gov
 
 ```
 export GOMEME_ENDPOINT=https://.../automation-api
-export GOMEME_INSECURE=true
+export GOMEME_CERT_DIR=~/certs
 gomeme login -u toto
 gomeme qr -n PRD*
-
-```
-
-Usage on Windows:
-```
-$env:GOMEME_INSECURE="true"
 ...
 ```
+
 
 Use the ```--dump``` option to output in a Go-like format. ```--json``` option outputs in json format.
 
 Helps for commands can be accessed with ```-h```
 
 Traffic received from ctm server can be dumped with ```--debug```
+
+### SSL config
+
+If GOMEME_ENDPOINT is using https, gomeme must be able to verify the identity of the server.
+When the certificate of the server is signed by an unknown authority, that certificate should be placed under a folder 
+referenced by SSL_CERT_DIR or GOMEME_CERT_DIR environment variable.
+
+Typically,
+
+1. create a certs folder
+2. retrieve the server certificate using ```echo | openssl s_client -prexit -connect myserver:443 | openssl x509 > certs/out.pem```
+3. unsure the server name in the certificate can be resolved (possibly, add it in etc/hosts)
+4. from the certs folder, run ```c_rehash .```
+
+SSL_CERT_DIR usually can be a column separated list of folders, but go (https://github.com/golang/go/issues/35325) consider it
+as a single folder. GOMEME_CERT_DIR environment variable can be used as an alternative to SSL_CERT_DIR (to avoid breaking
+other tools).
+
 
 ## Commands
 

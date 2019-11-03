@@ -11,12 +11,11 @@ import (
 func TestCurl(t *testing.T) {
 	commands.Tokens.Endpoint["https//toto/api"] = types.TokenFileToken{Token: types.Token{Token: "abc"}}
 	commands.Opts.Endpoint = "https//toto/api"
-	commands.Opts.Insecure = true
 
 	c := curl{}
 	_ = c.Execute([]string{})
 
-	if !reflect.DeepEqual(c.out, "curl -k -H 'Accept: application/json' -H 'Authorization: Bearer abc' https//toto/api") {
+	if !reflect.DeepEqual(c.out, "curl -H 'Accept: application/json' -H 'Authorization: Bearer abc' https//toto/api") {
 		t.Errorf("got %#v", c.out)
 	}
 }

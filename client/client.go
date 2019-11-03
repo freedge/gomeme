@@ -4,6 +4,7 @@ package client
 import (
 	"bytes"
 	"crypto/tls"
+	"crypto/x509"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -75,10 +76,20 @@ func Call(method, url string, query interface{}, params map[string]string, out i
 
 	// Send req using http Client
 	client := &http.Client{}
-	if commands.Opts.Insecure {
+	if commands.Opts.Capath != "" {
 		if customTransport == nil {
+			roots := x509.NewCertPool()
+			fis, err := ioutil.ReadDir(commands.Opts.Capath)
+			if err != nil {
+				panic(err)
+			}
+			for _, fi := range fis {
+				if data, err := ioutil.ReadFile(commands.Opts.Capath + "/" + fi.Name()); err == nil {
+					roots.AppendCertsFromPEM(data)
+				}
+			}
 			cfg := &tls.Config{
-				InsecureSkipVerify: true,
+				RootCAs: roots,
 			}
 			customTransport = &http.Transport{
 				TLSClientConfig: cfg,

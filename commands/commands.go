@@ -11,7 +11,7 @@ import (
 type DefaultOpts struct {
 	Dump       bool   `long:"dump" description:"outputs as go structure"`
 	JSONNeeded bool   `long:"json" description:"outputs as json"`
-	Insecure   bool   `long:"insecure" description:"insecure"  env:"GOMEME_INSECURE"`
+	Capath     string `long:"capath" description:"SSL_CERT_DIR for GOMEME"  env:"GOMEME_CERT_DIR"`
 	Endpoint   string `long:"endpoint" description:"endpoint" env:"GOMEME_ENDPOINT" required:"true"`
 	Debug      bool   `long:"debug"`
 }
