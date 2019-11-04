@@ -39,7 +39,7 @@ Typically,
 
 1. create a certs folder
 2. retrieve the server certificate using ```echo | openssl s_client -prexit -connect myserver:443 | openssl x509 > certs/out.pem```
-3. unsure the server name in the certificate can be resolved (possibly, add it in etc/hosts)
+3. ensure the server name in the certificate can be resolved (possibly, add it in etc/hosts)
 4. from the certs folder, run ```c_rehash .```
 
 SSL_CERT_DIR usually can be a column separated list of folders, but go (https://github.com/golang/go/issues/35325) consider it
@@ -212,7 +212,7 @@ gomeme deploy.put --filename foo.json
 
 ### con
 
-🚧 List jobs on a terminal. Take the same parameters as ls
+🚧 List jobs on a terminal. Take the same parameters as lj
 
 ```
 gomeme con
