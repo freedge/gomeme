@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"mime/multipart"
 	"os"
+	"strings"
 
 	"github.com/freedge/gomeme/client"
 	"github.com/freedge/gomeme/commands"
@@ -14,6 +15,7 @@ import (
 
 type put struct {
 	Filename string `long:"filename" short:"f" description:"json file corresponding to the job definition folder" required:"true"`
+	Dry      bool   `long:"dry" short:"d" description:"call the build service, not the deploy one" `
 	reply    types.DeployReply
 }
 
@@ -53,13 +55,20 @@ func (cmd *put) Execute([]string) (err error) {
 	}
 	writer.Close()
 	client.ContentType = writer.FormDataContentType()
-	err = client.Call("POST", "/deploy", body, map[string]string{}, &cmd.reply)
+	service := "/deploy"
+	if cmd.Dry {
+		service = "/build"
+	}
+	err = client.Call("POST", service, body, map[string]string{}, &cmd.reply)
 	return
 }
 
 func (cmd *put) PrettyPrint() error {
 	for _, deploy := range cmd.reply {
-		fmt.Printf("%d jobs successfully deployed: %v\n", deploy.SuccessfulJobsCount, deploy)
+		fmt.Printf("%d jobs successfully deployed (%v)\n", deploy.SuccessfulJobsCount, deploy)
+		for _, oneerr := range deploy.Errors {
+			fmt.Printf("Got error : %s\n", strings.Join(oneerr.Lines, ", "))
+		}
 	}
 	return nil
 }

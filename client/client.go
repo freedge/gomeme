@@ -15,14 +15,11 @@ import (
 	"github.com/freedge/gomeme/types"
 )
 
-func handleError(resp *http.Response) (formattedError error) {
+func handleError(resp *http.Response, body []byte) (formattedError error) {
 	formattedError = fmt.Errorf("server replied an error %d", resp.StatusCode)
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
+
 	var reply types.ErrorReply
-	err = json.Unmarshal(body, &reply)
+	err := json.Unmarshal(body, &reply)
 	if err != nil {
 		return
 	}
@@ -109,25 +106,26 @@ func Call(method, url string, query interface{}, params map[string]string, out i
 	}
 
 	var body []byte
+	body, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
 	if commands.Opts.Debug {
-		body, _ = ioutil.ReadAll(resp.Body)
 		fmt.Println("DEBUG", resp.StatusCode, string(body))
 	}
 
+	var maybeAnError bool
 	switch resp.StatusCode {
 	case 404:
 		err = fmt.Errorf("client: got an error accessing %v", req.URL)
 		return
-	case 400, 401, 500:
-		err = handleError(resp)
+	case 401, 500:
+		err = handleError(resp, body)
 		return
-	}
-
-	if !commands.Opts.Debug {
-		body, err = ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return
-		}
+	case 400:
+		// not too sure about that one, sometimes it parses as an error
+		maybeAnError = true
 	}
 
 	switch out.(type) {
@@ -135,6 +133,9 @@ func Call(method, url string, query interface{}, params map[string]string, out i
 		*(out.(*string)) = string(body)
 	default:
 		err = json.Unmarshal(body, out)
+		if err != nil && maybeAnError {
+			err = handleError(resp, body)
+		}
 	}
 
 	return

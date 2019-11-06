@@ -83,6 +83,9 @@ type SetResourceQuery struct {
 // Message is returned by various services
 type Message struct {
 	Message string
+	File    string
+	Line    int
+	Col     int
 }
 
 // SetResourceReply is returned when setting a QR
@@ -144,6 +147,11 @@ type PingAgentQuery struct {
 	Discover bool `json:"discover"`
 }
 
+// DeployErrors are the kind of errors you get when deploying
+type DeployErrors struct {
+	Lines []string
+}
+
 // DeployResult is the result of a deployment
 type DeployResult struct {
 	DeploymentFile                    string
@@ -155,6 +163,7 @@ type DeployResult struct {
 	SuccessfulDriversCount            int
 	IsDeployDescriptorValid           bool
 	DeployedFolders                   []string
+	Errors                            []DeployErrors
 }
 
 // DeployReply is the reply to the deployment service
