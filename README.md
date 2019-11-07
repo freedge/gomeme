@@ -40,12 +40,16 @@ Typically,
 1. create a certs folder
 2. retrieve the server certificate using ```echo | openssl s_client -prexit -connect myserver:443 | openssl x509 > certs/out.pem```
 3. ensure the server name in the certificate can be resolved (possibly, add it in etc/hosts)
-4. from the certs folder, run ```c_rehash .```
+4. from the certs folder, run ```c_rehash .``` (so that curl will be able to use --capath, though it does not seem mandatory)
 
 SSL_CERT_DIR usually can be a column separated list of folders, but go (https://github.com/golang/go/issues/35325) consider it
 as a single folder. GOMEME_CERT_DIR environment variable can be used as an alternative to SSL_CERT_DIR (to avoid breaking
 other tools).
 
+openssl and go tls package do not validate certificates identically (it seems you need to trust the whole chain, including
+the root CA, for openssl to work fine). As such, you may want to run 
+```echo | openssl s_client -prexit -connect myserver:443 -showcerts``` 
+and put the root CA certificate in your certs folder.
 
 ## Commands
 
