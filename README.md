@@ -197,6 +197,14 @@ Ping an agent, so that it ends up in config.agents output. Default timeout is 10
 gomeme config.ping -H foo -c FOO
 ```
 
+### config.hostgroup
+
+Returns the list of agents parts of a hostgroup
+
+```
+omeme config.hostgroup -c foo -g group
+```
+
 ### deploy.get
 
 Return definition of jobs in folder

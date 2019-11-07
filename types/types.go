@@ -111,6 +111,7 @@ type Server struct {
 	Host    string
 	State   string
 	Message string
+	Version string
 }
 
 // ConfigServersReply is the reply to the config server
@@ -168,3 +169,11 @@ type DeployResult struct {
 
 // DeployReply is the reply to the deployment service
 type DeployReply = []DeployResult
+
+// HostInGroup is one host part of a host group
+type HostInGroup struct {
+	Host string
+}
+
+// HostGroupAgentsReply is the reply to the hostgroup/agents service
+type HostGroupAgentsReply = []HostInGroup
