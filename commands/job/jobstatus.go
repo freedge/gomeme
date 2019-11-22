@@ -28,7 +28,7 @@ type jobsStatusCommonCommand struct {
 
 type jobsStatusCommand struct {
 	jobsStatusCommonCommand
-	Csv bool `short:"c" long:"csv" description:"csv output"`
+	Csv bool `long:"csv" description:"csv output"`
 }
 
 func (cmd *jobsStatusCommand) Data() interface{} {
