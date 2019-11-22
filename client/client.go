@@ -100,6 +100,11 @@ func Call(method, url string, query interface{}, params map[string]string, out i
 		req.Header.Set("Content-type", ContentType)
 	}
 
+	if commands.Opts.Subject != "" {
+		req.Header.Set("Annotation-Subject", commands.Opts.Subject)
+		req.Header.Set("Annotation-Description", commands.Opts.Description)
+	}
+
 	resp, err := client.Do(req)
 	if err != nil {
 		return

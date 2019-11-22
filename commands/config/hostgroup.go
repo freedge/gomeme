@@ -3,8 +3,6 @@ package config
 
 import (
 	"fmt"
-	_ "fmt"
-	_ "strings"
 
 	"github.com/freedge/gomeme/client"
 	"github.com/freedge/gomeme/commands"

@@ -9,11 +9,13 @@ import (
 
 // DefaultOpts are the common options for every command
 type DefaultOpts struct {
-	Dump       bool   `long:"dump" description:"outputs as go structure"`
-	JSONNeeded bool   `long:"json" description:"outputs as json"`
-	Capath     string `long:"capath" description:"SSL_CERT_DIR for GOMEME"  env:"GOMEME_CERT_DIR"`
-	Endpoint   string `long:"endpoint" description:"endpoint" env:"GOMEME_ENDPOINT" required:"true"`
-	Debug      bool   `long:"debug"`
+	Dump        bool   `long:"dump" description:"outputs as go structure"`
+	JSONNeeded  bool   `long:"json" description:"outputs as json"`
+	Capath      string `long:"capath" description:"SSL_CERT_DIR for GOMEME"  env:"GOMEME_CERT_DIR"`
+	Endpoint    string `long:"endpoint" description:"endpoint" env:"GOMEME_ENDPOINT" required:"true"`
+	Debug       bool   `long:"debug"`
+	Subject     string `long:"subject" description:"annotation subject"`
+	Description string `long:"description" description:"annotation description"`
 }
 
 // Opts is the list of default opts

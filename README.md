@@ -202,7 +202,7 @@ gomeme config.ping -H foo -c FOO
 Returns the list of agents parts of a hostgroup
 
 ```
-omeme config.hostgroup -c foo -g group
+gomeme config.hostgroup -c foo -g group
 ```
 
 ### deploy.get
