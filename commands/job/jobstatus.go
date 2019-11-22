@@ -23,6 +23,7 @@ type jobsStatusCommonCommand struct {
 	Verbose     bool   `short:"v" long:"verbose" description:"output more stuff, that fits onto my sreen (158 characters wide)"`
 	Host        string `short:"H" long:"host" description:"host"`
 	Neighbours  bool   `long:"deps" description:"browse through neighours of this job. Only jobid can be used to filter jobs"`
+	Ctm         string `short:"c" long:"ctm" description:"Control-m server to target"`
 }
 
 type jobsStatusCommand struct {
@@ -51,6 +52,7 @@ func (cmd *jobsStatusCommonCommand) GetJobs() (i interface{}, err error) {
 	commands.AddIfNotEmpty(args, "jobname", cmd.Jobname)
 	commands.AddIfNotEmpty(args, "folder", cmd.Folder)
 	commands.AddIfNotEmpty(args, "host", cmd.Host)
+	commands.AddIfNotEmpty(args, "ctm", cmd.Ctm)
 
 	if cmd.Jobid != "" {
 		if cmd.Neighbours {
