@@ -1,8 +1,7 @@
 {
     "FOO-BARLOCAL-PRK" : {
       "Type" : "SimpleFolder",
-      "ControlmServer" : "FOOCTM",
-      "SiteStandard" : "SITSTA",
+      "ControlmServer" : "workbench",
       "OrderMethod" : "JOB",
       "dFOOJOBPRGPK1" : {
         "Type" : "Job:Script",
