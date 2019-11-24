@@ -30,7 +30,10 @@ func TestDeployPut(t *testing.T) {
 
 	var cmd put
 	cmd.Filename = "fixtures/folder.json"
+	cmd.Ctm = "FOOCTM"
+	defer func() { commands.Opts = commands.DefaultOpts{} }()
 	commands.Opts.Endpoint = ts.URL + "/api"
+
 	err := cmd.Execute([]string{})
 
 	if err != nil {

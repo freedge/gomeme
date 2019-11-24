@@ -51,6 +51,12 @@ the root CA, for openssl to work fine). As such, you may want to run
 ```echo | openssl s_client -prexit -connect myserver:443 -showcerts``` 
 and put the root CA certificate in your certs folder.
 
+### Annotations
+
+Annotations can be provided with the ```--subject``` and ```--description``` parameters. ```deploy.put``` and ```job.modify```
+requires an annotation to be set even if audit is not activated on server side.
+
+
 ## Commands
 
 ### login
@@ -76,7 +82,7 @@ gomeme qr --name PRD-*
 
 ### lj
 
-list jobs (default limit is 1000). Use ```-v``` for more info. Outputs a csv with ```-csv```
+list jobs (default limit is 1000). Use ```-v``` for more info. Outputs a csv with ```--csv```
 
 ```
 gomeme lj --application TOTO-PRD --status Executing --limit 30
@@ -183,7 +189,7 @@ gomeme config.servers --ctm FOO123
 
 ### config.agent
 
-List parameters specific to an agent. Uses ```-all``` to show all parameters.
+List parameters specific to an agent. Uses ```--all``` to show all parameters.
 
 ```
 gomeme config.server --ctm FOO123 --host toto.net
@@ -216,10 +222,10 @@ gomeme deploy.get --ctm FOO --folder toto
 
 ### deploy.put
 
-🚧 Upload the definition of jobs
+Upload the definition of jobs
 
 ```
-gomeme deploy.put --filename foo.json
+gomeme deploy.put --filename foo.json --subject "Record1234" --ctm FOOCTM
 ```
 
 ### con
@@ -235,12 +241,19 @@ Might need to resize the screen after these displays...
 
 ### job.get
 
-🚧 Retrieve status and waiting info of a single job
+Retrieve status, waiting info, parameters of a single job
 
 ```
 gomeme job.get -j FOO:123
 ```
 
+### job.modify
+
+Change the parameters of a held job
+
+```
+gomeme job.modify  --subject "Record 1234" -n jobname -j FOOBAR:09otj -- param1 param2
+```
 
 ### logout
 

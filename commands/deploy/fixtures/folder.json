@@ -1,1 +1,47 @@
-{ "abc": 42 }
+{
+    "FOO-BARLOCAL-PRK" : {
+      "Type" : "SimpleFolder",
+      "ControlmServer" : "FOOCTM",
+      "SiteStandard" : "SITSTA",
+      "OrderMethod" : "JOB",
+      "dFOOJOBPRGPK1" : {
+        "Type" : "Job:Script",
+        "DaysKeepActive" : "1",
+        "SubApplication" : "FOO-BARLOCAL-PRK",
+        "Priority" : "sa",
+        "FileName" : "startjob",
+        "Host" : "BAR",
+        "FilePath" : "/home/controlm",
+        "CreatedBy" : "François",
+        "Description" : "1234",
+        "RunAs" : "controlm",
+        "TimeZone" : "GMT",
+        "Application" : "FOO-BARLOCAL",
+        "Arguments" : [ "X", "XX", "XXX" ],
+        "DocumentationUrl" : {
+          "Url" : "https://example.com/"
+        },
+        "RerunLimit" : {
+          "Times" : "1"
+        },
+        "When" : {
+          "WeekDays" : [ "MON", "TUE", "WED", "THU", "FRI" ],
+          "MonthDays" : [ "NONE" ],
+          "ToTime" : ">",
+          "SpecificDates" : [ ],
+          "FromTime" : "0100"
+        },
+        "INIT" : {
+          "Type" : "Resource:Semaphore",
+          "Quantity" : "1"
+        },
+        "IfBase:Folder:CompletionStatus_0" : {
+          "Type" : "If:CompletionStatus",
+          "CompletionStatus" : "1",
+          "Action:SetToNotOK_0" : {
+            "Type" : "Action:SetToNotOK"
+          }
+        }
+      }
+    }
+  }

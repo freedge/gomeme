@@ -2,6 +2,7 @@ package deploy
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"mime/multipart"
@@ -16,6 +17,7 @@ import (
 type put struct {
 	Filename string `long:"filename" short:"f" description:"json file corresponding to the job definition folder" required:"true"`
 	Dry      bool   `long:"dry" short:"d" description:"call the build service, not the deploy one" `
+	Ctm      string `long:"ctm" short:"c" description:"controlm server, to prevent mistakes" required:"true"`
 	reply    types.DeployReply
 }
 
@@ -23,8 +25,37 @@ func (cmd *put) Data() interface{} {
 	return cmd.reply
 }
 
-// Creates a new file upload http request with optional extra params
-func newfileUploadRequest(path string, paramName string, writer *multipart.Writer) error {
+// NewfileUploadRequest creates a new file upload http request with optional extra params
+func NewfileUploadRequest(filename string, filecontents []byte, paramName string, writer *multipart.Writer) error {
+	part, err := writer.CreateFormFile(paramName, filename)
+	if err != nil {
+		return nil
+	}
+	_, err = part.Write(filecontents)
+	return err
+}
+
+type linter func([]byte) error
+
+func getLinter(ctm string) linter {
+	return func(content []byte) error {
+		var file types.DeployPutFormat
+		if err := json.Unmarshal(content, &file); err != nil {
+			return fmt.Errorf("could not parse that file: %w", err)
+		}
+		for _, folder := range file {
+			if folder.ControlmServer != ctm {
+				return fmt.Errorf("controlm server does not match")
+			}
+			if folder.SiteStandard == "" {
+				return fmt.Errorf("site standard not specified")
+			}
+		}
+		return nil
+	}
+}
+
+func newfileUploadRequestFromFile(path string, paramName string, writer *multipart.Writer, l linter) error {
 	file, err := os.Open(path)
 	if err != nil {
 		return err
@@ -39,24 +70,27 @@ func newfileUploadRequest(path string, paramName string, writer *multipart.Write
 		return err
 	}
 
-	part, err := writer.CreateFormFile(paramName, fi.Name())
-	if err != nil {
-		return nil
+	if err = l(fileContents); err != nil {
+		return err
 	}
-	_, err = part.Write(fileContents)
-	return err
+
+	return NewfileUploadRequest(fi.Name(), fileContents, paramName, writer)
 }
 
 func (cmd *put) Execute([]string) (err error) {
 	body := new(bytes.Buffer)
 	writer := multipart.NewWriter(body)
-	if err = newfileUploadRequest(cmd.Filename, "definitionsFile", writer); err != nil {
+	if err = newfileUploadRequestFromFile(cmd.Filename, "definitionsFile", writer, getLinter(cmd.Ctm)); err != nil {
 		return
 	}
 	writer.Close()
 	client.ContentType = writer.FormDataContentType()
 	service := "/deploy"
 	if cmd.Dry {
+		service = "/build"
+	}
+	if !cmd.Dry && commands.Opts.Subject == "" {
+		fmt.Println("No subject provided, run in dry mode")
 		service = "/build"
 	}
 	err = client.Call("POST", service, body, map[string]string{}, &cmd.reply)

@@ -177,3 +177,31 @@ type HostInGroup struct {
 
 // HostGroupAgentsReply is the reply to the hostgroup/agents service
 type HostGroupAgentsReply = []HostInGroup
+
+// OneJobDefinition is part of one job replied by JobGetReply
+type OneJobDefinition struct {
+	FilePath       string
+	FileName       string
+	Description    string
+	RunAs          string
+	Application    string
+	SubApplication string
+	Arguments      []string
+}
+
+// JobGetReply is what the job/get service will reply
+type JobGetReply = map[string]OneJobDefinition
+
+// WaitinfoReply is the information from the waiting info
+type WaitinfoReply = []string
+
+// OneFolderDefinition is a folder containing a few jobs
+type OneFolderDefinition struct {
+	ControlmServer string
+	SiteStandard   string
+	Type           string
+	OrderMethod    string
+}
+
+// DeployPutFormat is part of what you give in input to the deploy or build service
+type DeployPutFormat = map[string]OneFolderDefinition
