@@ -75,7 +75,6 @@ func (cmd *modify) Execute(args []string) (err error) {
 }
 
 func (cmd *modify) PrettyPrint() error {
-	fmt.Println(cmd.jobdef)
 	fmt.Println(cmd.reply)
 	return nil
 }

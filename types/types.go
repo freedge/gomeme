@@ -86,6 +86,8 @@ type Message struct {
 	File    string
 	Line    int
 	Col     int
+	ID      string `json:"id"`
+	Item    string
 }
 
 // SetResourceReply is returned when setting a QR

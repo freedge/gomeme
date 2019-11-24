@@ -25,8 +25,15 @@ func handleError(resp *http.Response, body []byte) (formattedError error) {
 	}
 	if len(reply.Errors) > 0 {
 		errorString := ""
-		for _, msg := range reply.Errors {
-			errorString += msg.Message + " "
+		for id, msg := range reply.Errors {
+			if id > 0 {
+				errorString += "\n"
+			}
+			errorString += msg.Message + " " + msg.Item
+			if msg.Line > 0 {
+				errorString += fmt.Sprintf(" (%s:%d:%d)", msg.File, msg.Line, msg.Col)
+			}
+			errorString += " "
 		}
 		formattedError = fmt.Errorf("%s", errorString)
 	}
