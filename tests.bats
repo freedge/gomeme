@@ -93,6 +93,11 @@
   run gomeme job.action -j $ID -a hold
   [ "$status" -eq 0 ]
   [[ "$output" =~ "was successfully held" ]]
+}
+
+@test "get the job logs" {
+  ID=$(gomeme lj --json | jq '.Statuses[0].JobId')
+  gomeme job.log -j $ID >&3
 }  
 
 @test "delete the job" {
