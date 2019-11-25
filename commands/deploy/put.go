@@ -47,7 +47,11 @@ func getLinter(ctm string) linter {
 			if folder.ControlmServer != ctm {
 				return fmt.Errorf("controlm server does not match")
 			}
-			if folder.SiteStandard == "" {
+			// we make an exception for the workbench...
+			// TODO: either remove the sitestandard to be able to deploy the job on workbench,
+			// or find a way to define the sitestandard on workbench as well (does not
+			// seem possible through the API today)
+			if ctm != "workbench" && folder.SiteStandard == "" {
 				return fmt.Errorf("site standard not specified")
 			}
 		}

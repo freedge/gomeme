@@ -5,6 +5,8 @@ go: 1.13
 go_import_path: github.com/freedge/gomeme
 env:
   global: TMPDIR=/tmp
+services:
+  - docker
 jobs:
   include:
   - stage: build
@@ -20,6 +22,30 @@ jobs:
     - go get ./...
     - go test ./...
     - gofmt -s -d . | tee /home/travis/gofmt.out ; test ! -s /home/travis/gofmt.out
+  - stage: integrationtest
+    install: true
+    env:
+      - GOMEME_PASSWORD=workbench
+      - GOMEME_ENDPOINT=https://workbench:8443/automation-api
+      - GOMEME_CERT_DIR=.
+    addons:
+      hosts:
+        - workbench
+    before_install:
+    # set up a running workbench
+    - curl -L https://controlm-appdev.s3-us-west-2.amazonaws.com/workbench/9.0.19.140/deploy/ova/controlm-workbench-9.19.140.xz | docker load
+    - docker run -dt --hostname=workbench --name=workbench -p 127.0.0.1:8443:8443 -p 7005:7005 controlm-workbench:9.19.140
+    - sleep 60
+    - until curl -L -k --connect-timeout 3 --max-time 3 ${GOMEME_ENDPOINT}/startHere.html -o /dev/null ; do echo . ; sleep 1 ; done
+    # get a certificate to connect to it
+    - echo | openssl s_client -connect workbench:8443 -showcerts
+    - echo | openssl s_client -connect workbench:8443 -showcerts | grep -A 40 "BEGIN CERTIFICATE" -m 1 | grep -B 40 "END CERTIFICATE" > cert.pem
+    # set up bats for our testing
+    - curl -L https://github.com/bats-core/bats-core/archive/v1.1.0.tar.gz | tar zxf -
+    - pushd bats-core-1.1.0 ; sh install.sh /home/travis/gopath/bin/ ; popd
+    script: 
+    - go get ./...
+    - bats tests.bats
 deploy:
   provider: releases
   api_key:

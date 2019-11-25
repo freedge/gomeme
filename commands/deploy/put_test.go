@@ -30,7 +30,7 @@ func TestDeployPut(t *testing.T) {
 
 	var cmd put
 	cmd.Filename = "fixtures/folder.json"
-	cmd.Ctm = "FOOCTM"
+	cmd.Ctm = "workbench"
 	defer func() { commands.Opts = commands.DefaultOpts{} }()
 	commands.Opts.Endpoint = ts.URL + "/api"
 
