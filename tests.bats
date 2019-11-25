@@ -6,6 +6,12 @@
   [[ "$output" =~ "Logged in. Server version " ]]
 }
 
+@test "bootstrap" {
+  run gomeme config.emparamset --debug --subject test --name UserAuditAnnotationOn --value 1
+  # ignoring the output of this for the time being
+  echo "[$status] $output" >&3
+}
+
 @test "config server should retrieve our workbench server" {
   gomeme config.servers >&3
   gomeme config.agents -c workbench >&3
@@ -32,13 +38,13 @@
 }
 
 @test "list the jobs" {
-  gomeme lj --json >&3
-  gomeme lj -H '*BA*' --json >&3
-  gomeme lj -n dFOOJOBPRGPK1 --json >&3
-  gomeme lj -c workbench --json >&3
-  gomeme lj -v --debug >&3
+  # the ordered job is not available immediately
+  until gomeme lj --json | jq .Statuses[0] ; do echo . ; sleep 1 ; done
+  gomeme lj -H '*BA*' >&3
+  gomeme lj -n dFOOJOBPRGPK1 >&3
+  gomeme lj -c workbench >&3
   run gomeme lj -v
-  echo "$output" >&3
+  [[ "$output" =~ "1/1" ]]
   [ "$status" -eq 0 ]
 }
 
