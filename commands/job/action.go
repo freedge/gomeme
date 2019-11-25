@@ -10,7 +10,7 @@ import (
 
 type jobActionCommand struct {
 	Jobid  string `short:"j" long:"jobid" required:"true" description:"Job ID"`
-	Action string `short:"a" long:"action" description:"action to run" choice:"hold" choice:"free" choice:"confirm" choice:"delete" choice:"undelete" choice:"rerun" choice:"setToOk" choice:"runNow" choice:"kill" required:"true"`
+	Action string `short:"a" long:"action" description:"action to run" choice:"hold" choice:"free" choice:"confirm" choice:"delete" choice:"undelete" choice:"setToOk" choice:"runNow" choice:"kill" required:"true"`
 	result types.JobActionReply
 }
 
