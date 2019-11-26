@@ -34,5 +34,5 @@ func (cmd *emparamset) PrettyPrint() error {
 }
 
 func init() {
-	commands.AddCommand("config.emparamset", "set an emparameter", "Only used to bootstrap our workbench", &emparamset{})
+	commands.AddCommand("test.config.emparamset", "set an emparameter", "Only used to bootstrap our workbench", &emparamset{})
 }
