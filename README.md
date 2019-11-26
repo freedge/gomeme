@@ -191,7 +191,7 @@ gomeme config.servers
 List all agents for a specific server
 
 ```
-gomeme config.servers --ctm FOO123
+gomeme config.agents --ctm FOO123
 ```
 
 
@@ -200,7 +200,7 @@ gomeme config.servers --ctm FOO123
 List parameters specific to an agent. Uses ```--all``` to show all parameters.
 
 ```
-gomeme config.server --ctm FOO123 --host toto.net
+gomeme config.agent --ctm FOO123 --host toto.net
 ```
 
 ### config.ping

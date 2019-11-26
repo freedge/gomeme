@@ -80,6 +80,12 @@ type SetResourceQuery struct {
 	Max string
 }
 
+// AddResourceQuery contain the data to create a QR
+type AddResourceQuery struct {
+	Max  string `json:"max"`
+	Name string `json:"name"`
+}
+
 // Message is returned by various services
 type Message struct {
 	Message string

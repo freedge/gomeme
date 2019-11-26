@@ -6,15 +6,30 @@
   [[ "$output" =~ "Logged in. Server version " ]]
 }
 
+@test "curl" {
+  gomeme curl  
+}
+
 @test "bootstrap" {
-  run gomeme config.emparamset --debug --subject test --name UserAuditAnnotationOn --value 1
+  run gomeme test.config.emparamset --debug --subject test --name UserAuditAnnotationOn --value 1
   # ignoring the output of this for the time being
   echo "[$status] $output" >&3
+
+  gomeme test.qr.new --subject test --debug -n INIT -m 0 -c workbench  
+}
+
+@test "qr" {
+  gomeme qr
 }
 
 @test "config server should retrieve our workbench server" {
   gomeme config.servers >&3
   gomeme config.agents -c workbench >&3
+}
+
+@test "ping our agent and show its parameters" {
+  until gomeme config.ping  -c workbench --host workbench -t 10 ; do sleep 1 ; done
+  gomeme config.agent -c workbench --host workbench   
 }
 
 @test "deploy.put should put some jobs" {
@@ -40,9 +55,9 @@
 @test "list the jobs" {
   # the ordered job is not available immediately
   until gomeme lj --json | jq .Statuses[0] ; do echo . ; sleep 1 ; done
-  gomeme lj -H '*BA*' >&3
-  gomeme lj -n dFOOJOBPRGPK1 >&3
-  gomeme lj -c workbench >&3
+  gomeme lj -H '*BA*'
+  gomeme lj -n dFOOJOBPRGPK1
+  gomeme lj --debug -c workbench >&3
   run gomeme lj -v
   [[ "$output" =~ "1/1" ]]
   [ "$status" -eq 0 ]
@@ -105,6 +120,12 @@
   run gomeme job.action -j $ID -a delete
   [ "$status" -eq 0 ]
   [[ "$output" =~ "was successfully deleted" ]]
+}
+
+@test "setting QR" { 
+  gomeme qr.set -n INIT -c workbench -m 42  
+  QR=$(gomeme qr -n INIT --json | jq '.[0].Max')  
+  [ "$QR" -eq 42 ]
 }
 
 @test "logout" {
