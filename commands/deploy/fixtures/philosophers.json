@@ -1,0 +1,177 @@
+{
+    "philo" : {
+      "Type" : "SimpleFolder",
+      "ControlmServer" : "workbench",
+      "OrderMethod" : "JOB",
+      "1" : {
+        "Type" : "Job:Command",
+        "DaysKeepActive" : "1",
+        "SubApplication" : "subappli",
+        "Priority" : "sa",
+        "Host" : "workbench",
+        "Command" : "sh -c 'sleep 5; exit -1'",
+        "CreatedBy" : "François",
+        "Description" : "philosopher1",
+        "RunAs" : "workbench",
+        "TimeZone" : "GMT",
+        "Application" : "appli",
+        "DocumentationUrl" : {
+          "Url" : "https://example.com/"
+        },
+        "RerunLimit" : {
+          "Times" : "10"
+        },
+        "a" : {
+          "Type" : "Resource:Semaphore",
+          "Quantity" : "1"
+        },
+        "b" : {
+          "Type" : "Resource:Semaphore",
+          "Quantity" : "1"
+        },
+        "IfBase:Folder:Output_1" : {
+          "Type" : "If:Output",
+          "Code" : "NOTOK",
+          "Action:Rerun_0" : {
+            "Type" : "Action:Rerun"
+          }
+        }
+      },
+      "2" : {
+        "Type" : "Job:Command",
+        "DaysKeepActive" : "1",
+        "SubApplication" : "subappli",
+        "Priority" : "sa",
+        "Host" : "workbench",
+        "Command" : "sh -c 'sleep 5; exit -1'",
+        "CreatedBy" : "François",
+        "Description" : "philosopher2",
+        "RunAs" : "workbench",
+        "TimeZone" : "GMT",
+        "Application" : "appli",
+        "DocumentationUrl" : {
+          "Url" : "https://example.com/"
+        },
+        "RerunLimit" : {
+          "Times" : "10"
+        },
+        "b" : {
+          "Type" : "Resource:Semaphore",
+          "Quantity" : "1"
+        },
+        "c" : {
+          "Type" : "Resource:Semaphore",
+          "Quantity" : "1"
+        },
+        "IfBase:Folder:Output_1" : {
+          "Type" : "If:Output",
+          "Code" : "NOTOK",
+          "Action:Rerun_0" : {
+            "Type" : "Action:Rerun"
+          }
+        }
+      },
+      "3" : {
+        "Type" : "Job:Command",
+        "DaysKeepActive" : "1",
+        "SubApplication" : "subappli",
+        "Priority" : "sa",
+        "Host" : "workbench",
+        "Command" : "sh -c 'sleep 5; exit -1'",
+        "CreatedBy" : "François",
+        "Description" : "philosopher3",
+        "RunAs" : "workbench",
+        "TimeZone" : "GMT",
+        "Application" : "appli",
+        "DocumentationUrl" : {
+          "Url" : "https://example.com/"
+        },
+        "RerunLimit" : {
+          "Times" : "10"
+        },
+        "c" : {
+          "Type" : "Resource:Semaphore",
+          "Quantity" : "1"
+        },
+        "d" : {
+          "Type" : "Resource:Semaphore",
+          "Quantity" : "1"
+        },
+        "IfBase:Folder:Output_1" : {
+          "Type" : "If:Output",
+          "Code" : "NOTOK",
+          "Action:Rerun_0" : {
+            "Type" : "Action:Rerun"
+          }
+        }
+      },
+      "4" : {
+        "Type" : "Job:Command",
+        "DaysKeepActive" : "1",
+        "SubApplication" : "subappli",
+        "Priority" : "sa",
+        "Host" : "workbench",
+        "Command" : "sh -c 'sleep 5; exit -1'",
+        "CreatedBy" : "François",
+        "Description" : "philosopher4",
+        "RunAs" : "workbench",
+        "TimeZone" : "GMT",
+        "Application" : "appli",
+        "DocumentationUrl" : {
+          "Url" : "https://example.com/"
+        },
+        "RerunLimit" : {
+          "Times" : "10"
+        },
+        "d" : {
+          "Type" : "Resource:Semaphore",
+          "Quantity" : "1"
+        },
+        "e" : {
+          "Type" : "Resource:Semaphore",
+          "Quantity" : "1"
+        },
+        "IfBase:Folder:Output_1" : {
+          "Type" : "If:Output",
+          "Code" : "NOTOK",
+          "Action:Rerun_0" : {
+            "Type" : "Action:Rerun"
+          }
+        }
+      },
+      "5" : {
+        "Type" : "Job:Command",
+        "DaysKeepActive" : "1",
+        "SubApplication" : "subappli",
+        "Priority" : "sa",
+        "Host" : "workbench",
+        "Command" : "sh -c 'sleep 5; exit -1'",
+        "CreatedBy" : "François",
+        "Description" : "philosopher5",
+        "RunAs" : "workbench",
+        "TimeZone" : "GMT",
+        "Application" : "appli",
+        "DocumentationUrl" : {
+          "Url" : "https://example.com/"
+        },
+        "RerunLimit" : {
+          "Times" : "10"
+        },
+        "e" : {
+          "Type" : "Resource:Semaphore",
+          "Quantity" : "1"
+        },
+        "a" : {
+          "Type" : "Resource:Semaphore",
+          "Quantity" : "1"
+        },
+        "IfBase:Folder:Output_1" : {
+          "Type" : "If:Output",
+          "Code" : "NOTOK",
+          "Action:Rerun_0" : {
+            "Type" : "Action:Rerun"
+          }
+        }
+      }
+    }
+}

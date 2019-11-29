@@ -104,8 +104,9 @@ type JobActionReply = Message
 
 // OrderJobReply is returned after ordering a job
 type OrderJobReply struct {
-	RunID     string `json:"runId"` // this syntax should probably be adopted everywhere in the file
-	StatusURI string
+	RunID          string `json:"runId"` // this syntax should probably be adopted everywhere in the file
+	StatusURI      string
+	MonitorPageURI string
 }
 
 // ErrorReply is returned in case of errors most of the time

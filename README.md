@@ -122,6 +122,10 @@ order a job.
 gomeme job.order --ctm FOOCT4T --folder ABC-DEV-OND --jobs dABC1
 ```
 
+By default the job is held unless the ```-D``` option is provided.
+
+Gomeme tries to get the job id of the created job and retry a few times (waiting 1s between each try). Default is 2 tries, use ```--retries 0``` to not wait.
+
 ### job.action
 
 hold/delete/undelete/confirm/setToOk a job
@@ -271,6 +275,33 @@ Logout
 gomeme logout
 ```
 
+## Local dev
+
+```
+vagrant up
+vagrant ssh
+bats tests.bats
+bats philo.bats
+```
+
+```vagrant up``` will start a localdev environment, including a running controlm workbench.
+
+After adding
+```
+127.0.0.1 workbench
+```
+
+the workbench can be access from https://workbench:8443/automation-api
+
+gomeme compiled under windows can be launched from VSCode terminal with
+```
+$env:GOMEME_ENDPOINT="https://workbench:8443/automation-api"
+$env:GOMEME_PASSWORD="workbench"
+$env:GOMEME_CERT_DIR=".certs"
+.\gomeme.exe login -u workbench
+```
+
+however the bats tests must be started under Linux.
 
 ## License
 

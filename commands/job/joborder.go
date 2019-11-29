@@ -2,6 +2,7 @@ package job
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/freedge/gomeme/client"
 
@@ -14,6 +15,7 @@ type orderJobCommand struct {
 	Ctm      string `short:"c" long:"ctm" description:"server" required:"true"`
 	Folder   string `short:"f" long:"folder" description:"folder" required:"true"`
 	Jobs     string `short:"n" long:"name" description:"job name" required:"true"`
+	Retries  int    `short:"r" long:"retries" description:"try to get the created job id a few times" default:"2"`
 	reply    types.OrderJobReply
 	status   types.JobsStatusReply
 }
@@ -28,14 +30,24 @@ func (cmd *orderJobCommand) Execute([]string) (err error) {
 		return
 	}
 
-	err = client.Call("GET", "/run/status/"+cmd.reply.RunID, nil, map[string]string{}, &cmd.status)
+	_ = client.Call("GET", "/run/status/"+cmd.reply.RunID, nil, map[string]string{}, &cmd.status)
+	for cmd.status.Statuses == nil && cmd.Retries > 0 {
+		cmd.Retries--
+		time.Sleep(1)
+		_ = client.Call("GET", "/run/status/"+cmd.reply.RunID, nil, map[string]string{}, &cmd.status)
+	}
+
 	return
 }
 
 func (cmd *orderJobCommand) PrettyPrint() error {
 	fmt.Println("RunId: ", cmd.reply.RunID)
-	for _, status := range cmd.status.Statuses {
-		fmt.Println("JobId: ", status.JobId)
+	if cmd.status.Statuses != nil {
+		for _, status := range cmd.status.Statuses {
+			fmt.Println("JobId: ", status.JobId)
+		}
+	} else {
+		fmt.Println(cmd.reply.MonitorPageURI, cmd.reply.StatusURI)
 	}
 	return nil
 }

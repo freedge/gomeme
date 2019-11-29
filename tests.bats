@@ -124,10 +124,11 @@
 
 @test "setting QR" { 
   gomeme qr.set -n INIT -c workbench -m 42  
-  QR=0
+  QR=$(gomeme qr -n INIT --json | jq '.[0].Max')
   until [ "$QR" -eq 42 ] ; do
-    QR=$(gomeme qr -n INIT --json | jq '.[0].Max')  
     echo ${QR} >&3
+    sleep 1
+    QR=$(gomeme qr -n INIT --json | jq '.[0].Max')
   done
 }
 

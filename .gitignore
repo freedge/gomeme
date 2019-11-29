@@ -3,3 +3,5 @@ gomeme.exe
 gomeme
 simulator/simulator.exe
 .certs
+.vagrant
+*console.log
