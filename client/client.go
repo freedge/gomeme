@@ -132,7 +132,7 @@ func Call(method, url string, query interface{}, params map[string]string, out i
 	case 404:
 		err = fmt.Errorf("client: got an error accessing %v", req.URL)
 		return
-	case 401, 500:
+	case 401, 500, 502:
 		err = handleError(resp, body)
 		return
 	case 400:
