@@ -11,11 +11,8 @@
 }
 
 @test "bootstrap" {
-  run gomeme test.config.emparamset --debug --subject test --name UserAuditAnnotationOn --value 1
-  # ignoring the output of this for the time being
-  echo "[$status] $output" >&3
-
-  gomeme test.qr.new --subject test --debug -n INIT -m 0 -c workbench  
+  gomeme test.config.emparamset --subject test --name UserAuditAnnotationOn --value 1
+  gomeme test.qr.new --subject test --debug -n INIT -m 0 -c workbench
 }
 
 @test "qr" {

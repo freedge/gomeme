@@ -5,12 +5,13 @@ import (
 
 	"github.com/freedge/gomeme/client"
 	"github.com/freedge/gomeme/commands"
+	"github.com/freedge/gomeme/types"
 )
 
 // only there to bootstrap our local workbench.
 // Maybe rename as bootstrap instead?
 type emparamset struct {
-	reply      string
+	reply      types.Message
 	ParamName  string `long:"name" required:"true" choice:"UserAuditAnnotationOn" description:"the parameter to change"`
 	ParamValue string `long:"value" required:"true"`
 }
@@ -29,7 +30,7 @@ func (cmd *emparamset) Data() interface{} {
 }
 
 func (cmd *emparamset) PrettyPrint() error {
-	fmt.Printf("%s\n", cmd.reply)
+	fmt.Printf("%s\n", cmd.reply.Message)
 	return nil
 }
 
