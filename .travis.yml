@@ -27,7 +27,7 @@ jobs:
     env:
       - GOMEME_PASSWORD=workbench
       - GOMEME_ENDPOINT=https://workbench:8443/automation-api
-      - GOMEME_CERT_DIR=.
+      - GOMEME_CERT_DIR=.certs
     addons:
       hosts:
         - workbench
@@ -38,11 +38,12 @@ jobs:
     - sleep 60
     - until curl -L -k --connect-timeout 3 --max-time 3 ${GOMEME_ENDPOINT}/startHere.html -o /dev/null ; do echo . ; sleep 1 ; done
     # get a certificate to connect to it
+    - mkdir .certs
     - echo | openssl s_client -connect workbench:8443 -showcerts
-    - echo | openssl s_client -connect workbench:8443 -showcerts | grep -A 40 "BEGIN CERTIFICATE" -m 1 | grep -B 40 "END CERTIFICATE" > cert.pem
+    - echo | openssl s_client -connect workbench:8443 -showcerts | grep -A 40 "BEGIN CERTIFICATE" -m 1 | grep -B 40 "END CERTIFICATE" > .certs/cert.pem
     # set up bats for our testing
-    - curl -L https://github.com/bats-core/bats-core/archive/v1.1.0.tar.gz | tar zxf -
-    - pushd bats-core-1.1.0 ; sh install.sh /home/travis/gopath/bin/ ; popd
+    - cd ~/ ; curl -L https://github.com/bats-core/bats-core/archive/v1.1.0.tar.gz | tar zxf -
+    - cd ~/bats-core-1.1.0 ; sh install.sh /home/travis/gopath/bin/
     script: 
     - go get ./...
     - bats tests.bats
