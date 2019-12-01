@@ -138,10 +138,18 @@ func (cmd *jobsStatusCommand) PrettyPrint() error {
 			"Folder/Name", "Held", "JobId", "Order", "Status", "Host", "Del?", "Start time", "Description", "Duration", "Runs")
 		fmt.Printf("%s\n", strings.Repeat("-", 158))
 		for _, job := range cmd.reply.Statuses {
-			fmt.Printf("%-40.40s %5.5s %-14.14s %8.8s %14.14s %17.17s %5.5s %12.12s %21.21s %8.8s % 4d\n",
+			hold := "  "
+			deleted := "  "
+			if job.Held {
+				hold = "⏸"
+			}
+			if job.Deleted {
+				deleted = "☓"
+			}
+			fmt.Printf("%-40.40s %2.2s %-17.17s %8.8s %14.14s %20.20s %2.2s %12.12s %21.21s %8.8s % 4d\n",
 				job.Folder+"/"+job.Name,
-				strconv.FormatBool(job.Held),
-				job.JobId, job.OrderDate, job.Status, job.Host, strconv.FormatBool(job.Deleted), job.StartTime, job.Description, GetDurationAsString(job), job.NumberOfRuns)
+				hold,
+				job.JobId, job.OrderDate, job.Status, job.Host, deleted, job.StartTime, job.Description, GetDurationAsString(job), job.NumberOfRuns)
 		}
 	} else {
 		fmt.Printf("%-15.15s %18.18s %8.8s %16.16s %8.8s\n",

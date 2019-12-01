@@ -24,6 +24,9 @@ func (cmd *orderJobCommand) Data() interface{} {
 	return cmd.status
 }
 func (cmd *orderJobCommand) Execute([]string) (err error) {
+	if err := commands.RequiresAnnotation(); err != nil {
+		return err
+	}
 	query := types.OrderQuery{Jobs: cmd.Jobs, Ctm: cmd.Ctm, Folder: cmd.Folder, Hold: !cmd.DontHold}
 	err = client.Call("POST", "/run/order", query, map[string]string{}, &cmd.reply)
 	if err != nil {
@@ -33,7 +36,7 @@ func (cmd *orderJobCommand) Execute([]string) (err error) {
 	_ = client.Call("GET", "/run/status/"+cmd.reply.RunID, nil, map[string]string{}, &cmd.status)
 	for cmd.status.Statuses == nil && cmd.Retries > 0 {
 		cmd.Retries--
-		time.Sleep(1)
+		time.Sleep(1 * time.Second)
 		_ = client.Call("GET", "/run/status/"+cmd.reply.RunID, nil, map[string]string{}, &cmd.status)
 	}
 

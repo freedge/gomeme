@@ -4,6 +4,10 @@
 package commands
 
 import (
+	"fmt"
+	"os"
+	"os/user"
+
 	"github.com/jessevdk/go-flags"
 )
 
@@ -41,4 +45,26 @@ func AddIfNotEmpty(args map[string]string, key, value string) {
 	if value != "" {
 		args[key] = value
 	}
+}
+
+// GetDefaultDescriptionAnnotation returns the default description annotation sent
+func GetDefaultDescriptionAnnotation() string {
+	var username string
+	if user, err := user.Current(); err == nil {
+		username = user.Username
+	}
+	hostname, _ := os.Hostname()
+
+	return fmt.Sprintf("requested by %s@%s 🐶", username, hostname)
+}
+
+// RequiresAnnotation mandates the annotation for that command
+func RequiresAnnotation() error {
+	if Opts.Subject == "" {
+		return fmt.Errorf("An annotation is required through the --subject flag")
+	}
+	if Opts.Description == "" {
+		Opts.Description = GetDefaultDescriptionAnnotation()
+	}
+	return nil
 }

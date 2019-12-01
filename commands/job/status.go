@@ -20,7 +20,14 @@ func (cmd *jobStatusCommand) Data() interface{} {
 	return cmd
 }
 
+const defaultJobGetAnnotation = defaultJobLogAnnotation
+
 func (cmd *jobStatusCommand) Execute([]string) (err error) {
+	if commands.Opts.Subject == "" {
+		// gomeme provide a default annotation for job get
+		commands.Opts.Subject = defaultJobGetAnnotation
+	}
+
 	err = client.Call("GET", "/run/job/"+cmd.Jobid+"/status", nil, map[string]string{}, &cmd.Result)
 
 	if err == nil {

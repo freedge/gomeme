@@ -15,7 +15,7 @@
 
 @test "get them to eat" {
   for name in 1 2 3 4 5 ; do
-    gomeme job.order -c workbench -f philo -n $name -D >&3
+    gomeme job.order --subject test -c workbench -f philo -n $name -D >&3
   done
 }
 

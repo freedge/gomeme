@@ -20,7 +20,7 @@ type emparam struct {
 }
 
 func (cmd *emparamset) Execute([]string) (err error) {
-	err = client.Call("POST", "/config/em/"+cmd.ParamName, emparam{cmd.ParamValue}, map[string]string{}, &cmd.reply)
+	err = client.Call("POST", "/config/em/param/"+cmd.ParamName, emparam{cmd.ParamValue}, map[string]string{}, &cmd.reply)
 	return
 }
 
