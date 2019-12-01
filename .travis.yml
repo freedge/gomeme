@@ -42,7 +42,7 @@ jobs:
     - echo | openssl s_client -connect workbench:8443 -showcerts
     - echo | openssl s_client -connect workbench:8443 -showcerts | grep -A 40 "BEGIN CERTIFICATE" -m 1 | grep -B 40 "END CERTIFICATE" > .certs/cert.pem
     # set up bats for our testing
-    - cd ~/ ; curl -L https://github.com/bats-core/bats-core/archive/v1.1.0.tar.gz | tar zxf -
+    - curl -L https://github.com/bats-core/bats-core/archive/v1.1.0.tar.gz | tar zxf - -C ~/
     - ~/bats-core-1.1.0/install.sh /home/travis/gopath
     script: 
     - go get ./...
