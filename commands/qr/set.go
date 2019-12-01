@@ -21,6 +21,9 @@ func (cmd *setQRCommand) Data() interface{} {
 }
 
 func (cmd *setQRCommand) Execute([]string) (err error) {
+	if err := commands.RequiresAnnotation(); err != nil {
+		return err
+	}
 	err = client.Call("POST", "/run/resource/"+cmd.Ctm+"/"+cmd.Name, types.SetResourceQuery{Max: strconv.Itoa(cmd.Max)}, map[string]string{}, &cmd.reply)
 	return
 }

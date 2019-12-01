@@ -53,8 +53,9 @@ and put the root CA certificate in your certs folder.
 
 ### Annotations
 
-Annotations can be provided with the ```--subject``` and ```--description``` parameters. ```deploy.put``` and ```job.modify```
-requires an annotation to be set even if audit is not activated on server side.
+Annotations can be provided with the ```--subject``` and ```--description``` parameters. 
+```deploy.put```, ```job.modify```, ```job.order```
+require an annotation to be set even if audit is not activated on server side.
 
 
 ## Commands
@@ -119,8 +120,14 @@ gomeme job.log --jobid FOOCCT4P:5nq1c --output --run 3
 order a job.
 
 ```
-gomeme job.order --ctm FOOCT4T --folder ABC-DEV-OND --jobs dABC1
+gomeme job.order --ctm FOOCT4T --folder ABC-DEV-OND --jobs dABC1 --subject Test1234
 ```
+
+By default the job is held unless the ```-D``` option is provided.
+
+Gomeme tries to get the job id of the created job and retry a few times (waiting 1s between each try). Default is 2 tries, use ```--retries 0``` to not wait.
+
+An annotation is required.
 
 ### job.action
 
@@ -271,6 +278,33 @@ Logout
 gomeme logout
 ```
 
+## Local dev
+
+```
+vagrant up
+vagrant ssh
+bats tests.bats
+bats philo.bats
+```
+
+```vagrant up``` will start a localdev environment, including a running controlm workbench.
+
+After adding
+```
+127.0.0.1 workbench
+```
+
+the workbench can be access from https://workbench:8443/automation-api
+
+gomeme compiled under windows can be launched from VSCode terminal with
+```
+$env:GOMEME_ENDPOINT="https://workbench:8443/automation-api"
+$env:GOMEME_PASSWORD="workbench"
+$env:GOMEME_CERT_DIR=".certs"
+.\gomeme.exe login -u workbench
+```
+
+however the bats tests must be started under Linux.
 
 ## License
 

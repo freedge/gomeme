@@ -18,7 +18,13 @@ func (cmd *jobLogCommand) Data() interface{} {
 	return cmd.result
 }
 
+const defaultJobLogAnnotation = "Requested by gomeme"
+
 func (cmd *jobLogCommand) Execute([]string) (err error) {
+	if commands.Opts.Subject == "" {
+		// gomeme provide a default annotation for job logs
+		commands.Opts.Subject = defaultJobLogAnnotation
+	}
 	service := "log"
 	if cmd.Output {
 		service = "output"

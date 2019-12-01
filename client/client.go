@@ -127,17 +127,13 @@ func Call(method, url string, query interface{}, params map[string]string, out i
 		fmt.Println("DEBUG", resp.StatusCode, string(body))
 	}
 
-	var maybeAnError bool
 	switch resp.StatusCode {
 	case 404:
 		err = fmt.Errorf("client: got an error accessing %v", req.URL)
 		return
-	case 401, 500:
+	case 400, 401, 500, 502:
 		err = handleError(resp, body)
 		return
-	case 400:
-		// not too sure about that one, sometimes it parses as an error
-		maybeAnError = true
 	}
 
 	switch out.(type) {
@@ -145,7 +141,7 @@ func Call(method, url string, query interface{}, params map[string]string, out i
 		*(out.(*string)) = string(body)
 	default:
 		err = json.Unmarshal(body, out)
-		if err != nil && maybeAnError {
+		if err != nil {
 			err = handleError(resp, body)
 		}
 	}

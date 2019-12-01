@@ -46,7 +46,7 @@
 }
 
 @test "job.order to order them and keep them held" {
-  run gomeme job.order -c workbench -f FOO-BARLOCAL-PRK -n dFOOJOBPRGPK1
+  run gomeme job.order --subject test -c workbench -f FOO-BARLOCAL-PRK -n dFOOJOBPRGPK1
   [ "$status" -eq 0 ]
   [[ "${lines[0]}" =~ "RunId:" ]]
   [[ "${lines[1]}" =~ "JobId:" ]]
@@ -91,7 +91,7 @@
 
 @test "free the job" {
   ID=$(gomeme lj --json | jq '.Statuses[0].JobId')
-  run gomeme job.action -j $ID -a free
+  run gomeme job.action -j $ID -a free --subject test
   [ "$status" -eq 0 ]
   [[ "$output" =~ "was successfully freed" ]]
 }  
@@ -105,7 +105,7 @@
 
 @test "hold the job" {
   ID=$(gomeme lj --json | jq '.Statuses[0].JobId')
-  run gomeme job.action -j $ID -a hold
+  run gomeme job.action -j $ID -a hold --subject test
   [ "$status" -eq 0 ]
   [[ "$output" =~ "was successfully held" ]]
 }
@@ -117,17 +117,18 @@
 
 @test "delete the job" {
   ID=$(gomeme lj --json | jq '.Statuses[0].JobId')
-  run gomeme job.action -j $ID -a delete
+  run gomeme job.action -j $ID -a delete --subject test
   [ "$status" -eq 0 ]
   [[ "$output" =~ "was successfully deleted" ]]
 }
 
 @test "setting QR" { 
-  gomeme qr.set -n INIT -c workbench -m 42  
-  QR=0
+  gomeme qr.set -n INIT -c workbench -m 42 --subject test
+  QR=$(gomeme qr -n INIT --json | jq '.[0].Max')
   until [ "$QR" -eq 42 ] ; do
-    QR=$(gomeme qr -n INIT --json | jq '.[0].Max')  
     echo ${QR} >&3
+    sleep 1
+    QR=$(gomeme qr -n INIT --json | jq '.[0].Max')
   done
 }
 

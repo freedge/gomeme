@@ -19,6 +19,9 @@ func (cmd *jobActionCommand) Data() interface{} {
 }
 
 func (cmd *jobActionCommand) Execute([]string) (err error) {
+	if err := commands.RequiresAnnotation(); err != nil {
+		return err
+	}
 	err = client.Call("POST", "/run/job/"+cmd.Jobid+"/"+cmd.Action, nil, map[string]string{}, &cmd.result)
 	return
 }

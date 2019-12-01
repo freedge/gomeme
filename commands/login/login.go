@@ -58,7 +58,7 @@ func (cmd *loginCommand) Execute([]string) (err error) {
 }
 
 func (cmd *loginCommand) PrettyPrint() error {
-	fmt.Printf("Logged in. Server version %s\n", cmd.token.Version)
+	fmt.Printf("Logged in. Server version %s.\nDefault description annotation: '%s'\n", cmd.token.Version, commands.GetDefaultDescriptionAnnotation())
 	return nil
 }
 
