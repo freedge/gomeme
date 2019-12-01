@@ -36,7 +36,8 @@ jobs:
     - curl -L https://controlm-appdev.s3-us-west-2.amazonaws.com/workbench/9.0.19.140/deploy/ova/controlm-workbench-9.19.140.xz | docker load
     - docker run -dt --hostname=workbench --name=workbench -p 127.0.0.1:8443:8443 -p 7005:7005 controlm-workbench:9.19.140
     - sleep 60
-    - until curl -L -k --connect-timeout 3 --max-time 3 ${GOMEME_ENDPOINT}/startHere.html -o /dev/null ; do echo . ; sleep 1 ; done
+    
+    - until curl --fail -L -k --connect-timeout 3 --max-time 3 ${GOMEME_ENDPOINT}/startHere.html -o /dev/null ; do echo . ; sleep 1 ; done
     # get a certificate to connect to it
     - mkdir .certs
     - echo | openssl s_client -connect workbench:8443 -showcerts
