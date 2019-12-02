@@ -243,17 +243,6 @@ Upload the definition of jobs
 gomeme deploy.put --filename foo.json --subject "Record1234" --ctm FOOCTM
 ```
 
-### con
-
-🚧 List jobs on a terminal. Take the same parameters as lj
-
-```
-gomeme con
-```
-
-Supports ```/``` to search, ```s``` to get a status, ```Enter``` for job output, ```l``` for the logs...
-Might need to resize the screen after these displays...
-
 ### job.get
 
 Retrieve status, waiting info, parameters of a single job
