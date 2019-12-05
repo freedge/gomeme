@@ -102,7 +102,7 @@ gomeme lj --deps --jobid FOOSRV:5rxwz -v
 set a qr
 
 ```
-gomeme qr.set --name DEV-FOO --ctm BARCT4T --max 5
+gomeme qr.set --name DEV-FOO --ctm BARCT4T --max 5 --subject reason
 ```
 
 ### job.log

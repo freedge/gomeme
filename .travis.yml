@@ -15,7 +15,8 @@ jobs:
     script: 
     - go get ./...
     - go install
-    - tar zcvf /home/travis/gomeme-${TRAVIS_TAG}.tar.gz -C /home/travis/gopath/bin/ gomeme
+    - chmod go-w /home/travis/gopath/bin/gomeme
+    - tar --format=gnu --owner=🐶 --group=🐶 -zcvf /home/travis/gomeme-${TRAVIS_TAG}.tar.gz -C /home/travis/gopath/bin/ gomeme
   - stage: test
     install: true
     script: 
@@ -41,7 +42,7 @@ jobs:
     # get a certificate to connect to it
     - mkdir .certs
     - echo | openssl s_client -connect workbench:8443 -showcerts
-    - echo | openssl s_client -connect workbench:8443 -showcerts | grep -A 40 "BEGIN CERTIFICATE" -m 1 | grep -B 40 "END CERTIFICATE" > .certs/cert.pem
+    - echo | openssl s_client -prexit -connect workbench:8443 | openssl x509 > .certs/cert.pem
     # set up bats for our testing
     - curl -L https://github.com/bats-core/bats-core/archive/v1.1.0.tar.gz | tar zxf - -C ~/
     - ~/bats-core-1.1.0/install.sh /home/travis/gopath
