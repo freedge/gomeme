@@ -29,13 +29,19 @@ jobs:
       - GOMEME_PASSWORD=workbench
       - GOMEME_ENDPOINT=https://workbench:8443/automation-api
       - GOMEME_CERT_DIR=.certs
+      - WORKBENCH_PATH=https://controlm-appdev.s3-us-west-2.amazonaws.com/workbench/9.0.19.200/deploy/ova/controlm-workbench-9.19.200.xz
+      - WORKBENCH_IMAGE=controlm-workbench:9.19.200
     addons:
       hosts:
         - workbench
+      apt:
+        packages:
+          # Needed for `xmllint`.
+          - libxml2-utils
     before_install:
     # set up a running workbench
-    - curl -L https://controlm-appdev.s3-us-west-2.amazonaws.com/workbench/9.0.19.140/deploy/ova/controlm-workbench-9.19.140.xz | docker load
-    - docker run -dt --hostname=workbench --name=workbench -p 127.0.0.1:8443:8443 -p 7005:7005 controlm-workbench:9.19.140
+    - curl -L ${WORKBENCH_PATH} | docker load
+    - docker run -dt --hostname=workbench --name=workbench -p 127.0.0.1:8443:8443 -p 7005:7005 ${WORKBENCH_IMAGE}
     - sleep 60
     
     - until curl --fail -L -k --connect-timeout 3 --max-time 3 ${GOMEME_ENDPOINT}/startHere.html -o /dev/null ; do echo . ; sleep 1 ; done
@@ -48,7 +54,7 @@ jobs:
     - ~/bats-core-1.1.0/install.sh /home/travis/gopath
     script: 
     - go get ./...
-    - bats tests.bats
+    - bats tests.bats    
 deploy:
   provider: releases
   api_key:

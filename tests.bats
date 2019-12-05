@@ -11,12 +11,12 @@
 }
 
 @test "bootstrap" {
-  gomeme test.config.emparamset --subject test --name UserAuditAnnotationOn --value 1
+  #gomeme test.config.emparamset --subject test --name UserAuditAnnotationOn --value 1
   gomeme test.qr.new --subject test --debug -n INIT -m 0 -c workbench
 }
 
 @test "qr" {
-  gomeme qr
+  gomeme --debug qr >&3
 }
 
 @test "config server should retrieve our workbench server" {
@@ -40,6 +40,10 @@
   [ "$status" -eq 0 ]
   DESC=$(echo "$output" | jq '."FOO-BARLOCAL-PRK".dFOOJOBPRGPK1.Description')
   [ "$DESC" == '"1234"' ]
+}
+
+@test "deploy.get --xml returns the defined jobs" {
+  gomeme deploy.get -c workbench -f FOO-BARLOCAL-PRK --xml | xmllint --encode ASCII - | grep CREATED_BY >&3  
 }
 
 @test "job.order to order them and keep them held" {
@@ -95,8 +99,8 @@
 
 @test "get the job waiting info" {
   ID=$(gomeme lj --json | jq '.Statuses[0].JobId')
-  run gomeme job.get -j $ID
-  [ "$status" -eq 0 ]
+  gomeme job.get --debug -j $ID >&3
+  run gomeme job.get -j $ID  
   [[ "$output" =~ "There is no machine available for job execution" ]]
 } 
 
