@@ -44,14 +44,15 @@ func getLinter(ctm string) linter {
 			return fmt.Errorf("could not parse that file: %w", err)
 		}
 		for _, folder := range file {
-			if folder.ControlmServer != ctm {
+			if folder.ControlmServer != ctm && folder.TargetCTM != ctm {
 				return fmt.Errorf("controlm server does not match")
 			}
 			// we make an exception for the workbench...
 			// TODO: either remove the sitestandard to be able to deploy the job on workbench,
 			// or find a way to define the sitestandard on workbench as well (does not
 			// seem possible through the API today)
-			if ctm != "workbench" && folder.SiteStandard == "" {
+			// TODO: check what we do about connection profiles
+			if ctm != "workbench" && folder.SiteStandard == "" && folder.TargetCTM == "" {
 				return fmt.Errorf("site standard not specified")
 			}
 		}
@@ -103,7 +104,7 @@ func (cmd *put) Execute([]string) (err error) {
 
 func (cmd *put) PrettyPrint() error {
 	for _, deploy := range cmd.reply {
-		fmt.Printf("%d jobs successfully deployed (%v)\n", deploy.SuccessfulJobsCount, deploy)
+		fmt.Printf("%d jobs successfully deployed (%#v)\n", deploy.SuccessfulJobsCount, deploy)
 		for _, oneerr := range deploy.Errors {
 			fmt.Printf("Got error : %s\n", strings.Join(oneerr.Lines, ", "))
 		}

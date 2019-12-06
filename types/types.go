@@ -204,13 +204,15 @@ type JobGetReply = map[string]OneJobDefinition
 // WaitinfoReply is the information from the waiting info
 type WaitinfoReply = []string
 
-// OneFolderDefinition is a folder containing a few jobs
-type OneFolderDefinition struct {
+// OneFolderOrConnectionProfileDefinition is a folder containing a few jobs
+// not sure if you could mix the 2, so creating a single structure here for the time being
+type OneFolderOrConnectionProfileDefinition struct {
 	ControlmServer string
 	SiteStandard   string
 	Type           string
 	OrderMethod    string
+	TargetCTM      string
 }
 
 // DeployPutFormat is part of what you give in input to the deploy or build service
-type DeployPutFormat = map[string]OneFolderDefinition
+type DeployPutFormat = map[string]OneFolderOrConnectionProfileDefinition
