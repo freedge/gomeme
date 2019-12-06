@@ -33,6 +33,7 @@ func TestDeployPut(t *testing.T) {
 	cmd.Ctm = "workbench"
 	defer func() { commands.Opts = commands.DefaultOpts{} }()
 	commands.Opts.Endpoint = ts.URL + "/api"
+	commands.Opts.Subject = "subject"
 
 	err := cmd.Execute([]string{})
 
