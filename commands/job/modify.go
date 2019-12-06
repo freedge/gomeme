@@ -70,6 +70,10 @@ func (cmd *modify) Execute(args []string) (err error) {
 	writer.Close()
 	client.ContentType = writer.FormDataContentType()
 
+	if commands.Opts.Debug {
+		fmt.Println("SENDING", cmd.jobdef)
+	}
+
 	err = client.Call("POST", "/run/job/"+cmd.Jobid+"/modify", body, map[string]string{}, &cmd.reply)
 
 	return err
