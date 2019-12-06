@@ -11,7 +11,7 @@
 }
 
 @test "bootstrap" {
-  #gomeme test.config.emparamset --subject test --name UserAuditAnnotationOn --value 1
+  gomeme test.config.emparamset --subject test --description test --name UserAuditAnnotationOn --value 1
   gomeme test.qr.new --subject test --debug -n INIT -m 0 -c workbench
 }
 
