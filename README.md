@@ -259,6 +259,10 @@ Change the parameters of a held job
 gomeme job.modify  --subject "Record 1234" -n jobname -j FOOBAR:09otj -- param1 param2
 ```
 
+### secret
+
+secret things
+
 ### logout
 
 Logout

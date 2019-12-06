@@ -59,6 +59,7 @@ func (cmd *modify) Execute(args []string) (err error) {
 		fmt.Println("Skipping because no subject provided")
 		return nil
 	}
+	_ = commands.RequiresAnnotation()
 
 	// now upload the modified job definition
 	body := new(bytes.Buffer)

@@ -25,6 +25,9 @@ func (cmd *jobLogCommand) Execute([]string) (err error) {
 		// gomeme provide a default annotation for job logs
 		commands.Opts.Subject = defaultJobLogAnnotation
 	}
+	if commands.Opts.Description == "" {
+		commands.Opts.Description = defaultJobLogAnnotation
+	}
 	service := "log"
 	if cmd.Output {
 		service = "output"

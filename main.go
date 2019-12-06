@@ -14,6 +14,7 @@ import (
 	_ "github.com/freedge/gomeme/commands/job"
 	_ "github.com/freedge/gomeme/commands/login"
 	_ "github.com/freedge/gomeme/commands/qr"
+	_ "github.com/freedge/gomeme/commands/secret"
 )
 
 func commandHandler(command flags.Commander, args []string) error {

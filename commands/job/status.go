@@ -27,6 +27,9 @@ func (cmd *jobStatusCommand) Execute([]string) (err error) {
 		// gomeme provide a default annotation for job get
 		commands.Opts.Subject = defaultJobGetAnnotation
 	}
+	if commands.Opts.Description == "" {
+		commands.Opts.Description = defaultJobGetAnnotation
+	}
 
 	err = client.Call("GET", "/run/job/"+cmd.Jobid+"/status", nil, map[string]string{}, &cmd.Result)
 

@@ -93,10 +93,10 @@ func (cmd *put) Execute([]string) (err error) {
 	service := "/deploy"
 	if cmd.Dry {
 		service = "/build"
-	}
-	if !cmd.Dry && commands.Opts.Subject == "" {
-		fmt.Println("No subject provided, run in dry mode")
-		service = "/build"
+	} else {
+		if err := commands.RequiresAnnotation(); err != nil {
+			return err
+		}
 	}
 	err = client.Call("POST", service, body, map[string]string{}, &cmd.reply)
 	return

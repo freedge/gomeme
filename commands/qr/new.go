@@ -14,6 +14,9 @@ type newQRCommand struct {
 }
 
 func (cmd *newQRCommand) Execute([]string) (err error) {
+	if err := commands.RequiresAnnotation(); err != nil {
+		return err
+	}
 	err = client.Call("POST", "/run/resource/"+cmd.Ctm, types.AddResourceQuery{Max: strconv.Itoa(cmd.Max), Name: cmd.Name}, map[string]string{}, &cmd.reply)
 	return
 }

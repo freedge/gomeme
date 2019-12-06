@@ -216,3 +216,9 @@ type OneFolderOrConnectionProfileDefinition struct {
 
 // DeployPutFormat is part of what you give in input to the deploy or build service
 type DeployPutFormat = map[string]OneFolderOrConnectionProfileDefinition
+
+// SecretAddQuery is what you give to add a named secret
+type SecretAddQuery struct {
+	Name  string `json:"name,omitempty"`
+	Value string `json:"value"`
+}
