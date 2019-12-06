@@ -17,9 +17,9 @@ Vagrant.configure(2) do |config|
   # get our workbench running
   config.vm.provision "docker" do |d|
     d.post_install_provision "shell", 
-      inline: "docker images | grep controlm-workbench || ( curl -L https://controlm-appdev.s3-us-west-2.amazonaws.com/workbench/9.0.19.140/deploy/ova/controlm-workbench-9.19.140.xz | docker load )"
+      inline: "docker images | grep controlm-workbench | grep 9.19.200 || ( curl -L https://controlm-appdev.s3-us-west-2.amazonaws.com/workbench/9.0.19.200/deploy/ova/controlm-workbench-9.19.200.xz | docker load )"
     d.run "workbench",
-      image: "controlm-workbench:9.19.140",
+      image: "controlm-workbench:9.19.200",
       args: "--tty --hostname workbench -p 8443:8443 -p 7005:7005" 
   end
 
@@ -32,6 +32,8 @@ Vagrant.configure(2) do |config|
     inline: "snap install --classic go"
   config.vm.provision "shell",
     inline: "snap install jq"
+  config.vm.provision "shell",
+    inline: "snap install libxml2-utils"
   config.vm.provision "shell",
     inline: "cd ; rm -rf bats-core-1.1.0 ; curl -L https://github.com/bats-core/bats-core/archive/v1.1.0.tar.gz | tar zxf - ; bats-core-1.1.0/install.sh /usr"
   config.vm.provision "shell",
