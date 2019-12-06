@@ -72,7 +72,7 @@ type OrderQuery struct {
 	Hold   bool
 	Ctm    string
 	Folder string
-	Jobs   string
+	Jobs   string `json:"jobs,omitempty"`
 }
 
 // SetResourceQuery contain the data to set a QR. QR name is given in the URL parameter

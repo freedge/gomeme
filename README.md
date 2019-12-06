@@ -117,9 +117,10 @@ gomeme job.log --jobid FOOCCT4P:5nq1c --output --run 3
 
 ### job.order
 
-order a job.
+order a job or a whole folder
 
 ```
+gomeme job.order --ctm FOOCT4T --folder ABC-DEV-OND --subject Test1234
 gomeme job.order --ctm FOOCT4T --folder ABC-DEV-OND --jobs dABC1 --subject Test1234
 ```
 

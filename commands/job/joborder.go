@@ -14,7 +14,7 @@ type orderJobCommand struct {
 	DontHold bool   `short:"D" long:"donthold" description:"do not hold the job after submission"`
 	Ctm      string `short:"c" long:"ctm" description:"server" required:"true"`
 	Folder   string `short:"f" long:"folder" description:"folder" required:"true"`
-	Jobs     string `short:"n" long:"name" description:"job name" required:"true"`
+	Jobs     string `short:"n" long:"name" description:"job name"`
 	Retries  int    `short:"r" long:"retries" description:"try to get the created job id a few times" default:"2"`
 	reply    types.OrderJobReply
 	status   types.JobsStatusReply
@@ -27,7 +27,10 @@ func (cmd *orderJobCommand) Execute([]string) (err error) {
 	if err := commands.RequiresAnnotation(); err != nil {
 		return err
 	}
-	query := types.OrderQuery{Jobs: cmd.Jobs, Ctm: cmd.Ctm, Folder: cmd.Folder, Hold: !cmd.DontHold}
+	query := types.OrderQuery{Ctm: cmd.Ctm, Folder: cmd.Folder, Hold: !cmd.DontHold}
+	if cmd.Jobs != "" {
+		query.Jobs = cmd.Jobs
+	}
 	err = client.Call("POST", "/run/order", query, map[string]string{}, &cmd.reply)
 	if err != nil {
 		return
@@ -47,7 +50,7 @@ func (cmd *orderJobCommand) PrettyPrint() error {
 	fmt.Println("RunId: ", cmd.reply.RunID)
 	if cmd.status.Statuses != nil {
 		for _, status := range cmd.status.Statuses {
-			fmt.Println("JobId: ", status.JobId)
+			fmt.Println("JobId: ", status.JobId, "Name: ", status.Name, "Status: ", status.Status)
 		}
 	} else {
 		fmt.Println(cmd.reply.MonitorPageURI, cmd.reply.StatusURI)

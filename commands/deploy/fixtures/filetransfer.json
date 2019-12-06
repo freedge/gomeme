@@ -1,0 +1,57 @@
+{
+    "filetransfer" : {
+      "Type" : "SimpleFolder",
+      "ControlmServer" : "workbench",
+      "OrderMethod" : "JOB",
+      "generateFile" : {
+        "Type" : "Job:Command",
+        "DaysKeepActive" : "1",
+        "SubApplication" : "subapplifile",
+        "Priority" : "sa",
+        "Host" : "workbench",
+        "Command" : "sh -c 'echo 42 > /tmp/afile'",
+        "CreatedBy" : "François",
+        "Description" : "afiletransfer",
+        "RunAs" : "workbench",
+        "TimeZone" : "GMT",
+        "Application" : "applifile",
+        "DocumentationUrl" : {
+          "Url" : "https://example.com/"
+        },
+        "eventsToAdd" : {
+          "Type" : "AddEvents",
+          "Events" : [ {
+            "Event" : "thenext"
+          } ]
+        }
+      },
+      "copyTheFile" : {
+        "Type" : "Job:Command",
+        "DaysKeepActive" : "1",
+        "SubApplication" : "subapplifile",
+        "Priority" : "sa",
+        "Host" : "workbench",
+        "Command" : "sh -c 'cat /tmp/afile'",
+        "CreatedBy" : "François",
+        "Description" : "afiletransfer",
+        "RunAs" : "workbench",
+        "TimeZone" : "GMT",
+        "Application" : "applifile",
+        "DocumentationUrl" : {
+          "Url" : "https://example.com/"
+        },
+        "eventsToWaitFor" : {
+          "Type" : "WaitForEvents",
+          "Events" : [ {
+            "Event" : "thenext"
+          } ]
+        },
+        "eventsToDelete" : {
+          "Type" : "DeleteEvents",
+          "Events" : [ {
+            "Event" : "thenext"
+          } ]
+        }
+      }
+    }
+}
