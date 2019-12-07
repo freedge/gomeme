@@ -134,6 +134,12 @@
   done
 }
 
+@test "create a secret and check for its existence" { 
+  echo 42 | gomeme secret.add --subject test -n mysecret -f -
+  echo 好 | gomeme secret.update --subject test -n mysecret -f -
+  gomeme secret.get | grep mysecret
+}
+
 @test "logout" {
   run gomeme logout
   [ "$status" -eq 0 ]

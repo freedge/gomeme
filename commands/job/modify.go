@@ -27,6 +27,10 @@ func (cmd *modify) Data() interface{} {
 }
 
 func (cmd *modify) Execute(args []string) (err error) {
+	if err := commands.RequiresAnnotation(); err != nil {
+		return err
+	}
+
 	// starts by getting the job definition
 	err = client.Call("GET", "/run/job/"+cmd.Jobid+"/get", nil, map[string]string{}, &cmd.jobdef)
 	if err != nil {
@@ -53,13 +57,6 @@ func (cmd *modify) Execute(args []string) (err error) {
 			return
 		}
 	}
-
-	// make subject mandatory
-	if commands.Opts.Subject == "" {
-		fmt.Println("Skipping because no subject provided")
-		return nil
-	}
-	_ = commands.RequiresAnnotation()
 
 	// now upload the modified job definition
 	body := new(bytes.Buffer)

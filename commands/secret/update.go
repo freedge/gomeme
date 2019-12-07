@@ -10,16 +10,18 @@ import (
 )
 
 type update struct {
-	Name  string `short:"n" long:"name" description:"name" required:"true"`
-	Value string `short:"v" long:"value" description:"value" required:"true"`
-	reply types.Message
+	add
 }
 
 func (cmd *update) Execute([]string) (err error) {
 	if err := commands.RequiresAnnotation(); err != nil {
 		return err
 	}
-	err = client.Call("POST", "/config/secret/"+cmd.Name, types.SecretAddQuery{Value: cmd.Value}, map[string]string{}, &cmd.reply)
+	var content []byte
+	if content, err = readSecretFromFile(cmd.File); err != nil {
+		return err
+	}
+	err = client.Call("POST", "/config/secret/"+cmd.Name, types.SecretAddQuery{Value: string(content)}, map[string]string{}, &cmd.reply)
 	return
 }
 
