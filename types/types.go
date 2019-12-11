@@ -137,6 +137,9 @@ type ConfigAgentsReply struct {
 	Agents []Agent
 }
 
+// ConfigHostGroupsReply is just a list of hostgroups
+type ConfigHostGroupsReply = []string
+
 // ConfigAgentParam is one paramater of the agent
 type ConfigAgentParam struct {
 	Name, Value, DefaultValue string

@@ -21,7 +21,7 @@
 
 @test "config server should retrieve our workbench server" {
   gomeme config.servers >&3
-  gomeme config.agents -c workbench >&3
+  gomeme config.server -c workbench >&3
 }
 
 @test "ping our agent and show its parameters" {

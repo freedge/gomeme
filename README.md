@@ -194,12 +194,12 @@ List all servers
 gomeme config.servers
 ```
 
-### config.agents
+### config.server
 
-List all agents for a specific server
+List all agents and hostgroups for a specific server
 
 ```
-gomeme config.agents --ctm FOO123
+gomeme config.server --ctm FOO123
 ```
 
 
