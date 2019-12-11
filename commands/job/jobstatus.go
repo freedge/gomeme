@@ -134,9 +134,9 @@ func (cmd *jobsStatusCommand) PrettyPrint() error {
 	}
 	if cmd.Verbose {
 		fmt.Printf("%d/%d jobs displayed\n", cmd.reply.Returned, cmd.reply.Total)
-		fmt.Printf("%-40.40s %5.5s %-14.14s %8.8s %14.14s %17.17s %5.5s %12.12s %21.21s %8.8s %4.4s\n",
+		fmt.Printf("%-40.40s %4.4s %-14.14s %8.8s %14.14s %17.17s %4.4s %12.12s %21.21s %8.8s %4.4s\n",
 			"Folder/Name", "Held", "JobId", "Order", "Status", "Host", "Del?", "Start time", "Description", "Duration", "Runs")
-		fmt.Printf("%s\n", strings.Repeat("-", 158))
+		fmt.Printf("%s\n", strings.Repeat("-", 156))
 		for _, job := range cmd.reply.Statuses {
 			hold := "  "
 			deleted := "  "
@@ -146,7 +146,7 @@ func (cmd *jobsStatusCommand) PrettyPrint() error {
 			if job.Deleted {
 				deleted = "☓"
 			}
-			fmt.Printf("%-40.40s %2.2s %-17.17s %8.8s %14.14s %20.20s %2.2s %12.12s %21.21s %8.8s % 4d\n",
+			fmt.Printf("%-40.40s %2.2s%-17.17s %8.8s %14.14s %20.20s %2.2s%12.12s %21.21s %8.8s % 4d\n",
 				job.Folder+"/"+job.Name,
 				hold,
 				job.JobId, job.OrderDate, job.Status, job.Host, deleted, job.StartTime, job.Description, GetDurationAsString(job), job.NumberOfRuns)
