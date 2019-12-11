@@ -275,6 +275,7 @@ gomeme logout
 ## Local dev
 
 ```
+vagrant plugin install vagrant-disksize
 vagrant up
 vagrant ssh
 bats tests.bats

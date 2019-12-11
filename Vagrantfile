@@ -3,6 +3,7 @@
 
 Vagrant.configure(2) do |config|
   config.vm.box = "ubuntu/xenial64" 
+  config.disksize.size = '25GB'
   # access a port on your host machine (via localhost) and have all data forwarded to a port on the guest machine.
   config.vm.network "forwarded_port", guest: 8443, host: 8443
   config.vm.hostname = "workbench"
@@ -23,6 +24,8 @@ Vagrant.configure(2) do |config|
       args: "--tty --hostname workbench -p 8443:8443 -p 7005:7005" 
   end
 
+  config.vm.provision "shell",
+    inline: "chown -v -R vagrant:vagrant /home/vagrant/go"
   # retrieve the certificate to use to connect to it
   config.vm.provision "shell",
     inline: "mkdir -p /home/vagrant/go/src/github.com/freedge/gomeme/.certs ; until echo | openssl s_client -prexit -connect workbench:8443 | openssl x509 > /home/vagrant/go/src/github.com/freedge/gomeme/.certs/out.pem ; do sleep 1 ; done",
