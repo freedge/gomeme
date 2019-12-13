@@ -23,7 +23,7 @@ jobs:
     - go get ./...
     - go test ./...
     - gofmt -s -d . | tee /home/travis/gofmt.out ; test ! -s /home/travis/gofmt.out
-  - stage: integrationtest
+  - # still test
     install: true
     env:
       - GOMEME_PASSWORD=workbench
@@ -42,7 +42,7 @@ jobs:
           - awscli
     before_install:
     # output any newer workbench that might be out
-    - aws --no-sign-request s3 ls --recursive | grep controlm-workbench | sort
+    - aws --no-sign-request s3 ls controlm-appdev --recursive | grep controlm-workbench | sort
     # set up a running workbench    
     - aws --no-sign-request s3 cp ${WORKBENCH_PATH} - | docker load
     - docker run -dt --hostname=workbench --name=workbench -p 127.0.0.1:8443:8443 -p 7005:7005 ${WORKBENCH_IMAGE}
