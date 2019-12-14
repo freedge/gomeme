@@ -5,6 +5,7 @@ package login
 import (
 	"fmt"
 	"os"
+	"syscall"
 	"time"
 
 	"golang.org/x/crypto/ssh/terminal"
@@ -33,13 +34,13 @@ func (cmd *loginCommand) Execute([]string) (err error) {
 	var found bool
 	var password string
 	if password, found = os.LookupEnv(envPassword); !found {
-		if !terminal.IsTerminal(0) {
+		if !terminal.IsTerminal(int(syscall.Stdin)) {
 			err = fmt.Errorf("run from a terminal or provide password through %s environment variable", envPassword)
 			return
 		}
 		fmt.Printf("Enter password for user %s:\n", cmd.User)
 		var bytes []byte
-		if bytes, err = terminal.ReadPassword(0 /* stdin */); err != nil {
+		if bytes, err = terminal.ReadPassword(int(syscall.Stdin)); err != nil {
 			return
 		}
 		password = string(bytes)
