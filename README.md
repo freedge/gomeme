@@ -15,6 +15,8 @@ and loosely inspired by [govc](https://github.com/vmware/govmomi/tree/master/gov
 ## Usage
 
 ```
+go install github.com/freedge/gomeme
+
 export GOMEME_ENDPOINT=https://.../automation-api
 export GOMEME_CERT_DIR=~/certs
 gomeme login -u toto
@@ -28,6 +30,18 @@ Use the ```--dump``` option to output in a Go-like format. ```--json``` option o
 Helps for commands can be accessed with ```-h```
 
 Traffic received from ctm server can be dumped with ```--debug```
+
+Usage on Windows:
+
+```
+$env:GOMEME_ENDPOINT="https://workbench:8443/automation-api"
+$env:GOMEME_CERTDIR=...
+gomeme login -u workbench
+
+$Jobs = & gomeme lj -s Executing -f *appli* --json | ConvertFrom-Json
+$Jobs.statuses |  Out-GridView
+```
+
 
 ### SSL config
 
