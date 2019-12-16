@@ -200,6 +200,17 @@ Just outputs the curl command to run to target the API by hand
 gomeme curl
 ```
 
+### ps
+
+Same as curl but with a call to Invoke-RestMethod PowerShell cmdlet.
+
+Powershell has no equivalent for capath, so we will skip server verification entirely in that case. Tested against PowerShell 7 preview.
+
+```
+$ps=& gomeme ps
+Invoke-Expression $ps/config/servers
+```
+
 ### config.servers
 
 List all servers
