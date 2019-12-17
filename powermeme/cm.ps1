@@ -60,7 +60,7 @@ function Get-CMJobStatus {
     if ($PSBoundParameters.ContainsKey('Status')) {
         $query.add("status", $Status) 
     }
-    return Invoke-RestMethod -Method Get -Uri $url -Headers $headers @extraparams -Body $query
+    return (Invoke-RestMethod -Method Get -Uri $url -Headers $headers @extraparams -Body $query).Statuses
 }
 
 function Get-CMResource {
@@ -82,26 +82,22 @@ function Get-CMResource {
     return Invoke-RestMethod -Method Get -Uri $url -Headers $headers @extraparams -Body $query
 }
 
+
 function Get-CMJobOutput {
     param (
         [Parameter(Mandatory=$true)] $EmServer,
-        [Parameter(Mandatory=$true)] [string] $Id
+        [Parameter(Mandatory=$true, ValueFromPipelineByPropertyName=$true)][Alias('Id')] [string[]] $jobId,
+        [switch] $Output
     )
     $headers = @{Authorization="Bearer "+ $EmServer.Token; "Annotation-Subject"="Dummy"; "Annotation-Description"="Dummy"}
-    $url = $EmServer.EndPoint + "/run/job/" + $Id + "/output"
     $extraparams = $EmServer.ExtraParams
-
-    return Invoke-RestMethod -Method Get -Uri $url -Headers $headers @extraparams -Body $query
+    $Option = "log"
+    if ( $Output) {
+        $Option = "output"
+    }
+    ForEach ( $input in $jobId)  {
+        $url = $EmServer.EndPoint + "/run/job/" + $input + "/" + $Option
+        Invoke-WebRequest -Uri $url -Headers $headers @extraparams | Write-Host
+    }
 }
 
-function Get-CMJobLog {
-    param (
-        [Parameter(Mandatory=$true)] $EmServer,
-        [Parameter(Mandatory=$true)] [string] $Id
-    )
-    $headers = @{Authorization="Bearer "+ $EmServer.Token; "Annotation-Subject"="Dummy"; "Annotation-Description"="Dummy"}
-    $url = $EmServer.EndPoint + "/run/job/" + $Id + "/log"
-    $extraparams = $EmServer.ExtraParams
-
-    return Invoke-RestMethod -Method Get -Uri $url -Headers $headers @extraparams
-}

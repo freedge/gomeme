@@ -3,7 +3,7 @@ Based on https://github.com/controlm/automation-api-quickstart/blob/master/201-c
 Requires at least PowerShell 6
 
 ```
-$creds = Get-Credential
-$server = Get-CMServer -Credentials $creds -Endpoint "https://workbench:8443/automation-api" -Insecure
-(Get-CMJobStatus $server).Statuses  | Out-GridView
+
+$server = Get-CMServer -Endpoint "https://workbench:8443/automation-api" -Insecure
+Get-CMJobStatus $server -Application *A* | Out-GridView -PassThru | Get-CMJobOutput $server -Output
 ```
