@@ -29,8 +29,8 @@ jobs:
       - GOMEME_PASSWORD=workbench
       - GOMEME_ENDPOINT=https://workbench:8443/automation-api
       - GOMEME_CERT_DIR=.certs
-      - WORKBENCH_PATH=s3://controlm-appdev/release/v9.19.200/controlm-workbench-9.19.200.xz
-      - WORKBENCH_IMAGE=controlm-workbench:9.19.200
+      - WORKBENCH_PATH=s3://controlm-appdev/release/v9.19.210/controlm-workbench-9.19.210.xz
+      - WORKBENCH_IMAGE=controlm-workbench:9.19.210
     addons:
       hosts:
         - workbench
@@ -43,7 +43,9 @@ jobs:
     before_install:
     # output any newer workbench that might be out
     - aws --no-sign-request s3 ls controlm-appdev/release/ --recursive | grep workbench | grep xz | sort
+    - WORKBENCH_IMAGE_2=`aws --no-sign-request s3 ls controlm-appdev/release/ --recursive | grep controlm-workbench- | grep xz | sort | tail -1 | grep -o -P 'controlm-workbench-.*.xz'`
     # set up a running workbench    
+    - echo candidate is ${WORKBENCH_IMAGE_2}
     - aws --no-sign-request s3 cp ${WORKBENCH_PATH} - | docker load
     - docker run -dt --hostname=workbench --name=workbench -p 127.0.0.1:8443:8443 -p 7005:7005 ${WORKBENCH_IMAGE}
     - sleep 60
