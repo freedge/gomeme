@@ -43,9 +43,9 @@ jobs:
     before_install:
     # output any newer workbench that might be out
     - aws --no-sign-request s3 ls controlm-appdev/release/ --recursive | grep workbench | grep xz | sort
-    - WORKBENCH_IMAGE_2=`aws --no-sign-request s3 ls controlm-appdev/release/ --recursive | grep controlm-workbench- | grep xz | sort | tail -1 | grep -o -P 'controlm-workbench-.*.xz'`
+    - WORKBENCH_PATH_2=s3://controlm-appdev/`aws --no-sign-request s3 ls controlm-appdev/release/ --recursive | grep controlm-workbench- | grep xz | sort | tail -1 | grep -o -P 'release/[^ ]*controlm-workbench-.*.xz'`
+    - echo candidate is ${WORKBENCH_PATH_2}
     # set up a running workbench    
-    - echo candidate is ${WORKBENCH_IMAGE_2}
     - aws --no-sign-request s3 cp ${WORKBENCH_PATH} - | docker load
     - docker run -dt --hostname=workbench --name=workbench -p 127.0.0.1:8443:8443 -p 7005:7005 ${WORKBENCH_IMAGE}
     - sleep 60
