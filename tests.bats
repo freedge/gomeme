@@ -4,6 +4,7 @@
   run gomeme login -u workbench
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Logged in. Server version " ]]
+  echo $output >&3
 }
 
 @test "curl" {
