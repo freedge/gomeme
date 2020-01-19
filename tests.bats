@@ -27,7 +27,7 @@
 
 @test "ping our agent and show its parameters" {
   until gomeme config.ping  -c workbench --host workbench -t 10 ; do sleep 1 ; done
-  gomeme config.agent -c workbench --host workbench   
+  until gomeme config.agent -c workbench --host workbench  ; do sleep 1 ; done 
 }
 
 @test "deploy.put should put some jobs" {
