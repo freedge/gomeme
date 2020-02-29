@@ -326,6 +326,33 @@ $env:GOMEME_CERT_DIR=".certs"
 
 however the bats tests must be started under Linux.
 
+### Azure pipelines
+
+Set-up for go:
+
+https://docs.microsoft.com/en-us/azure/devops/pipelines/ecosystems/go?view=azure-devops&tabs=go-current
+
+Create the manifest file:
+https://docs.microsoft.com/en-us/windows/msix/desktop/desktop-to-uwp-manual-conversion
+
+not sure if needed : Create the package manifest using MakeAppx.exe 
+
+https://developer.microsoft.com/fr-fr/windows/downloads/windows-10-sdk/
+
+
+Create a certificate 
+
+https://docs.microsoft.com/en-us/windows/msix/package/create-certificate-package-signing
+
+```
+ New-SelfSignedCertificate -Type Custom -Subject "CN=Frigocorp, O=Frigocorp, L=Gotham, S=Hyrule, C=France" -KeyUsage DigitalSignature -FriendlyName "Frigo certificate" -CertStoreLocation "Cert:\CurrentUser\My" -TextExtension @("2.5.29.37={text}1.3.6.1.5.5.7.3.3", "2.5.29.19={text}")
+```
+
+
+Set-up the pipeline 
+
+https://docs.microsoft.com/en-us/windows/msix/desktop/azure-dev-ops
+
 ## License
 
 http://www.apache.org/licenses/LICENSE-2.0
