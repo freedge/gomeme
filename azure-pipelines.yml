@@ -48,7 +48,7 @@ steps:
 - powershell: |
    $newVersion = "$(major).$(minor).$(build).$(revision)";
    if ( $Env:BUILD_SOURCEBRANCH.StartsWith("refs/tags/v") ) {
-      $newVersion = $Env:BUILD_SOURCEBRANCH.Substring(11);
+      $newVersion = $Env:BUILD_SOURCEBRANCH.Substring(11) + ".0";
    }
    [Reflection.Assembly]::LoadWithPartialName("System.Xml.Linq")
    $path = "$(Build.ArtifactStagingDirectory)\appxmanifest.xml"
