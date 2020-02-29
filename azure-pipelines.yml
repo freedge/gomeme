@@ -16,7 +16,7 @@ variables:
   build: $(Date:yyyyMMdd)
   revision: $[counter('rev', 0)]
 
-name: gomeme_win_$(Build.DefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+name: $(Date:yyyyMMdd)$(Rev:.r)
 steps: 
 - task: GoTool@0
   inputs:
@@ -47,7 +47,7 @@ steps:
   inputs:
      artifactName: drop
 - powershell: |
-   $newVersion = "$(major).$(minor)." + $Env.Build_BuildNumber";
+   $newVersion = "$(major).$(minor).42.$(revision)";
    [Reflection.Assembly]::LoadWithPartialName("System.Xml.Linq")
    $path = "$(Build.ArtifactStagingDirectory)\appxmanifest.xml"
    $doc = [System.Xml.Linq.XDocument]::Load($path)
@@ -65,15 +65,13 @@ steps:
 - script: '"C:\Program Files (x86)\Windows Kits\10\bin\10.0.17763.0\x64\signtool"
     sign /fd SHA256 /f $(Agent.TempDirectory)/frigocorp.pfx /p toto $(Build.ArtifactStagingDirectory)\gomemepkg.msix'
   displayName: 'Sign MSIX Package'
-  condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/master')
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/master'))
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: drop'
 - task: GithubRelease@0
   displayName: 'Create GitHub Release'   
-  condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/master')   
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/master'))
   inputs:
-    tagSource: manual
-    tag: $(major).$(minor).$(Build.BuildNumber) 
     gitHubConnection: github.com_freedge
     repositoryName: freedge/gomeme
     assets: |
