@@ -13,9 +13,10 @@ variables:
   buildConfiguration: 'release'
   major: 1
   minor: 0
-  build: 0
+  build: $(Date:yyyyMMdd)
   revision: $[counter('rev', 0)]
-  
+
+name: gomeme_win_$(Build.DefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 steps: 
 - task: GoTool@0
   inputs:
@@ -47,9 +48,6 @@ steps:
      artifactName: drop
 - powershell: |
    $newVersion = "$(major).$(minor).$(build).$(revision)";
-   if ( $Env:BUILD_SOURCEBRANCH.StartsWith("refs/tags/v") ) {
-      $newVersion = $Env:BUILD_SOURCEBRANCH.Substring(11) + ".0";
-   }
    [Reflection.Assembly]::LoadWithPartialName("System.Xml.Linq")
    $path = "$(Build.ArtifactStagingDirectory)\appxmanifest.xml"
    $doc = [System.Xml.Linq.XDocument]::Load($path)
@@ -67,14 +65,15 @@ steps:
 - script: '"C:\Program Files (x86)\Windows Kits\10\bin\10.0.17763.0\x64\signtool"
     sign /fd SHA256 /f $(Agent.TempDirectory)/frigocorp.pfx /p toto $(Build.ArtifactStagingDirectory)\gomemepkg.msix'
   displayName: 'Sign MSIX Package'
-  condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/v')
+  condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/master')
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: drop'
 - task: GithubRelease@0
   displayName: 'Create GitHub Release'   
-  condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/v')   
+  condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/master')   
   inputs:
-    action: edit
+    tagSource: manual
+    tag: $(major).$(minor).$(build).$(revision) 
     gitHubConnection: github.com_freedge
     repositoryName: freedge/gomeme
     assets: |
