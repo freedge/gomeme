@@ -41,6 +41,7 @@ steps:
     contents: |
       images\**
       appxmanifest.xml
+      gomeme.appinstaller
       frigocorp.cer
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
 - task: PublishBuildArtifacts@1
@@ -52,6 +53,11 @@ steps:
    $path = "$(Build.ArtifactStagingDirectory)\appxmanifest.xml"
    $doc = [System.Xml.Linq.XDocument]::Load($path)
    $xName =      [System.Xml.Linq.XName]"{http://schemas.microsoft.com/appx/manifest/foundation/windows10}Identity"
+   $doc.Root.Element($xName).Attribute("Version").Value = $newVersion;
+   $doc.Save($path)
+   $path = "$(Build.ArtifactStagingDirectory)\gomeme.appinstaller"
+   $doc = [System.Xml.Linq.XDocument]::Load($path)
+   $xName =      [System.Xml.Linq.XName]"{http://schemas.microsoft.com/appx/appinstaller/2018}MainPackage"
    $doc.Root.Element($xName).Attribute("Version").Value = $newVersion;
    $doc.Save($path)
   displayName: 'Version Package Manifest'
@@ -79,3 +85,4 @@ steps:
     assets: |
       $(Build.ArtifactStagingDirectory)/*.msix
       $(Build.ArtifactStagingDirectory)/*.cer
+      $(Build.ArtifactStagingDirectory)/*.appinstaller
