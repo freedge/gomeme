@@ -72,6 +72,8 @@ steps:
   displayName: 'Create GitHub Release'   
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/master'))
   inputs:
+    tagSource: manual
+    tag: v$(major).$(minor).$(revision)
     gitHubConnection: github.com_freedge
     repositoryName: freedge/gomeme
     assets: |
