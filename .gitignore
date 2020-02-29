@@ -5,3 +5,4 @@ simulator/simulator.exe
 .certs
 .vagrant
 *console.log
+build

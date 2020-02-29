@@ -7,33 +7,75 @@ trigger:
 - master
 
 pool:
-  vmImage: 'ubuntu-latest'
-
+  vmImage: 'windows-latest'
 variables:
-  GOBIN:  '$(GOPATH)/bin' # Go binaries path
-  GOROOT: '/usr/local/go1.13' # Go installation path
-  GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
-  modulePath: '$(GOPATH)/src/github.com/$(build.repository.name)' # Path to the module's code
-
-steps:
-- script: |
-    mkdir -p '$(GOBIN)'
-    mkdir -p '$(GOPATH)/pkg'
-    mkdir -p '$(modulePath)'
-    shopt -s extglob
-    shopt -s dotglob
-    mv !(gopath) '$(modulePath)'
-    echo '##vso[task.prependpath]$(GOBIN)'
-    echo '##vso[task.prependpath]$(GOROOT)/bin'
-  displayName: 'Set up the Go workspace'
-
-- script: |
-    go version
-    go get -v -t -d ./...
-    if [ -f Gopkg.toml ]; then
-        curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-        dep ensure
-    fi
-    go build -v .
-  workingDirectory: '$(modulePath)'
-  displayName: 'Get dependencies, then build'
+  buildPlatform: 'x64'
+  buildConfiguration: 'release'
+  major: 1
+  minor: 0
+  build: 0
+  revision: $[counter('rev', 0)]
+  
+steps: 
+- task: GoTool@0
+  inputs:
+    version: '1.13.5'
+- task: Go@0
+  inputs:
+    command: 'get'
+    arguments: '-d'
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
+- task: Go@0
+  inputs:
+    command: 'build'
+    arguments: '-o $(Build.ArtifactStagingDirectory)\gomeme.exe'
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
+- task: Go@0
+  inputs:
+    command: 'test'
+    arguments: '-v ./...'
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
+- task: CopyFiles@2
+  inputs:
+    contents: |
+      images\**
+      appxmanifest.xml
+      frigocorp.cer
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+- task: PublishBuildArtifacts@1
+  inputs:
+     artifactName: drop
+- powershell: |
+   $newVersion = "$(major).$(minor).$(build).$(revision)";
+   if ( $Env:BUILD_SOURCEBRANCH.StartsWith("refs/tags/v") ) {
+      $newVersion = $Env:BUILD_SOURCEBRANCH.Substring(11);
+   }
+   [Reflection.Assembly]::LoadWithPartialName("System.Xml.Linq")
+   $path = "$(Build.ArtifactStagingDirectory)\appxmanifest.xml"
+   $doc = [System.Xml.Linq.XDocument]::Load($path)
+   $xName =      [System.Xml.Linq.XName]"{http://schemas.microsoft.com/appx/manifest/foundation/windows10}Identity"
+   $doc.Root.Element($xName).Attribute("Version").Value = $newVersion;
+   $doc.Save($path)
+  displayName: 'Version Package Manifest'
+- script: '"C:\Program Files (x86)\Windows Kits\10\bin\10.0.17763.0\x64\makeappx" 
+    pack /v /h SHA256 /d $(Build.ArtifactStagingDirectory) /p $(Build.ArtifactStagingDirectory)\gomemepkg.msix'
+  displayName: 'Package the App'
+- task: DownloadSecureFile@1
+  inputs:
+    secureFile: 'frigocorp.pfx'
+  displayName: 'Download Secure PFX File'
+- script: '"C:\Program Files (x86)\Windows Kits\10\bin\10.0.17763.0\x64\signtool"
+    sign /fd SHA256 /f $(Agent.TempDirectory)/frigocorp.pfx /p toto $(Build.ArtifactStagingDirectory)\gomemepkg.msix'
+  displayName: 'Sign MSIX Package'
+  condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/v')
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'
+- task: GithubRelease@0
+  displayName: 'Create GitHub Release'   
+  condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/v')   
+  inputs:
+    gitHubConnection: freedgepat
+    repositoryName: freedge/gomeme
+    assets: |
+      $(Build.ArtifactStagingDirectory)/*.msix
+      $(Build.ArtifactStagingDirectory)/*.cer

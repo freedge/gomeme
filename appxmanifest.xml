@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" 
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" 
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+  IgnorableNamespaces="desktop uap3">
+    <Identity Name="Frigocorp.Gomeme" Version="1.0.0.0" Publisher="CN=Frigocorp, O=Frigocorp, L=Gotham, S=Hyrule, C=France" ProcessorArchitecture="x64" />
+    <Properties>
+        <DisplayName>Gomeme</DisplayName>
+        <PublisherDisplayName>Frigo</PublisherDisplayName>
+        <Description>A Cli for Control-M</Description>
+        <Logo>images\icon.png</Logo>
+    </Properties>
+    <Resources>
+        <Resource Language="en-us" />
+    </Resources>
+    <Dependencies>
+        <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.14316.0" MaxVersionTested="10.0.15063.0" />
+    </Dependencies>
+    <Capabilities>
+        <rescap:Capability Name="runFullTrust" />
+    </Capabilities>
+    <Applications>
+        <Application Id="Gomeme" Executable="gomeme.exe" EntryPoint="Windows.FullTrustApplication">
+            <uap:VisualElements DisplayName="Gomeme" Description="Cli in go for Control-M" Square150x150Logo="images\icon.png" Square44x44Logo="images\icon_small.png" BackgroundColor="#464646" />
+            <Extensions>
+                <uap3:Extension
+                    Category="windows.appExecutionAlias"
+                    Executable="gomeme.exe"
+                    EntryPoint="Windows.FullTrustApplication">
+                    <uap3:AppExecutionAlias>
+                        <desktop:ExecutionAlias Alias="gomeme.exe" />
+                    </uap3:AppExecutionAlias>
+                </uap3:Extension>
+            </Extensions>
+        </Application>
+    </Applications>
+</Package>
