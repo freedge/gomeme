@@ -2,14 +2,14 @@
 <AppInstaller
     Version="1.0.0.0"
     xmlns="http://schemas.microsoft.com/appx/appinstaller/2018"
-    Uri="https://github.com/freedge/gomeme/releases/latest/download/gomeme.appinstaller" >
+    Uri="https://raw.githubusercontent.com/freedge/gomeme/master/gomeme.appinstaller" >
 
     <MainPackage
         Name="Frigocorp.Gomeme"
         Publisher="CN=Frigocorp, O=Frigocorp, L=Gotham, S=Hyrule, C=France"
-        Version="1.0.0.0"
+        Version="1.0.42.25"
         ProcessorArchitecture="x64"
-        Uri="https://github.com/freedge/gomeme/releases/latest/download/gomemepkg.msix" />
+        Uri="https://github.com/freedge/gomeme/releases/download/v1.0.25/gomemepkg.msix" />
 
     
     <UpdateSettings>

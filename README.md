@@ -33,7 +33,7 @@ Traffic received from ctm server can be dumped with ```--debug```
 
 Usage on Windows:
 
-It might be installed using [the latest release](https://github.com/freedge/gomeme/releases/latest/download/gomeme.appinstaller)
+It might be installed using [the app installer](https://raw.githubusercontent.com/freedge/gomeme/master/gomeme.appinstaller)
 
 ```
 $env:GOMEME_ENDPOINT="https://workbench:8443/automation-api"
