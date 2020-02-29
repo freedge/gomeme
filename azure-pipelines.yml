@@ -47,7 +47,7 @@ steps:
   inputs:
      artifactName: drop
 - powershell: |
-   $newVersion = "$(major).$(minor).$(build).$(revision)";
+   $newVersion = "$(major).$(minor)." + $Env.Build_BuildNumber";
    [Reflection.Assembly]::LoadWithPartialName("System.Xml.Linq")
    $path = "$(Build.ArtifactStagingDirectory)\appxmanifest.xml"
    $doc = [System.Xml.Linq.XDocument]::Load($path)
@@ -73,7 +73,7 @@ steps:
   condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/master')   
   inputs:
     tagSource: manual
-    tag: $(major).$(minor).$(build).$(revision) 
+    tag: $(major).$(minor).$(Build.BuildNumber) 
     gitHubConnection: github.com_freedge
     repositoryName: freedge/gomeme
     assets: |
