@@ -87,3 +87,4 @@ steps:
     assets: |
       $(Build.ArtifactStagingDirectory)/*.msix
       $(Build.ArtifactStagingDirectory)/*.cer
+      $(Build.ArtifactStagingDirectory)/*.appinstaller
