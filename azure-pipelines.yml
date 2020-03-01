@@ -88,6 +88,7 @@ steps:
       $(Build.ArtifactStagingDirectory)/*.appinstaller
 - task: Kubernetes@1
   displayName: kubectl apply
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/master'))
   inputs:
     connectionType: Kubernetes Service Connection
     kubernetesServiceEndpoint: Openshift
