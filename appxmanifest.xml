@@ -23,7 +23,7 @@
     </Capabilities>
     <Applications>
         <Application Id="Gomeme" Executable="gomeme.exe" EntryPoint="Windows.FullTrustApplication">
-            <uap:VisualElements DisplayName="Gomeme" Description="Cli in go for Control-M" Square150x150Logo="images\icon.png" Square44x44Logo="images\icon_small.png" BackgroundColor="#464646" />
+            <uap:VisualElements DisplayName="Gomeme" Description="Cli in go for Control-M" Square150x150Logo="images\icon.png" Square44x44Logo="images\icon_small.png" BackgroundColor="#E6E35E" />
             <Extensions>
                 <uap3:Extension
                     Category="windows.appExecutionAlias"

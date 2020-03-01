@@ -13,7 +13,7 @@
 
     
     <UpdateSettings>
-    <OnLaunch HoursBetweenUpdateChecks="0"/>   
-  </UpdateSettings>
+      <AutomaticBackgroundTask/>   
+    </UpdateSettings>
 
 </AppInstaller>
