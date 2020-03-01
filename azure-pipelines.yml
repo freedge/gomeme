@@ -86,3 +86,10 @@ steps:
       $(Build.ArtifactStagingDirectory)/*.msix
       $(Build.ArtifactStagingDirectory)/*.cer
       $(Build.ArtifactStagingDirectory)/*.appinstaller
+- task: Kubernetes@1
+  displayName: kubectl apply
+  inputs:
+    connectionType: Kubernetes Service Connection
+    kubernetesServiceEndpoint: Openshift
+    command: apply
+    arguments: -f winstore\httpd.yaml
