@@ -13,6 +13,7 @@
 
     
     <UpdateSettings>
+      <OnLaunch HoursBetweenUpdateChecks="12"/>
       <AutomaticBackgroundTask/>   
     </UpdateSettings>
 
