@@ -331,6 +331,10 @@ however the bats tests must be started under Linux.
 
 ### Azure pipelines
 
+These are some links used to set-up this repository. Current pipeline under Azure is missing the "integration tests" (that are run
+under Travis on a Linux box), but includes a step to package as a msix, release an appinstaller file, and deploy 
+a server for that appinstaller on Openshift.
+
 Set-up for go:
 
 https://docs.microsoft.com/en-us/azure/devops/pipelines/ecosystems/go?view=azure-devops&tabs=go-current
