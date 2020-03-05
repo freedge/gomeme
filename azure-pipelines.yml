@@ -93,4 +93,4 @@ steps:
     connectionType: Kubernetes Service Connection
     kubernetesServiceEndpoint: Openshift
     command: apply
-    arguments: --insecure-skip-tls-verify=true -f winstore\httpd.yaml -n freedge-demo
+    arguments: -f winstore\httpd.yaml -n freedge-demo
