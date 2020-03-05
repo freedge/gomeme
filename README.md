@@ -33,6 +33,9 @@ Traffic received from ctm server can be dumped with ```--debug```
 
 Usage on Windows:
 
+It might be installed using [the app installer](http://httpd-freedge-demo.apps.us-east-1.starter.openshift-online.com/gomeme.appinstaller) or from 
+the msix released.
+
 ```
 $env:GOMEME_ENDPOINT="https://workbench:8443/automation-api"
 $env:GOMEME_CERTDIR=...
@@ -327,6 +330,10 @@ $env:GOMEME_CERT_DIR=".certs"
 however the bats tests must be started under Linux.
 
 ### Azure pipelines
+
+These are some links used to set-up this repository. Current pipeline under Azure is missing the "integration tests" (that are run
+under Travis on a Linux box), but includes a step to package as a msix, release an appinstaller file, and deploy 
+a server for that appinstaller on Openshift.
 
 Set-up for go:
 
