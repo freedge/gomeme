@@ -51,7 +51,7 @@ func (cmd *jobStatusCommand) PrettyPrint() error {
 	}
 	if cmd.JobDefinition != nil {
 		for _, def := range cmd.JobDefinition {
-			fmt.Printf("(runas %s) %s/%s %s\n", def.RunAs, def.FilePath, def.FileName, strings.Join(def.Arguments, " "))
+			fmt.Printf("(runas %s@%s) %s/%s %s\n", def.RunAs, cmd.Result.Host, def.FilePath, def.FileName, strings.Join(def.Arguments, " "))
 		}
 	}
 
