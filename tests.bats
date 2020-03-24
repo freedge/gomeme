@@ -12,7 +12,7 @@
 }
 
 @test "bootstrap" {
-  gomeme test.config.emparamset --subject test --description test --name UserAuditAnnotationOn --value 1
+  until gomeme test.config.emparamset --subject test --description test --name UserAuditAnnotationOn --value 1 ; do sleep 1 ; done
   gomeme test.qr.new --subject test --debug -n INIT -m 0 -c workbench
 }
 
