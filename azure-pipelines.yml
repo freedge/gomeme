@@ -85,12 +85,13 @@ steps:
     assets: |
       $(Build.ArtifactStagingDirectory)/*.msix
       $(Build.ArtifactStagingDirectory)/*.cer
-      $(Build.ArtifactStagingDirectory)/*.appinstaller
-- task: Kubernetes@1
-  displayName: kubectl apply
-  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/master'))
-  inputs:
-    connectionType: Kubernetes Service Connection
-    kubernetesServiceEndpoint: Openshift
-    command: apply
-    arguments: --certificate-authority=winstore\cert.txt -f winstore\httpd.yaml -n freedge-demo
+
+# Openshift Online starter expired
+# - task: Kubernetes@1
+#   displayName: kubectl apply
+#   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/master'))
+#   inputs:
+#     connectionType: Kubernetes Service Connection
+#     kubernetesServiceEndpoint: Openshift
+#     command: apply
+#     arguments: --certificate-authority=winstore\cert.txt -f winstore\httpd.yaml -n freedge-demo

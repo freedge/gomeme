@@ -33,8 +33,7 @@ Traffic received from ctm server can be dumped with ```--debug```
 
 Usage on Windows:
 
-It might be installed using [the app installer](http://httpd-freedge-demo.apps.us-east-1.starter.openshift-online.com/gomeme.appinstaller) or from 
-the msix released.
+It might be installed using the msix released.
 
 ```
 $env:GOMEME_ENDPOINT="https://workbench:8443/automation-api"
@@ -59,7 +58,7 @@ Typically,
 3. ensure the server name in the certificate can be resolved (possibly, add it in etc/hosts)
 4. from the certs folder, run ```c_rehash .``` (so that curl will be able to use --capath, though it does not seem mandatory)
 
-SSL_CERT_DIR usually can be a column separated list of folders, but go (https://github.com/golang/go/issues/35325) consider it
+SSL_CERT_DIR usually can be a column separated list of folders, but go (https://github.com/golang/go/issues/35325) considers it
 as a single folder. GOMEME_CERT_DIR environment variable can be used as an alternative to SSL_CERT_DIR (to avoid breaking
 other tools).
 
