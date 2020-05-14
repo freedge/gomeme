@@ -41,7 +41,7 @@ steps:
     contents: |
       images\**
       appxmanifest.xml
-      gomeme.appinstaller
+      winstore\gomeme.appinstaller
       frigocorp.cer
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
 - task: PublishBuildArtifacts@1
@@ -55,7 +55,7 @@ steps:
    $xName =      [System.Xml.Linq.XName]"{http://schemas.microsoft.com/appx/manifest/foundation/windows10}Identity"
    $doc.Root.Element($xName).Attribute("Version").Value = $newVersion;
    $doc.Save($path)
-   $path = "$(Build.ArtifactStagingDirectory)\gomeme.appinstaller"
+   $path = "$(Build.ArtifactStagingDirectory)\winstore\gomeme.appinstaller"
    $doc = [System.Xml.Linq.XDocument]::Load($path)
    $xName =      [System.Xml.Linq.XName]"{http://schemas.microsoft.com/appx/appinstaller/2018}MainPackage"
    $doc.Root.Element($xName).Attribute("Version").Value = $newVersion;
@@ -85,12 +85,13 @@ steps:
     assets: |
       $(Build.ArtifactStagingDirectory)/*.msix
       $(Build.ArtifactStagingDirectory)/*.cer
-      $(Build.ArtifactStagingDirectory)/*.appinstaller
-- task: Kubernetes@1
-  displayName: kubectl apply
-  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/master'))
-  inputs:
-    connectionType: Kubernetes Service Connection
-    kubernetesServiceEndpoint: Openshift
-    command: apply
-    arguments: --certificate-authority=winstore\cert.txt -f winstore\httpd.yaml -n freedge-demo
+
+# Openshift Online starter expired
+# - task: Kubernetes@1
+#   displayName: kubectl apply
+#   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/master'))
+#   inputs:
+#     connectionType: Kubernetes Service Connection
+#     kubernetesServiceEndpoint: Openshift
+#     command: apply
+#     arguments: --certificate-authority=winstore\cert.txt -f winstore\httpd.yaml -n freedge-demo
