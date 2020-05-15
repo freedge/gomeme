@@ -21,7 +21,8 @@ func (cmd *jobRerunCommand) Execute([]string) (err error) {
 	if err := commands.RequiresAnnotation(); err != nil {
 		return err
 	}
-	err = client.Call("POST", "/run/job/"+cmd.Jobid+"/rerun", nil, map[string]string{}, &cmd.result)
+	query := types.RerunQuery{}
+	err = client.Call("POST", "/run/job/"+cmd.Jobid+"/rerun", query, map[string]string{}, &cmd.result)
 	return
 }
 
