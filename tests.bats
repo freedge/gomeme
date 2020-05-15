@@ -116,6 +116,12 @@
 @test "get the job logs" {
   ID=$(gomeme lj --json | jq '.Statuses[0].JobId')
   gomeme job.log -j $ID >&3
+}
+
+@test "fail to rerun the job" {
+  ID=$(gomeme lj --json | jq '.Statuses[0].JobId')
+  run gomeme job.rerun -j $ID --subject test
+  echo "$output" >&3
 }  
 
 @test "delete the job" {

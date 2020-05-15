@@ -225,3 +225,7 @@ type SecretAddQuery struct {
 	Name  string `json:"name,omitempty"`
 	Value string `json:"value"`
 }
+
+// RerunQuery is an empty structure needed in some version of Control-M
+type RerunQuery struct {
+}
