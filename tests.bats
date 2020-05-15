@@ -120,8 +120,9 @@
 
 @test "fail to rerun the job" {
   ID=$(gomeme lj --json | jq '.Statuses[0].JobId')
-  run gomeme job.rerun -j $ID --subject test --debug
+  run gomeme job.rerun -j $ID --subject test
   echo "$output" >&3
+  [[ "$output" =~ "Failed to rerun job"]]
 }  
 
 @test "delete the job" {
