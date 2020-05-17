@@ -122,7 +122,7 @@
   ID=$(gomeme lj --json | jq '.Statuses[0].JobId')
   run gomeme job.rerun -j $ID --subject test
   echo "$output" >&3
-  [[ "$output" =~ "Failed to rerun job"]]
+  [[ "$output" =~ "Failed to rerun job" ]]
 }  
 
 @test "delete the job" {
