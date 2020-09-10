@@ -89,7 +89,7 @@
   run gomeme job.modify -j $ID -n dFOOJOBPRGPK1 --subject test --debug -- A B C
   echo "$output" >&3
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "job was successfully modifyed" ]]
+  [[ "$output" =~ "job was successfully modified" ]]
 }  
 
 @test "free the job" {

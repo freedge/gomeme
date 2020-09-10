@@ -29,8 +29,8 @@ jobs:
       - GOMEME_PASSWORD=workbench
       - GOMEME_ENDPOINT=https://workbench:8443/automation-api
       - GOMEME_CERT_DIR=.certs
-      - WORKBENCH_PATH=s3://controlm-appdev/release/v9.20.20/controlm-workbench-9.20.20.xz
-      - WORKBENCH_IMAGE=controlm-workbench:9.20.20
+      - WORKBENCH_PATH=s3://controlm-appdev/release/v9.20.25/controlm-workbench-9.20.25.xz
+      - WORKBENCH_IMAGE=controlm-workbench:9.20.25
     addons:
       hosts:
         - workbench
