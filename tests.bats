@@ -65,8 +65,11 @@
   # the ordered job is not available immediately
   until gomeme lj --json | jq .Statuses[0] ; do echo . ; sleep 1 ; done
   gomeme lj -H '*BA*'
+  ctm run jobs:status::get -s 'host=*BA*'
   gomeme lj -n dFOOJOBPRGPK1
+  ctm run jobs:status::get -s name=dFOOJOBPRGPK1
   gomeme lj --debug -c workbench >&3
+  ctm run jobs:status::get -s ctm=workbench
   run gomeme lj -v
   [[ "$output" =~ "1/1" ]]
   [ "$status" -eq 0 ]
