@@ -1,5 +1,17 @@
 #!/usr/bin/env bats
 
+
+@test "bootstrap" {
+  ctm environment workbench::add https://workbench:8443/automation-api
+  ctm environment set workbench
+  # sadly won't work with a self signed certificate, even if trusted
+  # ctm environment configure rootCertificateRequired true
+  ctm session login
+  until ctm config servers::get | grep Up ; do echo "." ; sleep 1 ; done
+  ctm config em:param::set -a 'subject=test&description=test'  UserAuditAnnotationOn  1
+  ctm run resource::add -a 'subject=test&description=test' workbench INIT 0
+}
+
 @test "login" {
   run gomeme login -u workbench
   [ "$status" -eq 0 ]
@@ -9,11 +21,6 @@
 
 @test "curl" {
   gomeme curl  
-}
-
-@test "bootstrap" {
-  until gomeme test.config.emparamset --subject test --description test --name UserAuditAnnotationOn --value 1 ; do sleep 1 ; done
-  gomeme test.qr.new --subject test --debug -n INIT -m 0 -c workbench
 }
 
 @test "qr" {
@@ -58,8 +65,11 @@
   # the ordered job is not available immediately
   until gomeme lj --json | jq .Statuses[0] ; do echo . ; sleep 1 ; done
   gomeme lj -H '*BA*'
+  ctm run jobs:status::get -s 'host=*BA*'
   gomeme lj -n dFOOJOBPRGPK1
+  ctm run jobs:status::get -s jobname=dFOOJOBPRGPK1
   gomeme lj --debug -c workbench >&3
+  ctm run jobs:status::get -s ctm=workbench
   run gomeme lj -v
   [[ "$output" =~ "1/1" ]]
   [ "$status" -eq 0 ]
