@@ -12,8 +12,11 @@
 }
 
 @test "bootstrap" {
-  until gomeme test.config.emparamset --subject test --description test --name UserAuditAnnotationOn --value 1 ; do sleep 1 ; done
-  gomeme test.qr.new --subject test --debug -n INIT -m 0 -c workbench
+  ctm environment workbench::add
+  ctm environment set workbench
+  until ctm config servers::get | grep Up ; do echo "." ; sleep 1 ; done
+  ctm session login
+  ctm run resource::add -a 'subject=test&description=test' workbench INIT 0
 }
 
 @test "qr" {
