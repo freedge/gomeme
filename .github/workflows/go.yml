@@ -34,7 +34,7 @@ jobs:
     - name: Prepare tests
       timeout-minutes: 5
       run: |
-        sudo echo "127.0.0.1 workbench" >> /etc/hosts
+        echo "127.0.0.1 workbench" | sudo tee -a /etc/hosts
         sudo apt-get install -y libxml2-utils awscli podman openssl
         podman pull controlm/workbench:latest
         mkdir .certs gopath
