@@ -38,6 +38,9 @@ jobs:
     - name: Build
       run: go build -v .
 
+    - name: Go tests
+      run: go test ./...
+
     - name: Cache Container Images
       id: cache-container-images
       uses: jamesmortensen/cache-container-images-action@v1
