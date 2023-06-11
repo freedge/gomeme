@@ -31,26 +31,29 @@ jobs:
     - name: Build
       run: go build -v .
 
+    - name: Cache Container Images
+      id: cache-container-images
+      uses: jamesmortensen/cache-container-images-action@v1
+      with:
+        images: |
+          controlm/workbench:latest
+
     - name: Prepare tests
       timeout-minutes: 5
       run: |
+        echo HOME=${HOME} pwd=$(pwd) id=$(id)
         echo "127.0.0.1 workbench" | sudo tee -a /etc/hosts
-        sudo apt-get install -y libxml2-utils awscli podman openssl
+        sudo apt-get install -y libxml2-utils awscli podman openssl bats
         podman pull controlm/workbench:latest
-        mkdir .certs gopath
-        curl -L https://github.com/bats-core/bats-core/archive/v1.9.0.tar.gz | tar zxf -
-        ./bats-core-1.9.0/install.sh gopath
+        mkdir .certs
 
     - name: Run tests
-      timeout-minutes: 15
+      timeout-minutes: 10
       run: |
         podman run -dt --hostname workbench --name=workbench -p 127.0.0.1:8443:8443 -p 7005:7005 controlm/workbench:latest
-        until curl --fail -L -k --connect-timeout 3 --max-time 3 ${GOMEME_ENDPOINT}/startHere.html -o /dev/null ; do echo . ; sleep 1 ; done
+        until curl --fail -L -k --connect-timeout 3 --max-time 3 ${GOMEME_ENDPOINT}/swagger-ui.html -o /dev/null ; do echo . ; sleep 1 ; done
         echo | openssl s_client -connect workbench:8443 -showcerts
         echo | openssl s_client -prexit -connect workbench:8443 | openssl x509 > .certs/cert.pem
-        export "PATH=${PATH}:.:gopath"
+        export "PATH=${PATH}:."
         bats tests.bats
-
-
-
 
