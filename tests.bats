@@ -4,9 +4,11 @@
 @test "bootstrap" {
   ctm environment workbench::add https://workbench:8443/automation-api
   ctm environment set workbench
-  ctm environment configure rootCertificateRequired true
-  until ctm config servers::get | grep Up ; do echo "." ; sleep 1 ; done
+  # sadly won't work with a self signed certificate, even if trusted
+  # ctm environment configure rootCertificateRequired true
   ctm session login
+  until ctm config servers::get | grep Up ; do echo "." ; sleep 1 ; done
+  ctm config em:param::set -a 'subject=test&description=test'  UserAuditAnnotationOn  1
   ctm run resource::add -a 'subject=test&description=test' workbench INIT 0
 }
 

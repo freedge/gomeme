@@ -4,6 +4,12 @@ env:
   GOMEME_PASSWORD: workbench
   GOMEME_ENDPOINT: https://workbench:8443/automation-api
   GOMEME_CERT_DIR: .certs
+  # should help ctm cli to find the right certificate, however
+  # nodejs does not allow us to use a self signed certificate
+  # even if trusted, so this won't be used unless we
+  # upload or own cert signed with a proper chain.
+  NODE_EXTRA_CA_CERTS: .certs/cert.pem
+  # should make caching of artifacts a bit faster
   GZIP: "-1"
 jobs:
 
@@ -51,15 +57,13 @@ jobs:
     - name: Run tests
       timeout-minutes: 15
       run: |
-        podman run -dt --hostname workbench --name=workbench -p 127.0.0.1:8443:8443 -p 7005:7005 controlm/workbench:latest
+        podman run -dt --hostname workbench --name=workbench -p 127.0.0.1:8443:8443 -p 7005:7005 --healthcheck-command "curl --fail -k https://localhost:8443/automation-api/swagger-ui.html" controlm/workbench:latest
         sleep 180
-        until curl -s --fail -L -k --connect-timeout 3 --max-time 3 ${GOMEME_ENDPOINT}/swagger-ui.html -o /dev/null ; do echo . ; sleep 10 ;done
+        until [[ $(podman inspect workbench | jq -r '.[].State.Healthcheck.Status') = healthy ]] ; do sleep 3 ; done
         echo | openssl s_client -connect workbench:8443 -showcerts
         echo | openssl s_client -prexit -connect workbench:8443 | openssl x509 > .certs/cert.pem
-        sudo cp .certs/cert.pem /usr/local/share/ca-certificates/cert.pem
-        sudo update-ca-certificates
 
-        until curl -o ctm-cli.tgz ${GOMEME_ENDPOINT}/ctm-cli.tgz --fail ; do echo . ; sleep 10 ; done
+        curl --cacert .certs/cert.pem -o ctm-cli.tgz ${GOMEME_ENDPOINT}/ctm-cli.tgz --fail
         sudo npm -g install ctm-cli.tgz
 
         export "PATH=${PATH}:."
