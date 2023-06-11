@@ -48,10 +48,11 @@ jobs:
         mkdir .certs
 
     - name: Run tests
-      timeout-minutes: 10
+      timeout-minutes: 15
       run: |
         podman run -dt --hostname workbench --name=workbench -p 127.0.0.1:8443:8443 -p 7005:7005 controlm/workbench:latest
-        until curl --fail -L -k --connect-timeout 3 --max-time 3 ${GOMEME_ENDPOINT}/swagger-ui.html -o /dev/null ; do echo . ; sleep 1 ; done
+        sleep 180
+        until curl -s --fail -L -k --connect-timeout 3 --max-time 3 ${GOMEME_ENDPOINT}/swagger-ui.html -o /dev/null ; do echo . ; sleep 10 ;done
         echo | openssl s_client -connect workbench:8443 -showcerts
         echo | openssl s_client -prexit -connect workbench:8443 | openssl x509 > .certs/cert.pem
         export "PATH=${PATH}:."
