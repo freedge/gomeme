@@ -67,7 +67,7 @@
   gomeme lj -H '*BA*'
   ctm run jobs:status::get -s 'host=*BA*'
   gomeme lj -n dFOOJOBPRGPK1
-  ctm run jobs:status::get -s name=dFOOJOBPRGPK1
+  ctm run jobs:status::get -s jobname=dFOOJOBPRGPK1
   gomeme lj --debug -c workbench >&3
   ctm run jobs:status::get -s ctm=workbench
   run gomeme lj -v
