@@ -4,6 +4,7 @@ env:
   GOMEME_PASSWORD: workbench
   GOMEME_ENDPOINT: https://workbench:8443/automation-api
   GOMEME_CERT_DIR: .certs
+  GZIP: "-1"
 jobs:
 
   build:
