@@ -56,7 +56,10 @@ jobs:
         until curl -s --fail -L -k --connect-timeout 3 --max-time 3 ${GOMEME_ENDPOINT}/swagger-ui.html -o /dev/null ; do echo . ; sleep 10 ;done
         echo | openssl s_client -connect workbench:8443 -showcerts
         echo | openssl s_client -prexit -connect workbench:8443 | openssl x509 > .certs/cert.pem
-        until curl --cacert .certs/cert.pem -o ctm-cli.tgz ${GOMEME_ENDPOINT}/ctm-cli.tgz --fail ; do echo . ; sleep 10 ; done
+        sudo cp .certs/cert.pem /usr/local/share/ca-certificates/cert.pem
+        sudo update-ca-certificates
+
+        until curl -o ctm-cli.tgz ${GOMEME_ENDPOINT}/ctm-cli.tgz --fail ; do echo . ; sleep 10 ; done
         sudo npm -g install ctm-cli.tgz
 
         export "PATH=${PATH}:."

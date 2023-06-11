@@ -1,5 +1,15 @@
 #!/usr/bin/env bats
 
+
+@test "bootstrap" {
+  ctm environment workbench::add https://workbench:8443/automation-api
+  ctm environment set workbench
+  ctm environment configure rootCertificateRequired true
+  until ctm config servers::get | grep Up ; do echo "." ; sleep 1 ; done
+  ctm session login
+  ctm run resource::add -a 'subject=test&description=test' workbench INIT 0
+}
+
 @test "login" {
   run gomeme login -u workbench
   [ "$status" -eq 0 ]
@@ -9,14 +19,6 @@
 
 @test "curl" {
   gomeme curl  
-}
-
-@test "bootstrap" {
-  ctm environment workbench::add
-  ctm environment set workbench
-  until ctm config servers::get | grep Up ; do echo "." ; sleep 1 ; done
-  ctm session login
-  ctm run resource::add -a 'subject=test&description=test' workbench INIT 0
 }
 
 @test "qr" {
